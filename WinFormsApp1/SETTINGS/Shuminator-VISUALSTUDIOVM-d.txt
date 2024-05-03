@@ -1,0 +1,4 @@
+MaxNoiseLevel0:10,0
+MaxNoiseLevel1:2,0
+MaxNoiseLevel2:43,26
+MaxNoiseLevel3:43,26
