@@ -57,6 +57,9 @@ namespace WinFormsApp1
         bool Start_NoiseDetector_executing = false;
         public void Start_NoiseDetector()
         {
+            if(GetStringFromSettings("[Shuminator_Enabled]")=="0")
+                return;
+
             if (Start_NoiseDetector_executing == true)
                 return;
             Start_NoiseDetector_executing = true;
