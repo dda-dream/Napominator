@@ -23,7 +23,7 @@ namespace WinFormsApp1
     public partial class Form1 : Form
     {
         Boolean allowFormClose = false;
-        string USERNAME;
+        string USERNAME="";
 
         //WasapiCapture? audioSource;
         static WaveIn? audioSource;
