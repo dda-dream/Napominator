@@ -1,0 +1,96 @@
+
+name: "Compile and Build and Test #1"
+on:
+   workflow_dispatch:
+jobs:
+  build:
+    strategy:
+      matrix:
+        configuration: [Release]
+    runs-on: windows-latest  
+    env:
+      Solution_Name: PortTunnel_forWindowsXP_1.sln             # Replace with your solution name, i.e. MyWpfApp.sln.
+      Wap_Project_Directory: PortTunnel_forWindowsXP_1       # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
+      Wap_Project_Path: PortTunnel_forWindowsXP_1.wapproj                # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    # Install the .NET Core workload
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 2.0.x
+    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v2
+    # Execute all unit tests in the solution
+    - name: Execute unit tests
+      run: dotnet test
+
+    # Restore the application to populate the obj folder with RuntimeIdentifiers
+    - name: Restore the application
+      run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
+      env:
+        Configuration: ${{ matrix.configuration }}
+
+    # Decode the base 64 encoded pfx and save the Signing_Certificate
+    - name: Decode the pfx
+      run: |
+        $pfx_cert_byte = [System.Convert]::FromBase64String("${{ secrets.Base64_Encoded_Pfx }}")
+        $certificateFolder = $env:Wap_Project_Directory 
+        $certificatePath = "GitHubActionsWorkflow.pfx"
+
+        echo "####"
+        echo "=1=>:"
+        echo "$certificateFolder"
+        echo "=2=>:"
+        mkdir "$certificateFolder"
+        echo "$certificatePath"
+        echo "=4=>:"
+        dir "$certificateFolder"
+        echo "=4=>:"
+        dir "$certificateFolder"
+        echo "=5=>:"
+        mkdir "$env:Wap_Project_Path"
+        echo "####"
+        
+        [IO.File]::WriteAllBytes("$certificatePath", $pfx_cert_byte)
+        
+        
+        
+    # Create the app package by building and packaging the Windows Application Packaging project
+    - name: Create the app package
+      run: |
+        dir 
+        msbuild PortTunnel_forWindowsXP_1.sln /p:Configuration=$env:Configuration /p:UapAppxPackageBuildMode=$env:Appx_Package_Build_Mode /p:AppxBundle=$env:Appx_Bundle /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx /p:PackageCertificatePassword=123
+        dir
+        echo $GITHUB_WORKSPACE
+        echo $(pwd)
+        cd bin
+        cd release
+        dir
+      env:
+        Appx_Bundle: Always
+        Appx_Bundle_Platforms: x86
+        Appx_Package_Build_Mode: StoreUpload
+        Configuration: ${{ matrix.configuration }}
+
+    # Remove the pfx
+    - name: Remove the pfx
+      run: Remove-Item GitHubActionsWorkflow.pfx
+
+    # compiled binary upload
+    - name: compiled binary upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: CompiledBinary
+        path: "d:\\a\\PortTunnel_forWindowsXP_1\\PortTunnel_forWindowsXP_1\\bin\\release\\"
+
+    # all stuff upload
+    - name: all stuff upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: AllStuff
+        path: "d:\\a\\PortTunnel_forWindowsXP_1\\"
