@@ -498,39 +498,43 @@ namespace WinFormsApp1
         List<string> settingsNotifyLines = new List<string>();
         void ReadSettingFile(string settingFileName = "Settings.txt")
         {
-            bool startFound = false;
-            bool startNotifyFound = false;
-            if (File.Exists(settingFileName))
-            {
-                settingsLines = new List<string>();
-                settingsNotifyLines = new List<string>();
-                string[] lines = File.ReadAllLines(settingFileName); 
-                foreach (string line in lines)
+            try {
+                bool startFound = false;
+                bool startNotifyFound = false;
+                if (File.Exists(settingFileName))
                 {
-                    if (line.Contains("[USER][ANYCOMPUTER]["+USERNAME+"][START]"))
+                    settingsLines = new List<string>();
+                    settingsNotifyLines = new List<string>();
+                    string[] lines = File.ReadAllLines(settingFileName); 
+                    foreach (string line in lines)
                     {
-                        startFound = true;
-                        continue;
-                    }
-                    if (startFound && line.Contains("[NOTIFYTEXTSTART]"))
-                    {
-                        startNotifyFound = true;
-                        continue;
-                    }
+                        if (line.Contains("[USER][ANYCOMPUTER]["+USERNAME+"][START]"))
+                        {
+                            startFound = true;
+                            continue;
+                        }
+                        if (startFound && line.Contains("[NOTIFYTEXTSTART]"))
+                        {
+                            startNotifyFound = true;
+                            continue;
+                        }
 
-                    if (line.Contains("[NOTIFYTEXTEND]"))
-                    {
-                        startNotifyFound = false;
-                        continue;
-                    }
-                    if (line.Contains("[USER][ANYCOMPUTER][" + USERNAME + "][END]"))
-                        break;
+                        if (line.Contains("[NOTIFYTEXTEND]"))
+                        {
+                            startNotifyFound = false;
+                            continue;
+                        }
+                        if (line.Contains("[USER][ANYCOMPUTER][" + USERNAME + "][END]"))
+                            break;
 
-                    if ( startFound == true && startNotifyFound == false)
-                        settingsLines.Add(line.TrimStart().TrimEnd());
-                    if (startNotifyFound == true)
-                        settingsNotifyLines.Add(line.TrimStart().TrimEnd());
+                        if ( startFound == true && startNotifyFound == false)
+                            settingsLines.Add(line.TrimStart().TrimEnd());
+                        if (startNotifyFound == true)
+                            settingsNotifyLines.Add(line.TrimStart().TrimEnd());
+                    }
                 }
+            } catch { 
+                //мало ли файл будет открыт или изменен в один и тот же момент.
             }
             return;
         }
