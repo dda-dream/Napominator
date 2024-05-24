@@ -75,6 +75,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Settings.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="SETTINGS_Shuminator\AllowedTime-RRCDOM-dementev_d.txt">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>

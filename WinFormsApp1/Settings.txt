@@ -1,0 +1,137 @@
+﻿[USER][ANYCOMPUTER][p][START]
+	[allowed time from]6:30:34
+	[allowed time to]9:55:11
+
+	[MaxTimePerDayInHours]3
+
+	[Blocklist]св1ерх,--------
+	[ExcludeFromBlock]potplayer,unity,program,напоминатор,microsoft,far,новая вкладка,youtube,параметры,диспетчер задач,настройки,дневник,мэш,школа
+	[BlockChrome]0
+	[BlockTotal]0
+
+	[Shuminator_Enabled]0
+
+	[ShuminatorPlaySoundWarning]1
+		[S(если микрофон ноутбука)huminatorPlaySoundWarning_MaxNoiseLevel]0,1
+	[Shuminator_MicrophoneName]Microphone Array
+	[ShuminatorPlaySoundWarning_MaxNoiseLevel]0,015
+
+	[Show_Message_To_Polina]0
+
+	[LockWorkStation]0
+	[LockWorkStation_shuminatorCount]2
+
+	[LockWorkStation_NoMicrophone]1
+	[LockWorkStation_Microphone_MasterVolumeLevelScalar]0,93
+
+	[KillProcess]1
+	[KillProcess_shuminatorCount]2
+	[KillProcess_ProcessName]chrome
+[USER][ANYCOMPUTER][p][END]
+
+[USER][ANYCOMPUTER][i][START]
+	[allowed time from]3:36:34
+	[allowed time to]22:59:11
+	[NOTIFYTEXTSTART]
+[shedule_week_of_mth]-1
+[shedule_day_of_week]-1
+Ходи и сиди РОВНО!
+Пей воду!
+
+[shedule_week_of_mth]1
+[shedule_day_of_week]1
+приседания
+
+[shedule_week_of_mth]1
+[shedule_day_of_week]2
+пресс
+
+[shedule_week_of_mth]1
+[shedule_day_of_week]3
+спина
+
+[shedule_week_of_mth]1
+[shedule_day_of_week]4
+приседания
+
+[shedule_week_of_mth]1
+[shedule_day_of_week]5
+спина
+
+
+[shedule_week_of_mth]2
+[shedule_day_of_week]1
+приседания
+
+[shedule_week_of_mth]2
+[shedule_day_of_week]2
+спина
+
+[shedule_week_of_mth]2
+[shedule_day_of_week]3
+пресс
+
+[shedule_week_of_mth]2
+[shedule_day_of_week]4
+приседания
+
+[shedule_week_of_mth]2
+[shedule_day_of_week]5
+пресс
+	[NOTIFYTEXTEND]
+[USER][ANYCOMPUTER][i][END]
+
+[USER][ANYCOMPUTER][d][START]
+	[allowed time from]6:33:33
+	[allowed time to]23:59:11
+	[NOTIFYTEXTSTART]
+[shedule_week_of_mth]-1
+[shedule_day_of_week]-1
+Медленно и осознанно.(с книгой на голове). наблюдение мыслей и недумание без "кто я".
+Расслабление тела и глаз.(Каждую часть тела и мышцы)
+Ходи и сиди ровно!
+
+[shedule_week_of_mth]1
+[shedule_day_of_week]1
+ноги - глубкие приседы и выпрыгивания, на 1 ноге.
+
+[shedule_week_of_mth]1
+[shedule_day_of_week]2
+трицепс и предплечье - подтягивания, отжиман, гиря от пола, лежа штангу вверх вниз, штанга кистями рук, БОКСИР
+
+[shedule_week_of_mth]1
+[shedule_day_of_week]3
+мышцы шеи и спины - становая тяга, упражнение Доброе утро, резина, на животе прогиб спины, шея - руками
+
+[shedule_week_of_mth]1
+[shedule_day_of_week]4
+грудныe и армреслинговые - на спине гантели встороны, отжимания руки широко
+
+[shedule_week_of_mth]1
+[shedule_day_of_week]5
+otdyx 1-5
+
+
+[shedule_week_of_mth]2
+[shedule_day_of_week]1
+икроножная и противоположная - тянуть резину носком, ходить на носочках и пятках, стоять на 1 носочке смотря на ступню по 20 сек
+
+[shedule_week_of_mth]2
+[shedule_day_of_week]2
+битцепс и армреслинговые - подтягивания узким хватом, сгибание рук со штангой(не делать если болят предплечья), гантели(попеременно)
+
+[shedule_week_of_mth]2
+[shedule_day_of_week]3
+пресс (и боковые) и втягивание живота, планка на прямых руках, на турнике ноги к перекладине и в бока к косякам двери
+
+[shedule_week_of_mth]2
+[shedule_day_of_week]4
+плечевые мышцы - гантели(попеременно как упр Кармацкого )\штанга вверх, стойка на руках, БОКСИР, гантеля/штанга вдоль тела стоя, растягивать резину
+
+[shedule_week_of_mth]2
+[shedule_day_of_week]5
+otdyx 2-5
+	[NOTIFYTEXTEND]
+	[BlockChrome]0
+	[BlockTotal]0
+[USER][ANYCOMPUTER][d][END]
