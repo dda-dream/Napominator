@@ -22,6 +22,7 @@ namespace WinFormsApp1
 {
     public partial class Form1 : Form
     {
+        string __VERSION = "24.05.2024 10:02";
         Boolean allowFormClose = false;
         string USERNAME="";
 
@@ -852,6 +853,7 @@ namespace WinFormsApp1
         {
             USERNAME = username2USERNAME(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1]);
 
+            Add_textBox_Log("NAPOMINATOR version:"+__VERSION);
             ReadSettingFile();
 
             if (USERNAME == "r")
