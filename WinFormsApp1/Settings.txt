@@ -1,13 +1,25 @@
 ﻿[USER][ANYCOMPUTER][p][START]
-	[allowed time from]6:30:34
-	[allowed time to]9:55:11
+	[allowed time from]9:00:34
+	[allowed time to]13:00:01
 
 	[MaxTimePerDayInHours]3
 
-	[Blocklist]св1ерх,--------
-	[ExcludeFromBlock]potplayer,unity,program,напоминатор,microsoft,far,новая вкладка,youtube,параметры,диспетчер задач,настройки,дневник,мэш,школа
+	//блокировка независимо ни от чего
+	[Blocklist]фик,
+	[Blocklist_BKP]сериал,youtube,rutube
+	//блокировка независимо ни от чего
+
+	//блокировки для браузеров		
 	[BlockChrome]0
+	//блокировки для браузеров		
+
+	//работает при BlockChrome и allowedTime
+	[ExcludeFromBlock]program,напоминатор,новая вкладка,параметры,vlc
+	//работает при BlockChrome и allowedTime
+
+	//тотальный блок во время разрешенного времени работы
 	[BlockTotal]0
+	//тотальный блок во время разрешенного времени работы
 
 	[Shuminator_Enabled]0
 
@@ -35,7 +47,7 @@
 	[NOTIFYTEXTSTART]
 [shedule_week_of_mth]-1
 [shedule_day_of_week]-1
-Ходи и сиди РОВНО!
+Массажируй лицо!
 Пей воду!
 
 [shedule_week_of_mth]1
