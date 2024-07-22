@@ -22,7 +22,7 @@ namespace WinFormsApp1
 {
     public partial class Form1 : Form
     {
-        string __VERSION = "22.07.2024 23:24 ";
+        string __VERSION = "22.07.2024 23:24---1";
         Boolean allowFormClose = false;
         string USERNAME="";
 
