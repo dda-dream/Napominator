@@ -1,6 +1,6 @@
 ﻿[USER][ANYCOMPUTER][p][START]
-	[allowed time from]9:00:34
-	[allowed time to]13:00:01
+	[allowed time from]08:00:01
+	[allowed time to]10:00:01
 
 	[MaxTimePerDayInHours]3
 
@@ -14,7 +14,7 @@
 	//блокировки для браузеров		
 
 	//работает при BlockChrome и allowedTime
-	[ExcludeFromBlock]program,напоминатор,новая вкладка,параметры,vlc
+	[ExcludeFromBlock]напоминатор,новая вкладка,параметры,vlc,blend,media,переводчик,
 	//работает при BlockChrome и allowedTime
 
 	//тотальный блок во время разрешенного времени работы
@@ -41,58 +41,6 @@
 	[KillProcess_ProcessName]chrome
 [USER][ANYCOMPUTER][p][END]
 
-[USER][ANYCOMPUTER][i][START]
-	[allowed time from]3:36:34
-	[allowed time to]22:59:11
-	[NOTIFYTEXTSTART]
-[shedule_week_of_mth]-1
-[shedule_day_of_week]-1
-Массажируй лицо!
-Пей воду!
-
-[shedule_week_of_mth]1
-[shedule_day_of_week]1
-приседания
-
-[shedule_week_of_mth]1
-[shedule_day_of_week]2
-пресс
-
-[shedule_week_of_mth]1
-[shedule_day_of_week]3
-спина
-
-[shedule_week_of_mth]1
-[shedule_day_of_week]4
-приседания
-
-[shedule_week_of_mth]1
-[shedule_day_of_week]5
-спина
-
-
-[shedule_week_of_mth]2
-[shedule_day_of_week]1
-приседания
-
-[shedule_week_of_mth]2
-[shedule_day_of_week]2
-спина
-
-[shedule_week_of_mth]2
-[shedule_day_of_week]3
-пресс
-
-[shedule_week_of_mth]2
-[shedule_day_of_week]4
-приседания
-
-[shedule_week_of_mth]2
-[shedule_day_of_week]5
-пресс
-	[NOTIFYTEXTEND]
-[USER][ANYCOMPUTER][i][END]
-
 [USER][ANYCOMPUTER][d][START]
 	[allowed time from]6:33:33
 	[allowed time to]23:59:11
@@ -105,44 +53,66 @@
 
 [shedule_week_of_mth]1
 [shedule_day_of_week]1
-ноги - глубкие приседы и выпрыгивания, на 1 ноге.
-
+1-1
 [shedule_week_of_mth]1
 [shedule_day_of_week]2
-трицепс и предплечье - подтягивания, отжиман, гиря от пола, лежа штангу вверх вниз, штанга кистями рук, БОКСИР
-
+1-2
 [shedule_week_of_mth]1
 [shedule_day_of_week]3
-мышцы шеи и спины - становая тяга, упражнение Доброе утро, резина, на животе прогиб спины, шея - руками
-
+1-3
 [shedule_week_of_mth]1
 [shedule_day_of_week]4
-грудныe и армреслинговые - на спине гантели встороны, отжимания руки широко
-
+1-4
 [shedule_week_of_mth]1
 [shedule_day_of_week]5
-otdyx 1-5
-
-
+1-5
 [shedule_week_of_mth]2
 [shedule_day_of_week]1
-икроножная и противоположная - тянуть резину носком, ходить на носочках и пятках, стоять на 1 носочке смотря на ступню по 20 сек
-
+2-1
 [shedule_week_of_mth]2
 [shedule_day_of_week]2
-битцепс и армреслинговые - подтягивания узким хватом, сгибание рук со штангой(не делать если болят предплечья), гантели(попеременно)
-
+2-2
 [shedule_week_of_mth]2
 [shedule_day_of_week]3
-пресс (и боковые) и втягивание живота, планка на прямых руках, на турнике ноги к перекладине и в бока к косякам двери
-
+2-3
 [shedule_week_of_mth]2
 [shedule_day_of_week]4
-плечевые мышцы - гантели(попеременно как упр Кармацкого )\штанга вверх, стойка на руках, БОКСИР, гантеля/штанга вдоль тела стоя, растягивать резину
-
+2-4
 [shedule_week_of_mth]2
 [shedule_day_of_week]5
-otdyx 2-5
+2-5
+[shedule_week_of_mth]3
+[shedule_day_of_week]1
+3-1
+[shedule_week_of_mth]3
+[shedule_day_of_week]2
+3-2
+[shedule_week_of_mth]3
+[shedule_day_of_week]3
+3-3
+[shedule_week_of_mth]3
+[shedule_day_of_week]4
+3-4
+[shedule_week_of_mth]3
+[shedule_day_of_week]5
+3-5
+[shedule_week_of_mth]4
+[shedule_day_of_week]1
+4-1
+[shedule_week_of_mth]4
+[shedule_day_of_week]2
+4-2
+[shedule_week_of_mth]4
+[shedule_day_of_week]3
+4-3
+[shedule_week_of_mth]4
+[shedule_day_of_week]4
+4-4
+[shedule_week_of_mth]4
+[shedule_day_of_week]5
+4-5
+
+
 	[NOTIFYTEXTEND]
 	[BlockChrome]0
 	[BlockTotal]0

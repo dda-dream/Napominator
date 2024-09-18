@@ -588,49 +588,39 @@ namespace WinFormsApp1
         {
             string[] text = settingsNotifyLines.ToArray();
             string ret="";
-                string[] arr = text;
-                int curLine = 0;
-                int curWeekOfMth;
-                if (DateTime.Now.Day < 15) //кратность 2 недели
-                {
-                    double tmp = (double)DateTime.Now.Day / 7;
-                    if (tmp <= 1)
-                        curWeekOfMth = 1;
-                    else
-                        curWeekOfMth = 2;
-                }
-                else
-                {
-                    double tmp = (double)DateTime.Now.Day / 2 / 7;
-                    if (tmp <= 1)
-                        curWeekOfMth = 1;
-                    else
-                        curWeekOfMth = 2;
-                }
-                int curDayOfWeek = ((int)DateTime.Now.DayOfWeek);
-                int textWeekOfMth = 0, textDayOfWeek = 0;
-                while (curLine < arr.Length)
-                {
-                    if (arr[curLine].Contains("[shedule_week_of_mth]"))
-                    {
-                        textWeekOfMth = Int16.Parse(arr[curLine].Replace("[shedule_week_of_mth]", ""));
-                        curLine++;
-                        continue;
-                    }
-                    if (arr[curLine].Contains("[shedule_day_of_week]"))
-                    {
-                        textDayOfWeek = Int16.Parse(arr[curLine].Replace("[shedule_day_of_week]", ""));
-                        curLine++;
-                        continue;
-                    }
+            string[] arr = text;
+            int curLine = 0;
+            float curWeekOfMthFloat;
+            
+            curWeekOfMthFloat = (float)DateTime.Now.Day / 7;
+            if (curWeekOfMthFloat > (DateTime.Now.Day / 7))
+                curWeekOfMthFloat++;
 
-                    if (textWeekOfMth == -1 && textDayOfWeek == -1)
-                        ret = ret + arr[curLine] + Environment.NewLine;
-                    if (textWeekOfMth == curWeekOfMth && textDayOfWeek == curDayOfWeek)
-                        ret = ret + arr[curLine] + Environment.NewLine;
-
+            int curWeekOfMth = (int)curWeekOfMthFloat;
+            int curDayOfWeek = ((int)DateTime.Now.DayOfWeek);
+            int textWeekOfMth = 0, textDayOfWeek = 0;
+            while (curLine < arr.Length)
+            {
+                if (arr[curLine].Contains("[shedule_week_of_mth]"))
+                {
+                    textWeekOfMth = Int16.Parse(arr[curLine].Replace("[shedule_week_of_mth]", ""));
                     curLine++;
+                    continue;
                 }
+                if (arr[curLine].Contains("[shedule_day_of_week]"))
+                {
+                    textDayOfWeek = Int16.Parse(arr[curLine].Replace("[shedule_day_of_week]", ""));
+                    curLine++;
+                    continue;
+                }
+
+                if (textWeekOfMth == -1 && textDayOfWeek == -1)
+                    ret = ret + arr[curLine] + Environment.NewLine;
+                if (textWeekOfMth == curWeekOfMth && textDayOfWeek == curDayOfWeek)
+                    ret = ret + arr[curLine] + Environment.NewLine;
+
+                curLine++;
+            }
             return ret;
         }
 
