@@ -17,12 +17,13 @@ using System.Management;
 using static System.Windows.Forms.LinkLabel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+//using MyFunctions;
 
 namespace WinFormsApp1
 {
     public partial class Form1 : Form
     {
-        string __VERSION = "22.07.2024 23:24---1122";
+        string __VERSION = "27.01.2025 16:13";
         Boolean allowFormClose = false;
         string USERNAME="";
 
@@ -105,24 +106,6 @@ namespace WinFormsApp1
             }
             Start_NoiseDetector_executing = false;
             Add_textBox_Log("e: Start_NoiseDetector()");
-        }
-        static void TakeScreenshotViaEmguCV()
-        {
-            try
-            {
-                VideoCapture myVideoCapture = new VideoCapture("rtsp://padmin:Qweqwe123@192.168.2.67:554/stream1");
-                Mat frame = new Mat();
-                bool ret = myVideoCapture.Read(frame);
-                if (ret)
-                {
-                    string path = System.AppContext.BaseDirectory + "\\photos\\";
-                    path += "\\EmguCV_kuhcam_" + DateTime.Now.ToString("yyyy-dd-M--HH-mm-ss") + ".jpg";
-                    frame.Save(path);
-                    myVideoCapture.Dispose();
-                    frame.Dispose();
-                }
-            } 
-            catch  { }
         }
 
         bool microphone_DataAvailable_wait = false;
@@ -226,34 +209,6 @@ namespace WinFormsApp1
                 microphone_DataAvailable_wait = true;
                 microphone_DataAvailable_nextExec = DateTime.Now.AddSeconds(10);
             }
-        }
-        void KillProcess(string _name, bool _add_textBox_Log)
-        {
-            if (_name == "")
-                return;
-            this.Invoke((MethodInvoker)delegate { Add_textBox_Log("s: KillProcess(): _name=" + _name, true); });
-            foreach (var process in Process.GetProcessesByName(_name))
-            {
-                string process_username = GetProcessOwner(process.Id).Split('\\')[1];
-                string current_username = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
-                if (process_username == current_username)
-                {
-                    if (_add_textBox_Log)
-                        this.Invoke((MethodInvoker)delegate { Add_textBox_Log("KillProcess(): Killing start. Id = " + process.Id, true,EventLogEntryType.Warning); });
-                    try
-                    {
-                        //System.Diagnostics.Process.Start ("taskkill.exe", "/f /im " + _name);
-                        process.Kill();
-                    }
-                    catch (Exception ex)
-                    {
-                        this.Invoke((MethodInvoker)delegate { Add_textBox_Log("KillProcess(): exception: " + ex.ToString(), true, EventLogEntryType.Error); });
-                    }
-                    if (_add_textBox_Log)
-                        this.Invoke((MethodInvoker)delegate { Add_textBox_Log("KillProcess(): Killing end: " + process.ProcessName, true); });
-                }
-            }
-            this.Invoke((MethodInvoker)delegate { Add_textBox_Log("e: KillProcess(): _name=" + _name, true); });
         }
         public string GetProcessOwner(int processId)
         {
@@ -379,7 +334,7 @@ namespace WinFormsApp1
             {
                 Rectangle resolution = Screen.PrimaryScreen!.Bounds;
 
-                Add_textBox_Log("Started. version : 29.12.2022 11:50");
+                Add_textBox_Log("Started. first version created at 29.12.2022 11:50");
                 timer1.Interval = 1000;// * Int32.Parse(textBox_Period.Text) * 1;
                 timer1.Start();
                 button_StartStop.Text = "Stop";
@@ -406,222 +361,6 @@ namespace WinFormsApp1
                 Show();
             }
             Add_textBox_Log("startTimer()-exit from func");
-        }
-        private void DisableControls(Control con)
-        {
-            foreach (Control c in con.Controls)
-            {
-                DisableControls(c);
-            }
-            if (con.Name != "Form1")
-                con.Enabled = false;
-        }
-        private void EnableControls(Control? con)
-        {
-            if (con != null)
-            {
-                con.Enabled = true;
-                EnableControls(con!.Parent);
-            }
-        }
-        /// <summary>
-        /// <summary>
-        /// ƒобавл€ет запись в лог окно и реестр.
-        /// </summary>
-        /// <param name="_mode"> режимы _mode = Information, Warning, Error</param>
-        /// </summary>
-        void Add_textBox_Log(string _text, bool _writeToLogFileOrRegistry = true, EventLogEntryType _mode = EventLogEntryType.Information)
-        {
-            string timeStr = DateTime.Now.ToString("dd-MM-yyyy") + " " + DateTime.Now.ToLongTimeString() + ": ";
-
-            //string filename = "";
-            //if (_mode == "") filename = "log-" + USERNAME + ".txt";
-            //if (_mode == "logblock") filename = "logblock-" + USERNAME + ".txt";
-
-            if (_writeToLogFileOrRegistry)
-            {
-                WriteToRegistryLog(_text, _mode, USERNAME);
-                /* NO WRITE TO LOG FILE
-                try
-                {
-                    var file = File.AppendText(filename);
-                    file.AutoFlush = false;
-                    file.WriteLine(timeStr + _text);
-                    file.Close();
-                }
-                catch (Exception e) 
-                {
-                    eventLog.WriteEntry(username + " " + e.ToString(), EventLogEntryType.Error, 3, 1);
-                }
-                */
-            }
-
-            if (textBox_Log.Lines.Count() > 100)
-                textBox_Log.Text = "";
-
-            textBox_Log.Text = textBox_Log.Text + timeStr + _text + Environment.NewLine;
-            textBox_Log.SelectionStart = textBox_Log.Text.Length;
-            textBox_Log.SelectionLength = 0;
-            textBox_Log.ScrollToCaret();
-        }
-        static void WriteToRegistryLog(string _text, EventLogEntryType _mode, string _USERNAME)
-        {
-            EventLog eventLog = new EventLog();
-
-            if (!EventLog.Exists("NAPOMINATOR")) // RUN AS ADMIN FIRST TIME
-            {
-                MessageBox.Show(" RUN AS ADMIN FIRST TIME to allow create EventLog.CreateEventSource(NAPOMINATOR)");
-                EventLog.CreateEventSource("NAPOMINATOR", "NAPOMINATOR");
-            }
-            eventLog.Source = "NAPOMINATOR";
-
-            eventLog.WriteEntry(_USERNAME + " : " + _text, _mode, 1, 1);
-        }
-
-        [DllImport("user32.dll")]
-        static extern IntPtr GetForegroundWindow();
-        [DllImport("user32.dll")]
-        static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
-        string GetActiveWindowTitle()
-        {
-            const int nChars = 256;
-            StringBuilder Buff = new StringBuilder(nChars);
-            IntPtr handle = GetForegroundWindow();
-
-            if (GetWindowText(handle, Buff, nChars) > 0)
-            {
-                return Buff.ToString();
-            }
-            return "";
-        }
-
-        List<string> settingsLines = new List<string>();
-        List<string> settingsNotifyLines = new List<string>();
-        void ReadSettingFile(string settingFileName = "Settings.txt")
-        {
-            try {
-                bool startFound = false;
-                bool startNotifyFound = false;
-                if (File.Exists(settingFileName))
-                {
-                    settingsLines = new List<string>();
-                    settingsNotifyLines = new List<string>();
-                    string[] lines = File.ReadAllLines(settingFileName); 
-                    foreach (string line in lines)
-                    {
-                        if (line.Contains("[USER][ANYCOMPUTER]["+USERNAME+"][START]"))
-                        {
-                            startFound = true;
-                            continue;
-                        }
-                        if (startFound && line.Contains("[NOTIFYTEXTSTART]"))
-                        {
-                            startNotifyFound = true;
-                            continue;
-                        }
-
-                        if (line.Contains("[NOTIFYTEXTEND]"))
-                        {
-                            startNotifyFound = false;
-                            continue;
-                        }
-                        if (line.Contains("[USER][ANYCOMPUTER][" + USERNAME + "][END]"))
-                            break;
-
-                        if ( startFound == true && startNotifyFound == false)
-                            settingsLines.Add(line.TrimStart().TrimEnd());
-                        if (startNotifyFound == true)
-                            settingsNotifyLines.Add(line.TrimStart().TrimEnd());
-                    }
-                }
-            } catch { 
-                //мало ли файл будет открыт или изменен в один и тот же момент.
-            }
-            return;
-        }
-        DateTime GetDateTimeFromSettings(string _settingName)// [allowed time from] [allowed to time]
-        {
-            DateTime ret = DateTime.MinValue;
-
-            foreach (string line in (List<string>) settingsLines)
-            {
-                if (line.Contains(_settingName))
-                {
-                    ret = DateTime.Parse(line.Replace(_settingName, ""));
-                    break;
-                }
-            }
-            return ret;
-        }
-        string GetStringFromSettings(string _settingName)
-        {
-            string ret = "";
-
-            foreach (string line in (List<string>)settingsLines)
-            {
-                if (line.Contains(_settingName))
-                {
-                    ret = line.Replace(_settingName, "");
-                    break;
-                }
-            }
-            return ret;
-        }
-        double GetDoubleFromSettings(string _settingName)
-        {
-            double ret = 0;
-
-            foreach (string line in (List<string>)settingsLines)
-            {
-                if (line.Contains(_settingName))
-                {
-                    ret = Double.Parse(line.Replace(_settingName, ""));
-                    break;
-                }
-            }
-            return ret;
-        }
-
-
-
-        string Parse_NotifyText()
-        {
-            string[] text = settingsNotifyLines.ToArray();
-            string ret="";
-            string[] arr = text;
-            int curLine = 0;
-            float curWeekOfMthFloat;
-            
-            curWeekOfMthFloat = (float)DateTime.Now.Day / 7;
-            if (curWeekOfMthFloat > (DateTime.Now.Day / 7))
-                curWeekOfMthFloat++;
-
-            int curWeekOfMth = (int)curWeekOfMthFloat;
-            int curDayOfWeek = ((int)DateTime.Now.DayOfWeek);
-            int textWeekOfMth = 0, textDayOfWeek = 0;
-            while (curLine < arr.Length)
-            {
-                if (arr[curLine].Contains("[shedule_week_of_mth]"))
-                {
-                    textWeekOfMth = Int16.Parse(arr[curLine].Replace("[shedule_week_of_mth]", ""));
-                    curLine++;
-                    continue;
-                }
-                if (arr[curLine].Contains("[shedule_day_of_week]"))
-                {
-                    textDayOfWeek = Int16.Parse(arr[curLine].Replace("[shedule_day_of_week]", ""));
-                    curLine++;
-                    continue;
-                }
-
-                if (textWeekOfMth == -1 && textDayOfWeek == -1)
-                    ret = ret + arr[curLine] + Environment.NewLine;
-                if (textWeekOfMth == curWeekOfMth && textDayOfWeek == curDayOfWeek)
-                    ret = ret + arr[curLine] + Environment.NewLine;
-
-                curLine++;
-            }
-            return ret;
         }
 
         string prev_curWinTitle = "";
@@ -730,20 +469,6 @@ namespace WinFormsApp1
             executing_Tick = false;
         }
 
-        bool CheckStringContainsInList(string _searchItem, string _whereToSearch)
-        {
-            bool foundany = false;
-            List<String> listNoWriteToFile = _whereToSearch.Split(",").ToList();
-            foreach (String item in listNoWriteToFile)
-            {
-                if (item != "" && _searchItem.Contains(item))
-                {
-                    foundany = true;
-                    break;
-                }
-            }
-            return foundany;
-        }
         void Show_Message_To_Polina(string _messageToShow, string _formCaption, Boolean _showDesktop = true, Boolean _dontCloseWindow = false, bool _write_textBox_Log = true, int _notifyLenghCounter = 5)
         {
             Message_To_Polina Message_To_Polina = new Message_To_Polina();
@@ -827,18 +552,6 @@ namespace WinFormsApp1
         {
         }
 
-        string username2USERNAME(string _username) 
-        {
-            string ret="ERROR";
-
-            if (_username.ToLower() == "r" || _username.ToLower().Contains("lobur"))
-                ret = "r";
-            if (_username.ToLower() == "d" || _username.ToLower().Contains("dementev_d"))
-                ret = "d";
-            if (_username.ToLower().Contains("user"))
-                ret = "p";
-            return ret;
-        }
         private void Form1_Shown(object sender, EventArgs e)
         {
             USERNAME = username2USERNAME(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1]);
