@@ -22,6 +22,7 @@
     <!-- Это чтобы ускорить запуск -->
     <PublishReadyToRun>true</PublishReadyToRun>
     <UseWPF>False</UseWPF>
+    <StartupObject></StartupObject>
     <!-- Эти две строки, чтобы уменьшить размер бинарника -->
     <!--PublishTrimmed>true</PublishTrimmed-->
     <!--TrimMode>link</TrimMode-->

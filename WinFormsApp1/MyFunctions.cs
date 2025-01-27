@@ -2,16 +2,22 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing.Imaging;
 using System.Linq;
+using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace WinFormsApp1
 {
+
+
+
+
     partial class Form1
     {
-        public static void TakeScreenshotViaEmguCV()
+        public static void TakeScreenshotFromWEBCameraViaEmguCV()
         {
             try
             {
@@ -164,7 +170,6 @@ namespace WinFormsApp1
             }
             return ret;
         }
-
         string username2USERNAME(string _username)
         {
             string ret = "ERROR";
@@ -238,10 +243,6 @@ namespace WinFormsApp1
 
             eventLog.WriteEntry(_USERNAME + " : " + _text, _mode, 1, 1);
         }
-        [DllImport("user32.dll")]
-        static extern IntPtr GetForegroundWindow();
-        [DllImport("user32.dll")]
-        static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
         string GetActiveWindowTitle()
         {
             const int nChars = 256;
@@ -254,10 +255,33 @@ namespace WinFormsApp1
             }
             return "";
         }
+        public string GetProcessOwner(int processId)
+        {
+            try
+            {
+                string query = "Select * From Win32_Process Where ProcessID = " + processId;
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
+                ManagementObjectCollection processList = searcher.Get();
 
+                foreach (ManagementObject obj in processList.Cast<ManagementObject>())
+                {
+                    string[] argList = new string[] { string.Empty, string.Empty };
+                    int returnVal = Convert.ToInt32(obj.InvokeMethod("GetOwner", argList));
+                    if (returnVal == 0)
+                    {
+                        // return DOMAIN\user
+                        return argList[1] + "\\" + argList[0];
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                this.Invoke((MethodInvoker)delegate { Add_textBox_Log("err: GetProcessOwner(): processId=" + processId.ToString(), true); });
+                return "ERR_DOMAIN\\ERR_OWNER";
+            }
 
-
-
+            return "NO_DOMAIN\\NO_OWNER";
+        }
         string Parse_NotifyText()
         {
             string[] text = settingsNotifyLines.ToArray();
@@ -299,6 +323,5 @@ namespace WinFormsApp1
         }
 
 
-
-    }//public class MyFunctions
+    }
 }//namespace WinFormsApp1

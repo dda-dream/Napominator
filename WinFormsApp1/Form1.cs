@@ -1,23 +1,9 @@
-using System;
 using System.Diagnostics;
-using System.Media;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Windows.Forms.VisualStyles;
-using System.Xml.Linq;
-using Microsoft.VisualBasic;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
-using static System.Windows.Forms.Design.AxImporter;
-using static WinFormsApp1.Form1;
-using Emgu.CV;
-using static System.Net.Mime.MediaTypeNames;
 using System.Management;
-using static System.Windows.Forms.LinkLabel;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
-//using MyFunctions;
+using System.Drawing.Imaging;
 
 namespace WinFormsApp1
 {
@@ -35,23 +21,15 @@ namespace WinFormsApp1
 
         static bool messageShown = false;
 
-        [DllImport("user32.dll")]
-        public static extern void LockWorkStation();
-
-            public const int KEYEVENTF_EXTENTEDKEY = 1;
-            public const int KEYEVENTF_KEYUP = 0;
-            public const int VK_MEDIA_NEXT_TRACK = 0xB0;
-            public const int VK_MEDIA_PLAY_PAUSE = 0xB3;
-            public const int VK_MEDIA_PREV_TRACK = 0xB1;
-
-            [DllImport("user32.dll")]
-            public static extern void keybd_event(byte virtualKey, byte scanCode, uint flags, IntPtr extraInfo);
 
         public Form1()
         {
             InitializeComponent();
             Add_textBox_Log("NAPOMINATOR Form1()");
         }
+
+
+
 
         MMDevice? device = null;
         const int constCountNoMicrophoneDetected = 5;
@@ -167,7 +145,7 @@ namespace WinFormsApp1
                 if (/*Get photo from cam*/1 == 1)
                 {
                     this.Invoke((MethodInvoker)delegate { Add_textBox_Log("s: taking photo from camera. Sound levels:" + levelsStr, true, EventLogEntryType.Warning); });
-                    TakeScreenshotViaEmguCV();
+                    TakeScreenshotFromWEBCameraViaEmguCV();
                     this.Invoke((MethodInvoker)delegate { Add_textBox_Log("e: taking photo from camera. Sound levels:" + levelsStr, true); });
                     //Get photo from cam
                 }
@@ -209,33 +187,6 @@ namespace WinFormsApp1
                 microphone_DataAvailable_wait = true;
                 microphone_DataAvailable_nextExec = DateTime.Now.AddSeconds(10);
             }
-        }
-        public string GetProcessOwner(int processId)
-        {
-            try
-            {
-                string query = "Select * From Win32_Process Where ProcessID = " + processId;
-                ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
-                ManagementObjectCollection processList = searcher.Get();
-
-                foreach (ManagementObject obj in processList.Cast<ManagementObject>())
-                {
-                    string[] argList = new string[] { string.Empty, string.Empty };
-                    int returnVal = Convert.ToInt32(obj.InvokeMethod("GetOwner", argList));
-                    if (returnVal == 0)
-                    {
-                        // return DOMAIN\user
-                        return argList[1] + "\\" + argList[0];
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                this.Invoke((MethodInvoker)delegate { Add_textBox_Log("err: GetProcessOwner(): processId=" + processId.ToString(), true); });
-                return "ERR_DOMAIN\\ERR_OWNER";
-            }
-
-            return "NO_DOMAIN\\NO_OWNER";
         }
 
         static Mp3FileReader? reader0, reader1;
@@ -468,7 +419,6 @@ namespace WinFormsApp1
             }
             executing_Tick = false;
         }
-
         void Show_Message_To_Polina(string _messageToShow, string _formCaption, Boolean _showDesktop = true, Boolean _dontCloseWindow = false, bool _write_textBox_Log = true, int _notifyLenghCounter = 5)
         {
             Message_To_Polina Message_To_Polina = new Message_To_Polina();
