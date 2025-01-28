@@ -285,17 +285,14 @@ namespace WinFormsApp1
             {
                 Rectangle resolution = Screen.PrimaryScreen!.Bounds;
 
-                Add_textBox_Log("Started. first version created at 29.12.2022 11:50");
+                Add_textBox_Log("Started. initial version created at 29.12.2022 11:50");
                 timer1.Interval = 1000;// * Int32.Parse(textBox_Period.Text) * 1;
                 timer1.Start();
                 button_StartStop.Text = "Stop";
-                //if (checkBox_Polina.CheckState == CheckState.Checked)
-                //{
-                //notifyIcon1.Visible = false;
-                //button_StartStop.Visible = false;
-                //this.Enabled = false;
+
+
                 DisableControls(this);
-                //}
+
                 notifyIcon1.Icon = WinFormsApp1.Properties.Resources.Icon1;
                 Add_textBox_Log("NAPOMINATOR startTimer() - start");
                 if (checkBox_Polina.CheckState == CheckState.Checked)
@@ -325,7 +322,6 @@ namespace WinFormsApp1
             if (prev_curWinTitle != curWinTitle)
                 Add_textBox_Log("curWindowsTitle=" + curWinTitle, true);
             prev_curWinTitle = curWinTitle;
-
 
             if (DateTime.Now > lastExec_Tick.AddSeconds(Int32.Parse(textBox_Period.Text)))
                 lastExec_Tick = DateTime.Now;
