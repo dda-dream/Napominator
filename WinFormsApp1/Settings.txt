@@ -1,6 +1,6 @@
 ﻿[USER][ANYCOMPUTER][p][START]
-	[allowed time from]08:00:01
-	[allowed time to]10:00:01
+	[allowed time from]01:00:01
+	[allowed time to]23:00:01
 
 	[MaxTimePerDayInHours]3
 
@@ -117,3 +117,17 @@
 	[BlockChrome]0
 	[BlockTotal]0
 [USER][ANYCOMPUTER][d][END]
+
+[USER][ANYCOMPUTER][user][START]
+	[allowed time from]6:33:33
+	[allowed time to]23:59:11
+	[NOTIFYTEXTSTART]
+Медленно и осознанно.(с книгой на голове). наблюдение мыслей и недумание без "кто я".
+Расслабление тела и глаз.(Каждую часть тела и мышцы)
+Ходи и сиди ровно!
+
+	[NOTIFYTEXTEND]
+	[BlockChrome]0
+	[BlockTotal]0
+[USER][ANYCOMPUTER][user][END]
+
