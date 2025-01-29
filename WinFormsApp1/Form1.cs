@@ -26,7 +26,11 @@ namespace WinFormsApp1
         {
             InitializeComponent();
             Add_textBox_Log("NAPOMINATOR Form1()");
+
+            GlobalMouseHook.OnMouseClick += CaptureScreenshotByMouseClick;
+            GlobalMouseHook.Start();
         }
+
 
 
 
@@ -323,6 +327,12 @@ namespace WinFormsApp1
                 Add_textBox_Log("curWindowsTitle=" + curWinTitle, true);
             prev_curWinTitle = curWinTitle;
 
+            if (DateTime.Now > lastReadSettingsFile.AddSeconds(59))
+            {
+                lastReadSettingsFile = DateTime.Now;
+                ReadSettingFile();
+            }
+
             if (DateTime.Now > lastExec_Tick.AddSeconds(Int32.Parse(textBox_Period.Text)))
                 lastExec_Tick = DateTime.Now;
             else
@@ -333,11 +343,7 @@ namespace WinFormsApp1
             else
                 return;
 
-            if (DateTime.Now > lastReadSettingsFile.AddSeconds(59))
-            {
-                lastReadSettingsFile = DateTime.Now;
-                ReadSettingFile();
-            }
+
 
 
             textBox_NotifyText.Text = Parse_NotifyText();
@@ -503,6 +509,7 @@ namespace WinFormsApp1
             USERNAME = username2USERNAME(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1]);
 
             Add_textBox_Log("NAPOMINATOR version:"+__VERSION);
+            Add_textBox_Log("ReadSettingFile() executed", false);
             ReadSettingFile();
 
             if (USERNAME == "r")

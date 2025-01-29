@@ -11,10 +11,6 @@ using System.Threading.Tasks;
 
 namespace WinFormsApp1
 {
-
-
-
-
     partial class Form1
     {
         public static void TakeScreenshotFromWEBCameraViaEmguCV()
@@ -128,7 +124,7 @@ namespace WinFormsApp1
             }
             return;
         }
-        DateTime GetDateTimeFromSettings(string _settingName)// [allowed time from] [allowed to time]
+        public DateTime GetDateTimeFromSettings(string _settingName)// [allowed time from] [allowed to time]
         {
             DateTime ret = DateTime.MinValue;
 
@@ -142,7 +138,7 @@ namespace WinFormsApp1
             }
             return ret;
         }
-        string GetStringFromSettings(string _settingName)
+        public string GetStringFromSettings(string _settingName)
         {
             string ret = "";
 
@@ -156,7 +152,7 @@ namespace WinFormsApp1
             }
             return ret;
         }
-        double GetDoubleFromSettings(string _settingName)
+        public double GetDoubleFromSettings(string _settingName)
         {
             double ret = 0;
 
@@ -322,6 +318,42 @@ namespace WinFormsApp1
             return ret;
         }
 
+        private static ImageCodecInfo GetEncoder(ImageFormat format)
+        {
+            var codecs = ImageCodecInfo.GetImageEncoders();
+            return codecs.FirstOrDefault(codec => codec.FormatID == format.Guid);
+        }
+        public void CaptureScreenshotByMouseClick()
+        {
+            int screenWidth  = Screen.PrimaryScreen.Bounds.Width;
+            int screenHeight = Screen.PrimaryScreen.Bounds.Height;
+
+            using (Bitmap bitmap = new Bitmap(screenWidth, screenHeight))
+            {
+                using (Graphics g = Graphics.FromImage(bitmap))
+                {
+                    g.CopyFromScreen(0, 0, 0, 0, bitmap.Size);
+                }
+
+                string filePath = $@"C:\NAPOMINATOR\screenshots\screenshot_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
+
+                if (!System.IO.Directory.Exists(@"C:\NAPOMINATOR\screenshots"))
+                    System.IO.Directory.CreateDirectory(@"C:\NAPOMINATOR\screenshots");
+
+                EncoderParameters encoderParameters = new EncoderParameters(1);
+                long jpgQuality = (long)GetDoubleFromSettings("[JpgQuality]");
+                if (jpgQuality < 1)
+                    jpgQuality = 50;
+
+                string s = (string)("jpgQuality=" + jpgQuality).ToString();
+                Add_textBox_Log(s, false);
+
+                encoderParameters.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, jpgQuality);
+
+                ImageCodecInfo jpegCodec = GetEncoder(ImageFormat.Jpeg);
+                bitmap.Save(filePath, jpegCodec, encoderParameters);
+            }
+        }
 
     }
 }//namespace WinFormsApp1

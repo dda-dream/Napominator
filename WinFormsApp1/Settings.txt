@@ -44,6 +44,9 @@
 [USER][ANYCOMPUTER][d][START]
 	[allowed time from]6:33:33
 	[allowed time to]23:59:11
+
+	[JpgQuality]20
+
 	[NOTIFYTEXTSTART]
 [shedule_week_of_mth]-1
 [shedule_day_of_week]-1
@@ -119,8 +122,11 @@
 [USER][ANYCOMPUTER][d][END]
 
 [USER][ANYCOMPUTER][user][START]
-	[allowed time from]6:33:33
-	[allowed time to]23:59:11
+
+	[JpgQuality]20
+
+	[allowed time from]3:33:33
+	[allowed time to]23:33:33
 	[NOTIFYTEXTSTART]
 Медленно и осознанно.(с книгой на голове). наблюдение мыслей и недумание без "кто я".
 Расслабление тела и глаз.(Каждую часть тела и мышцы)
