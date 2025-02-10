@@ -325,35 +325,39 @@ namespace WinFormsApp1
         }
         public void CaptureScreenshotByMouseClick()
         {
-            int screenWidth  = Screen.PrimaryScreen.Bounds.Width;
-            int screenHeight = Screen.PrimaryScreen.Bounds.Height;
-
-            using (Bitmap bitmap = new Bitmap(screenWidth, screenHeight))
+            try
             {
-                using (Graphics g = Graphics.FromImage(bitmap))
+                int screenWidth = Screen.PrimaryScreen.Bounds.Width;
+                int screenHeight = Screen.PrimaryScreen.Bounds.Height;
+
+                using (Bitmap bitmap = new Bitmap(screenWidth, screenHeight))
                 {
-                    g.CopyFromScreen(0, 0, 0, 0, bitmap.Size);
+                    using (Graphics g = Graphics.FromImage(bitmap))
+                    {
+                        g.CopyFromScreen(0, 0, 0, 0, bitmap.Size);
+                    }
+
+                    string filePath = $@"C:\NAPOMINATOR\screenshots\screenshot_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
+
+                    if (!System.IO.Directory.Exists(@"C:\NAPOMINATOR\screenshots"))
+                        System.IO.Directory.CreateDirectory(@"C:\NAPOMINATOR\screenshots");
+
+                    EncoderParameters encoderParameters = new EncoderParameters(1);
+                    long jpgQuality = (long)GetDoubleFromSettings("[JpgQuality]");
+                    if (jpgQuality < 1)
+                        jpgQuality = 50;
+
+                    string s = (string)("jpgQuality=" + jpgQuality).ToString();
+                    Add_textBox_Log(s, false);
+
+                    encoderParameters.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, jpgQuality);
+
+                    ImageCodecInfo jpegCodec = GetEncoder(ImageFormat.Jpeg);
+                    bitmap.Save(filePath, jpegCodec, encoderParameters);
                 }
-
-                string filePath = $@"C:\NAPOMINATOR\screenshots\screenshot_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
-
-                if (!System.IO.Directory.Exists(@"C:\NAPOMINATOR\screenshots"))
-                    System.IO.Directory.CreateDirectory(@"C:\NAPOMINATOR\screenshots");
-
-                EncoderParameters encoderParameters = new EncoderParameters(1);
-                long jpgQuality = (long)GetDoubleFromSettings("[JpgQuality]");
-                if (jpgQuality < 1)
-                    jpgQuality = 50;
-
-                string s = (string)("jpgQuality=" + jpgQuality).ToString();
-                Add_textBox_Log(s, false);
-
-                encoderParameters.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, jpgQuality);
-
-                ImageCodecInfo jpegCodec = GetEncoder(ImageFormat.Jpeg);
-                bitmap.Save(filePath, jpegCodec, encoderParameters);
+            }
+            catch { 
             }
         }
-
     }
 }//namespace WinFormsApp1

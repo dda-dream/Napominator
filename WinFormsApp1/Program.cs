@@ -1,19 +1,33 @@
 using System.Drawing.Imaging;
+using System.Reflection;
 
 namespace WinFormsApp1
 {
     internal static class Program
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
+        static Mutex mutex = new Mutex(true, System.IO.Path.GetFileName(Application.ExecutablePath));
+        
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
-            ApplicationConfiguration.Initialize();
-            Application.Run(new Form1());
+            try
+            {
+                if (mutex.WaitOne(TimeSpan.Zero, true))
+                {
+                    ApplicationConfiguration.Initialize();
+                    Application.Run(new Form1());
+
+                    mutex.ReleaseMutex();
+                }
+            }
+            finally
+            {
+                if (mutex != null)
+                {
+                    mutex.ReleaseMutex();
+                    mutex.Dispose();
+                }
+            }
         }
     }
 }

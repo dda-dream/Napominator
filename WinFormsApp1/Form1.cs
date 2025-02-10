@@ -27,8 +27,13 @@ namespace WinFormsApp1
             InitializeComponent();
             Add_textBox_Log("NAPOMINATOR Form1()");
 
+            if (true)
+            { }
+
             GlobalMouseHook.OnMouseClick += CaptureScreenshotByMouseClick;
             GlobalMouseHook.Start();
+
+            Add_textBox_Log(System.IO.Path.GetFileName(Application.ExecutablePath));
         }
 
 
