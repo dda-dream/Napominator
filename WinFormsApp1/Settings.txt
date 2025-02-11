@@ -1,6 +1,8 @@
 ﻿[USER][ANYCOMPUTER][p][START]
-	[allowed time from]01:00:01
-	[allowed time to]23:00:01
+	[allowed time from]06:00:01
+	[allowed time to]22:00:01
+
+	[JpgQuality]50
 
 	[MaxTimePerDayInHours]3
 
@@ -123,17 +125,27 @@
 
 [USER][ANYCOMPUTER][user][START]
 
-	[JpgQuality]20
+	[JpgQuality]50
 
 	[allowed time from]3:33:33
 	[allowed time to]23:33:33
 	[NOTIFYTEXTSTART]
-Медленно и осознанно.(с книгой на голове). наблюдение мыслей и недумание без "кто я".
-Расслабление тела и глаз.(Каждую часть тела и мышцы)
-Ходи и сиди ровно!
-
+[shedule_week_of_mth]-1
+[shedule_day_of_week]-1
+...
 	[NOTIFYTEXTEND]
 	[BlockChrome]0
 	[BlockTotal]0
 [USER][ANYCOMPUTER][user][END]
+
+[USER][ANYCOMPUTER][r][START]
+	[JpgQuality]50
+	[NOTIFYTEXTSTART]
+[shedule_week_of_mth]-1
+[shedule_day_of_week]-1
+Пей воду!
+	[NOTIFYTEXTEND]
+	[BlockChrome]0
+	[BlockTotal]0
+[USER][ANYCOMPUTER][r][END]
 

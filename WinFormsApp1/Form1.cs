@@ -4,6 +4,7 @@ using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using System.Management;
 using System.Drawing.Imaging;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace WinFormsApp1
 {
@@ -515,6 +516,11 @@ namespace WinFormsApp1
 
             Add_textBox_Log("NAPOMINATOR version:"+__VERSION);
             Add_textBox_Log("ReadSettingFile() executed", false);
+
+            //HACK: Если нужно запустить под другим пользователем, то менять тут.
+            //USERNAME = "r";
+
+
             ReadSettingFile();
 
             if (USERNAME == "r")

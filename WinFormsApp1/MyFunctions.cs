@@ -174,7 +174,7 @@ namespace WinFormsApp1
                 ret = "r";
             if (_username.ToLower() == "d" || _username.ToLower().Contains("dementev_d"))
                 ret = "d";
-            if (_username.ToLower().Contains("user"))
+            if (_username.ToLower() == "p" || _username.ToLower().Contains("user"))
                 ret = "p";
             return ret;
         }
@@ -337,15 +337,16 @@ namespace WinFormsApp1
                         g.CopyFromScreen(0, 0, 0, 0, bitmap.Size);
                     }
 
-                    string filePath = $@"C:\NAPOMINATOR\screenshots\screenshot_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
+                    string filePath = $@"C:\NAPOMINATOR\screenshots\_ssssssssss_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
+                    filePath = filePath.Replace("_ssssssssss_", USERNAME + "_scr_");
 
                     if (!System.IO.Directory.Exists(@"C:\NAPOMINATOR\screenshots"))
                         System.IO.Directory.CreateDirectory(@"C:\NAPOMINATOR\screenshots");
 
                     EncoderParameters encoderParameters = new EncoderParameters(1);
                     long jpgQuality = (long)GetDoubleFromSettings("[JpgQuality]");
-                    if (jpgQuality < 1)
-                        jpgQuality = 50;
+                    if (jpgQuality < 1)//TODO: если jpgQuality < 1 тогда не создавать скриншот.
+                        return;
 
                     string s = (string)("jpgQuality=" + jpgQuality).ToString();
                     Add_textBox_Log(s, false);
