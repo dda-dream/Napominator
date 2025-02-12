@@ -47,7 +47,7 @@
 	[allowed time from]6:33:33
 	[allowed time to]23:59:11
 
-	[JpgQuality]20
+	[JpgQuality]99
 
 	[NOTIFYTEXTSTART]
 [shedule_week_of_mth]-1
@@ -125,7 +125,7 @@
 
 [USER][ANYCOMPUTER][user][START]
 
-	[JpgQuality]50
+	[JpgQuality]99
 
 	[allowed time from]3:33:33
 	[allowed time to]23:33:33

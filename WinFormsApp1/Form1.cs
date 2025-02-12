@@ -95,6 +95,7 @@ namespace WinFormsApp1
             Start_NoiseDetector_executing = false;
             Add_textBox_Log("e: Start_NoiseDetector()");
         }
+                    
 
         bool microphone_DataAvailable_wait = false;
         DateTime microphone_DataAvailable_nextExec = DateTime.MinValue;
@@ -456,7 +457,6 @@ namespace WinFormsApp1
 
             checkBox_Mama.CheckedChanged += this.CheckBox_Mama_CheckedChanged;
             checkBox_Papa.CheckedChanged += this.CheckBox_Papa_CheckedChanged;
-            USERNAME = "p";
         }
         private void CheckBox_Mama_CheckedChanged(object? sender, EventArgs e)
         {
@@ -470,7 +470,6 @@ namespace WinFormsApp1
 
             checkBox_Papa.CheckedChanged += this.CheckBox_Papa_CheckedChanged;
             checkBox_Polina.CheckedChanged += this.CheckBox_Polina_CheckedChanged;
-            USERNAME = "i";
         }
         private void CheckBox_Papa_CheckedChanged(object? sender, EventArgs e)
         {
@@ -484,7 +483,6 @@ namespace WinFormsApp1
 
             checkBox_Polina.CheckedChanged += this.CheckBox_Polina_CheckedChanged;
             checkBox_Mama.CheckedChanged += this.CheckBox_Mama_CheckedChanged;
-            USERNAME = "d";
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -518,12 +516,12 @@ namespace WinFormsApp1
             Add_textBox_Log("ReadSettingFile() executed", false);
 
             //HACK: Если нужно запустить под другим пользователем, то менять тут.
-            //USERNAME = "r";
+            //USERNAME = "i";
 
 
             ReadSettingFile();
 
-            if (USERNAME == "r")
+            if (USERNAME == "i")
                 checkBox_Mama.Checked = true;
             if (USERNAME == "d")
                 checkBox_Papa.Checked = true;

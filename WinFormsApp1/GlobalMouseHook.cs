@@ -13,7 +13,7 @@ namespace WinFormsApp1
         private const int WM_LBUTTONDOWN = 0x0201;
         private static IntPtr _hookID = IntPtr.Zero;
         public static event Action OnMouseClick;
-
+        
         public static void Start()
         {
             _hookID = SetHook(HookCallback);

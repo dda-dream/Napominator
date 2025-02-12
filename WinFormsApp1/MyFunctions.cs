@@ -171,7 +171,7 @@ namespace WinFormsApp1
             string ret = "ERROR";
 
             if (_username.ToLower() == "r" || _username.ToLower().Contains("lobur"))
-                ret = "r";
+                ret = "i";
             if (_username.ToLower() == "d" || _username.ToLower().Contains("dementev_d"))
                 ret = "d";
             if (_username.ToLower() == "p" || _username.ToLower().Contains("user"))
@@ -196,14 +196,14 @@ namespace WinFormsApp1
         {
             string timeStr = DateTime.Now.ToString("dd-MM-yyyy") + " " + DateTime.Now.ToLongTimeString() + ": ";
 
-            //string filename = "";
-            //if (_mode == "") filename = "log-" + USERNAME + ".txt";
-            //if (_mode == "logblock") filename = "logblock-" + USERNAME + ".txt";
 
             if (_writeToLogFileOrRegistry)
             {
                 WriteToRegistryLog(_text, _mode, USERNAME);
                 /* NO WRITE TO LOG FILE
+                string filename = "";
+                if (_mode == "") filename = "log-" + USERNAME + ".txt";
+                if (_mode == "logblock") filename = "logblock-" + USERNAME + ".txt";
                 try
                 {
                     var file = File.AppendText(filename);
@@ -323,12 +323,32 @@ namespace WinFormsApp1
             var codecs = ImageCodecInfo.GetImageEncoders();
             return codecs.FirstOrDefault(codec => codec.FormatID == format.Guid);
         }
+        static long DirectorySize(DirectoryInfo dInfo, bool includeSubDirs)
+        {
+            long totalFileSize = dInfo.EnumerateFiles().Sum(file => file.Length);
+
+            if (includeSubDirs)
+                dInfo.EnumerateDirectories().ToList().ForEach(dir => totalFileSize += DirectorySize(dir, true));
+
+            return totalFileSize;
+        }
         public void CaptureScreenshotByMouseClick()
         {
+            string dirToStore = @"C:\NAPOMINATOR\screenshots";
             try
             {
-                int screenWidth = Screen.PrimaryScreen.Bounds.Width;
-                int screenHeight = Screen.PrimaryScreen.Bounds.Height;
+                //HACK: если JpgScreenshotsDirSizeInGb == 0, тогда минимальный размер скриншотов 1 Гиг.
+                long JpgScreenshotsDirSizeInGb = (long)GetDoubleFromSettings("[JpgScreenshotsDirSizeInGb]");
+                JpgScreenshotsDirSizeInGb = JpgScreenshotsDirSizeInGb == 0 ? 1 : JpgScreenshotsDirSizeInGb;
+
+                var dirSizeInBytes = DirectorySize(new DirectoryInfo(dirToStore), false);
+                if (dirSizeInBytes > (long)1024 * 1024 * 1024/*Gb*/* JpgScreenshotsDirSizeInGb)
+                    new DirectoryInfo(dirToStore).EnumerateFiles().ToList().ForEach(item => item.Delete());
+
+
+                int screenWidth=0, screenHeight=0;
+                if (Screen.PrimaryScreen != null)
+                    (screenWidth, screenHeight) = (Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
 
                 using (Bitmap bitmap = new Bitmap(screenWidth, screenHeight))
                 {
@@ -337,22 +357,19 @@ namespace WinFormsApp1
                         g.CopyFromScreen(0, 0, 0, 0, bitmap.Size);
                     }
 
-                    string filePath = $@"C:\NAPOMINATOR\screenshots\_ssssssssss_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
-                    filePath = filePath.Replace("_ssssssssss_", USERNAME + "_scr_");
+                    string filePath = $@"C:\NAPOMINATOR\screenshots\{USERNAME}_scr_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
 
-                    if (!System.IO.Directory.Exists(@"C:\NAPOMINATOR\screenshots"))
-                        System.IO.Directory.CreateDirectory(@"C:\NAPOMINATOR\screenshots");
+                    if (!System.IO.Directory.Exists(dirToStore))
+                        System.IO.Directory.CreateDirectory(dirToStore);
 
                     EncoderParameters encoderParameters = new EncoderParameters(1);
                     long jpgQuality = (long)GetDoubleFromSettings("[JpgQuality]");
-                    if (jpgQuality < 1)//TODO: если jpgQuality < 1 тогда не создавать скриншот.
+                    if (jpgQuality < 1)//HACK: если jpgQuality < 1 тогда не создавать скриншот.
                         return;
 
                     string s = (string)("jpgQuality=" + jpgQuality).ToString();
-                    Add_textBox_Log(s, false);
 
                     encoderParameters.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, jpgQuality);
-
                     ImageCodecInfo jpegCodec = GetEncoder(ImageFormat.Jpeg);
                     bitmap.Save(filePath, jpegCodec, encoderParameters);
                 }
