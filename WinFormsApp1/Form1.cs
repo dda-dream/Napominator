@@ -14,27 +14,20 @@ namespace WinFormsApp1
         Boolean allowFormClose = false;
         string USERNAME="";
 
-        //WasapiCapture? audioSource;
         static WaveIn? audioSource;
         double soundLevel;
         double continuousBig;
         double shuminatorCount = 0, tot_shuminatorCount=0;
-
         static bool messageShown = false;
-
 
         public Form1()
         {
             InitializeComponent();
             Add_textBox_Log("NAPOMINATOR Form1()");
-
-            if (true)
-            { }
+            Add_textBox_Log(System.IO.Path.GetFileName(Application.ExecutablePath));
 
             GlobalMouseHook.OnMouseClick += CaptureScreenshotByMouseClick;
             GlobalMouseHook.Start();
-
-            Add_textBox_Log(System.IO.Path.GetFileName(Application.ExecutablePath));
         }
 
 
@@ -65,7 +58,10 @@ namespace WinFormsApp1
                     Add_textBox_Log("Microphone name:" + devitem.FriendlyName + " mic level" + devitem.AudioEndpointVolume.MasterVolumeLevelScalar);
                     if (device is null && devitem.FriendlyName.Contains(GetStringFromSettings("[Shuminator_MicrophoneName]")))
                         device = devitem;
-                }            
+                }
+                if (device is null)
+                    throw new Exception("No microphone detected.");
+
                 Add_textBox_Log("Microphone selected. Name:" + device.FriendlyName + " mic level"+ device.AudioEndpointVolume.MasterVolumeLevelScalar);
 
                 audioSource = new WaveIn();

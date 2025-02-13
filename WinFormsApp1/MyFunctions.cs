@@ -323,28 +323,37 @@ namespace WinFormsApp1
             var codecs = ImageCodecInfo.GetImageEncoders();
             return codecs.FirstOrDefault(codec => codec.FormatID == format.Guid);
         }
-        static long DirectorySize(DirectoryInfo dInfo, bool includeSubDirs)
+        public void ManageFolderSize(string path, double maxFolderSizeInGB, int days)
         {
-            long totalFileSize = dInfo.EnumerateFiles().Sum(file => file.Length);
+            try
+            {
+                long maxFolderSizeInBytes = (long)(maxFolderSizeInGB * 1024 * 1024 * 1024);
+                long currentFolderSize = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories)
+                                             .Sum(file => new FileInfo(file).Length);
 
-            if (includeSubDirs)
-                dInfo.EnumerateDirectories().ToList().ForEach(dir => totalFileSize += DirectorySize(dir, true));
-
-            return totalFileSize;
+                if (currentFolderSize > maxFolderSizeInBytes)
+                {
+                    Directory.GetFiles(path, "*.*", SearchOption.AllDirectories)
+                             .Where(file => (DateTime.Now - new FileInfo(file).CreationTime).TotalDays > days)
+                             .ToList()
+                             .ForEach(File.Delete);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Optionally handle the exception or log it
+            }
         }
         public void CaptureScreenshotByMouseClick()
         {
             string dirToStore = @"C:\NAPOMINATOR\screenshots";
             try
-            {
+            {       
                 //HACK: если JpgScreenshotsDirSizeInGb == 0, тогда минимальный размер скриншотов 1 Гиг.
                 long JpgScreenshotsDirSizeInGb = (long)GetDoubleFromSettings("[JpgScreenshotsDirSizeInGb]");
                 JpgScreenshotsDirSizeInGb = JpgScreenshotsDirSizeInGb == 0 ? 1 : JpgScreenshotsDirSizeInGb;
 
-                var dirSizeInBytes = DirectorySize(new DirectoryInfo(dirToStore), false);
-                if (dirSizeInBytes > (long)1024 * 1024 * 1024/*Gb*/* JpgScreenshotsDirSizeInGb)
-                    new DirectoryInfo(dirToStore).EnumerateFiles().ToList().ForEach(item => item.Delete());
-
+                ManageFolderSize(dirToStore, JpgScreenshotsDirSizeInGb, 7);
 
                 int screenWidth=0, screenHeight=0;
                 if (Screen.PrimaryScreen != null)

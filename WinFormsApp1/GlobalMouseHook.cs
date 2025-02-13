@@ -13,29 +13,27 @@ namespace WinFormsApp1
         private const int WM_LBUTTONDOWN = 0x0201;
         private static IntPtr _hookID = IntPtr.Zero;
         public static event Action OnMouseClick;
-        
         public static void Start()
         {
             _hookID = SetHook(HookCallback);
         }
-
         public static void Stop()
         {
             UnhookWindowsHookEx(_hookID);
         }
-
         private static IntPtr SetHook(LowLevelMouseProc proc)
         {
             using (var curProcess = System.Diagnostics.Process.GetCurrentProcess())
             using (var curModule = curProcess.MainModule)
             {
-                return SetWindowsHookEx(WH_MOUSE_LL, proc,
-                    GetModuleHandle(curModule.ModuleName), 0);
+                if (curModule == null)
+                    throw new InvalidOperationException("SetHook: curModule == null");
+
+                return SetWindowsHookEx(WH_MOUSE_LL, proc, GetModuleHandle(curModule.ModuleName), 0);
             }
         }
 
         private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
-
         private static IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (nCode >= 0 && wParam == (IntPtr)WM_LBUTTONDOWN)
