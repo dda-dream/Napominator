@@ -121,16 +121,25 @@ namespace WinFormsApp1
             this.CenterToScreen();
 
             Size size = this.Size;
-            size.Width = resolution.Width / 100 * 95;
-            size.Height = resolution.Height / 100 * 95;
+            size.Width = resolution.Width / 100 * 98;
+            size.Height = resolution.Height / 100 * 98;
             Point point = ((Point)size);
-            point.X = rnd.Next(resolution.Width - resolution.Width / 100 * 95);
-            point.Y = rnd.Next(resolution.Height - Height / 100 * 95);
+            //point.X = rnd.Next(resolution.Width - resolution.Width / 100 * 95);
+            //point.Y = rnd.Next(resolution.Height - Height / 100 * 95);
+            
+            point.X = (resolution.Width - (resolution.Width - resolution.Width / 100 * 1) );
+            point.Y = (resolution.Height - (resolution.Height - Height / 100 * 1) );
+
             this.Location = point;
             this.Size = size;
 
-            size.Width -= 50;
-            size.Height -= 150;
+
+
+            //richTextBox_NotifyText
+            size.Width -= 40;
+            size.Height -= 90;
+            //size.Width -= resolution.Width - (resolution.Width - resolution.Width / 100 * 1);
+            //size.Height -= resolution.Height - (resolution.Height - Height / 100 * 1);
             richTextBox_NotifyText.Size = size;
         }
 

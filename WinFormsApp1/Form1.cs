@@ -10,7 +10,7 @@ namespace WinFormsApp1
 {
     public partial class Form1 : Form
     {
-        string __VERSION = "27.01.2025 16:13";
+        const string __VERSION = "15.05.2025 20:13";
         Boolean allowFormClose = false;
         string USERNAME="";
 

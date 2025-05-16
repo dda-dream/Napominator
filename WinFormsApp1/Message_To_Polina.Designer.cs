@@ -65,7 +65,7 @@
             // label_Count
             // 
             label_Count.AutoSize = true;
-            label_Count.Font = new Font("Segoe UI", 18F, FontStyle.Regular, GraphicsUnit.Point);
+            label_Count.Font = new Font("Segoe UI", 18F);
             label_Count.Location = new Point(310, 6);
             label_Count.Name = "label_Count";
             label_Count.Size = new Size(28, 32);
@@ -75,11 +75,11 @@
             // richTextBox_NotifyText
             // 
             richTextBox_NotifyText.BorderStyle = BorderStyle.FixedSingle;
-            richTextBox_NotifyText.Font = new Font("Segoe UI", 36F, FontStyle.Regular, GraphicsUnit.Point);
+            richTextBox_NotifyText.Font = new Font("Segoe UI", 36F);
             richTextBox_NotifyText.Location = new Point(12, 41);
             richTextBox_NotifyText.Name = "richTextBox_NotifyText";
             richTextBox_NotifyText.ReadOnly = true;
-            richTextBox_NotifyText.Size = new Size(1320, 440);
+            richTextBox_NotifyText.Size = new Size(767, 375);
             richTextBox_NotifyText.TabIndex = 5;
             richTextBox_NotifyText.Text = "TEXT";
             // 
@@ -87,7 +87,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1344, 493);
+            ClientSize = new Size(952, 428);
             ControlBox = false;
             Controls.Add(richTextBox_NotifyText);
             Controls.Add(label_Count);
