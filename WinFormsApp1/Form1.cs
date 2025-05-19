@@ -300,7 +300,7 @@ namespace WinFormsApp1
 
                 DisableControls(this);
 
-                notifyIcon1.Icon = WinFormsApp1.Properties.Resources.Icon1;
+                notifyIcon1.Icon = Napominator.Properties.Resources.Icon1;
                 Add_textBox_Log("NAPOMINATOR startTimer() - start");
                 if (checkBox_Polina.CheckState == CheckState.Checked)
                     if (GetDoubleFromSettings("[Enabled]") == 1)
@@ -533,7 +533,7 @@ namespace WinFormsApp1
         {
             if (WindowState == FormWindowState.Minimized)
             {
-                notifyIcon1.Icon = WinFormsApp1.Properties.Resources.Icon1;
+                notifyIcon1.Icon = Napominator.Properties.Resources.Icon1;
                 Hide();
             }
         }

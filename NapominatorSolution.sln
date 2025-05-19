@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WinFormsApp1", "WinFormsApp1\WinFormsApp1.csproj", "{6530C413-6A56-40DE-AE41-9964FCC0E41B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Napominator", "WinFormsApp1\Napominator.csproj", "{6530C413-6A56-40DE-AE41-9964FCC0E41B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
