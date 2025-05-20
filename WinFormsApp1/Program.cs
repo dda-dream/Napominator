@@ -1,7 +1,7 @@
 using System.Drawing.Imaging;
 using System.Reflection;
 
-namespace WinFormsApp1
+namespace Napominator
 {
     internal static class Program
     {

@@ -1,4 +1,4 @@
-﻿namespace WinFormsApp1
+﻿namespace Napominator
 {
     partial class Form1
     {

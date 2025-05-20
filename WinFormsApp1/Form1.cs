@@ -6,7 +6,7 @@ using System.Management;
 using System.Drawing.Imaging;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
-namespace WinFormsApp1
+namespace Napominator
 {
     public partial class Form1 : Form
     {
@@ -513,7 +513,6 @@ namespace WinFormsApp1
 
             //HACK: Если нужно запустить под другим пользователем, то менять тут.
             //USERNAME = "i";
-
 
             ReadSettingFile();
 

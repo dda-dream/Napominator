@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WinFormsApp1
+namespace Napominator
 {
     partial class Form1
     {
@@ -387,4 +387,4 @@ namespace WinFormsApp1
             }
         }
     }
-}//namespace WinFormsApp1
+}//namespace Napominator
