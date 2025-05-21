@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Napominator
 {
-    partial class Form1
+    partial class MainForm
     {
         public static void TakeScreenshotFromWEBCameraViaEmguCV()
         {
@@ -65,7 +65,7 @@ namespace Napominator
             {
                 DisableControls(c);
             }
-            if (con.Name != "Form1")
+            if (con.Name != "MainForm")
                 con.Enabled = false;
         }
         private void EnableControls(Control? con)

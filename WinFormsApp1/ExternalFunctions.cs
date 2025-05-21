@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Napominator
 {
-    partial class Form1
+    partial class MainForm
     {
         //====================================
         [DllImport("user32.dll")]

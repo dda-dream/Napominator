@@ -1,6 +1,6 @@
 ﻿namespace Napominator
 {
-    partial class Form1
+    partial class MainForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -258,7 +258,7 @@
             tb_noiselevel.Size = new Size(705, 26);
             tb_noiselevel.TabIndex = 18;
             // 
-            // Form1
+            // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -268,7 +268,7 @@
             Controls.Add(groupBox1);
             Controls.Add(textBox_Log);
             Controls.Add(button_StartStop);
-            Name = "Form1";
+            Name = "MainForm";
             Text = "Напоминатор! v 270324";
             FormClosing += Form1_FormClosing;
             Load += Form1_Load;

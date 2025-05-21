@@ -8,9 +8,9 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace Napominator
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
-        const string __VERSION = "15.05.2025 20:13";
+        const string __VERSION = "21.05.2025";
         Boolean allowFormClose = false;
         string USERNAME="";
 
@@ -20,10 +20,11 @@ namespace Napominator
         double shuminatorCount = 0, tot_shuminatorCount=0;
         static bool messageShown = false;
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
-            Add_textBox_Log("NAPOMINATOR Form1()");
+            Add_textBox_Log("Started. initial version created at 29.12.2022 11:50");
+            Add_textBox_Log("NAPOMINATOR MainForm()");
             Add_textBox_Log(System.IO.Path.GetFileName(Application.ExecutablePath));
 
             GlobalMouseHook.OnMouseClick += CaptureScreenshotByMouseClick;
@@ -292,13 +293,12 @@ namespace Napominator
             {
                 Rectangle resolution = Screen.PrimaryScreen!.Bounds;
 
-                Add_textBox_Log("Started. initial version created at 29.12.2022 11:50");
                 timer1.Interval = 1000;// * Int32.Parse(textBox_Period.Text) * 1;
                 timer1.Start();
                 button_StartStop.Text = "Stop";
 
-
-                DisableControls(this);
+                if(USERNAME!="d")
+                    DisableControls(this);
 
                 notifyIcon1.Icon = Napominator.Properties.Resources.Icon1;
                 Add_textBox_Log("NAPOMINATOR startTimer() - start");
