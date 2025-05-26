@@ -229,7 +229,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy &quot;$(TargetDir)WinFormsApp1.*&quot; &quot;$(TargetDir)WinFormsApp1_r.*&quot;&#xD;&#xA;&#xD;&#xA;" />
+    <Exec Command="&#xD;&#xA;&#xD;&#xA;" />
   </Target>
 
 </Project>

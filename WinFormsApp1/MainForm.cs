@@ -1,10 +1,11 @@
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using NAudio.CoreAudioApi;
+Ôªøusing NAudio.CoreAudioApi;
 using NAudio.Wave;
-using System.Management;
+using System.Diagnostics;
 using System.Drawing.Imaging;
+using System.Management;
+using System.Runtime.InteropServices;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace Napominator
 {
@@ -25,7 +26,7 @@ namespace Napominator
             InitializeComponent();
             Add_textBox_Log("Started. initial version created at 29.12.2022 11:50");
             Add_textBox_Log("NAPOMINATOR MainForm()");
-            Add_textBox_Log(System.IO.Path.GetFileName(Application.ExecutablePath));
+            Add_textBox_Log($"Exec FileName : {System.IO.Path.GetFileName(Application.ExecutablePath)}");
 
             GlobalMouseHook.OnMouseClick += CaptureScreenshotByMouseClick;
             GlobalMouseHook.Start();
@@ -77,9 +78,9 @@ namespace Napominator
                 Add_textBox_Log("No microphone detected.");
                 if (GetDoubleFromSettings("[LockWorkStation_NoMicrophone]") == 1)
                 {
-                    Add_textBox_Log("œÓ‰ÍÎ˛˜Ë ÏËÍÓÙÓÌ!");
+                    Add_textBox_Log("–ü–æ–¥–∫–ª—é—á–∏ –º–∏–∫—Ä–æ—Ñ–æ–Ω!");
                     ShuminatorPlaySoundWarning("podkluchi_microfon.mp3", false);
-                    Show_Message_To_Polina("œŒƒ Àﬁ◊» Ã» –Œ‘ŒÕ! \n —◊»“¿ﬁ ƒŒ 0-Îˇ! "+ count_NoMicrophoneDetected.ToString(), "œŒƒ Àﬁ◊» Ã» –Œ‘ŒÕ!", true, false, false, 5);
+                    Show_Message_To_Polina("–ü–û–î–ö–õ–Æ–ß–ò –ú–ò–ö–†–û–§–û–ù! \n –°–ß–ò–¢–ê–Æ –î–û 0-–ª—è! "+ count_NoMicrophoneDetected.ToString(), "–ü–û–î–ö–õ–Æ–ß–ò –ú–ò–ö–†–û–§–û–ù!", true, false, false, 5);
                     count_NoMicrophoneDetected--;
                     if (count_NoMicrophoneDetected == 0)
                     {
@@ -165,9 +166,9 @@ namespace Napominator
                 if (GetDoubleFromSettings("[Show_Message_To_Polina]") == 1)
                 {
                     if (USERNAME.Contains("d"))
-                        Show_Message_To_Polina("Õ≈ ÿ”Ã»!!! \n ƒ¿… œŒ—œ¿“‹!!!", "Õ≈ ÿ”Ã»!!! " + levelsStr, true,  true, false, 15);
+                        Show_Message_To_Polina("–ù–ï –®–£–ú–ò!!! \n –î–ê–ô –ü–û–°–ü–ê–¢–¨!!!", "–ù–ï –®–£–ú–ò!!! " + levelsStr, true,  true, false, 15);
                     else
-                        Show_Message_To_Polina("Õ≈ ÿ”Ã»!!! \n ƒ¿… œŒ—œ¿“‹!!!", "Õ≈ ÿ”Ã»!!! " + levelsStr, true, false, false, 15);
+                        Show_Message_To_Polina("–ù–ï –®–£–ú–ò!!! \n –î–ê–ô –ü–û–°–ü–ê–¢–¨!!!", "–ù–ï –®–£–ú–ò!!! " + levelsStr, true, false, false, 15);
                 }
                 if (GetDoubleFromSettings("[LockWorkStation]") == 1)
                 {
@@ -279,7 +280,7 @@ namespace Napominator
         }
         void Microphone_RecordingStopped(object? sender, NAudio.Wave.StoppedEventArgs e)
         {
-            this.Invoke((MethodInvoker)delegate { Add_textBox_Log("microphone_RecordingStopped!!!!!!!!! ", true, EventLogEntryType.Error); });
+            this.Invoke((MethodInvoker) delegate { Add_textBox_Log("microphone_RecordingStopped!!!!!!!!! ", true, EventLogEntryType.Error); });
             audioSource.Dispose();
             audioSource = null;
         }
@@ -347,8 +348,6 @@ namespace Napominator
                 return;
 
 
-
-
             textBox_NotifyText.Text = Parse_NotifyText();
 
             DateTime dt_from, dt_to;
@@ -370,7 +369,7 @@ namespace Napominator
 
             //checkBox_Polina.CheckState = CheckState.Checked;//TODO: DEBUG
             if (checkBox_Polina.CheckState == CheckState.Checked)
-            {//‰Îˇ œÓÎËÌ˚
+            {//–¥–ª—è –ü–æ–ª–∏–Ω—ã
                 if (audioSource == null)
                 {
                     //Start_NoiseDetector_executing = false;
@@ -381,35 +380,35 @@ namespace Napominator
                 if (!timeAllowed)
                     timeAllowed = ((dt_from > dt_to) && (DateTime.Now > dt_to));
                 if (timeAllowed)
-                {//‡ÁÂ¯ÂÌÌÓÂ ‚ÂÏˇ
+                {//—Ä–∞–∑—Ä–µ—à–µ–Ω–Ω–æ–µ –≤—Ä–µ–º—è
                     if( GetDoubleFromSettings("[BlockChrome]")==1 )
                         if (curWinTitle.Contains("chrome") || curWinTitle.Contains("edge") || curWinTitle.Contains("firefox"))
                         {
                             bool foundany = curWinTitle == "" || CheckStringContainsInList(curWinTitle, GetStringFromSettings("[ExcludeFromBlock]"));
                             if (!foundany)
-                                Show_Message_To_Polina("BlockChrome" + Parse_NotifyText(), "Õ¿œŒÃ»Õ¿“Œ–! BlockChrome " + curWinTitle);
+                                Show_Message_To_Polina("BlockChrome" + Parse_NotifyText(), "–ù–ê–ü–û–ú–ò–ù–ê–¢–û–†! BlockChrome " + curWinTitle);
                         }
 
                     if ( GetDoubleFromSettings("[BlockTotal]")==1 )
-                        Show_Message_To_Polina("TotalBlock" + Parse_NotifyText(), "Õ¿œŒÃ»Õ¿“Œ–! TotalBlock " + curWinTitle);
+                        Show_Message_To_Polina("TotalBlock" + Parse_NotifyText(), "–ù–ê–ü–û–ú–ò–ù–ê–¢–û–†! TotalBlock " + curWinTitle);
                 }
                 else
-                {//ÌÂ ‡ÁÂ¯ÂÌÌÓÂ ‚ÂÏˇ
+                {//–Ω–µ —Ä–∞–∑—Ä–µ—à–µ–Ω–Ω–æ–µ –≤—Ä–µ–º—è
                     bool foundany = curWinTitle == "" || CheckStringContainsInList(curWinTitle, GetStringFromSettings("[ExcludeFromBlock]"));
                     if (!foundany)
-                        Show_Message_To_Polina("Allowed time from " + dt_from.ToShortTimeString() + " to " + dt_to.ToShortTimeString() + Parse_NotifyText(), "Õ¿œŒÃ»Õ¿“Œ–! Allowed time " + curWinTitle);
+                        Show_Message_To_Polina("Allowed time from " + dt_from.ToShortTimeString() + " to " + dt_to.ToShortTimeString() + Parse_NotifyText(), "–ù–ê–ü–û–ú–ò–ù–ê–¢–û–†! Allowed time " + curWinTitle);
                 }
-                //·ÎÓÍ ÔÓ ÒÔËÒÍÛ
+                //–±–ª–æ–∫ –ø–æ —Å–ø–∏—Å–∫—É
                 if( CheckStringContainsInList(curWinTitle, GetStringFromSettings("[Blocklist]")) )
-                    Show_Message_To_Polina("BlockList", "Õ¿œŒÃ»Õ¿“Œ–! BlockList " + curWinTitle);
+                    Show_Message_To_Polina("BlockList", "–ù–ê–ü–û–ú–ò–ù–ê–¢–û–†! BlockList " + curWinTitle);
             }
             else
             {// MAMA and PAPA
-             //·ÎÓÍ ÔÓ ÒÔËÒÍÛ
+             //–±–ª–æ–∫ –ø–æ —Å–ø–∏—Å–∫—É
                 if (checkBox_Mama.Checked == true)
                 {
                     if (CheckStringContainsInList(curWinTitle, GetStringFromSettings("[Blocklist]")))
-                        Show_Message_To_Polina("BlockList" + Parse_NotifyText(), "Õ¿œŒÃ»Õ¿“Œ–! BlockList " + curWinTitle);
+                        Show_Message_To_Polina("BlockList" + Parse_NotifyText(), "–ù–ê–ü–û–ú–ò–ù–ê–¢–û–†! BlockList " + curWinTitle);
 
                     if (DateTime.Now.Hour == 04 && DateTime.Now.Minute == 44)
                     {
@@ -419,13 +418,16 @@ namespace Napominator
                 }
                 if (checkBox_Papa.Checked == true || checkBox_Mama.Checked == true)
                 {
-                    Show_Message_To_Polina(Parse_NotifyText(), "Õ¿œŒÃ»Õ¿“Œ–!", false, true);
+                    Show_Message_To_Polina(Parse_NotifyText(), "–ù–ê–ü–û–ú–ò–ù–ê–¢–û–†!", false, true);
                 }
             }
             executing_Tick = false;
         }
         void Show_Message_To_Polina(string _messageToShow, string _formCaption, Boolean _showDesktop = true, Boolean _dontCloseWindow = false, bool _write_textBox_Log = true, int _notifyLenghCounter = 5)
         {
+            if (GetStringFromSettings("[Disable_MessageWindow]") == "true")
+                return;
+
             Message_To_Polina Message_To_Polina = new Message_To_Polina();
             Message_To_Polina.Set_NotifyText(_messageToShow);
             Message_To_Polina.Set_counter(_notifyLenghCounter);
@@ -511,7 +513,7 @@ namespace Napominator
             Add_textBox_Log("NAPOMINATOR version:"+__VERSION);
             Add_textBox_Log("ReadSettingFile() executed", false);
 
-            //HACK: ≈ÒÎË ÌÛÊÌÓ Á‡ÔÛÒÚËÚ¸ ÔÓ‰ ‰Û„ËÏ ÔÓÎ¸ÁÓ‚‡ÚÂÎÂÏ, ÚÓ ÏÂÌˇÚ¸ ÚÛÚ.
+            //HACK: –ï—Å–ª–∏ –Ω—É–∂–Ω–æ –∑–∞–ø—É—Å—Ç–∏—Ç—å –ø–æ–¥ –¥—Ä—É–≥–∏–º –ø–æ–ª—å–∑–æ–≤–∞—Ç–µ–ª–µ–º, —Ç–æ –º–µ–Ω—è—Ç—å —Ç—É—Ç.
             //USERNAME = "i";
 
             ReadSettingFile();
@@ -522,6 +524,8 @@ namespace Napominator
                 checkBox_Papa.Checked = true;
             if (USERNAME == "p")
                 checkBox_Polina.Checked = true;
+
+            Add_textBox_Log($"USERNAME = {USERNAME}", false);
 
             string tmpUser = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
             if (!tmpUser.Contains("d") )
