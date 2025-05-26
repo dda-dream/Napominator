@@ -23,6 +23,7 @@ namespace Napominator
         public Message_To_Polina()
         {
             InitializeComponent();
+            this.Hide();
         }
         private void button2_Click(object sender, EventArgs e)
         {

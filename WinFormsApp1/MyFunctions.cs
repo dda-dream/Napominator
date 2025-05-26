@@ -196,14 +196,10 @@ namespace Napominator
         {
             string timeStr = DateTime.Now.ToString("dd-MM-yyyy") + " " + DateTime.Now.ToLongTimeString() + ": ";
 
-
             if (_writeToLogFileOrRegistry)
             {
                 WriteToRegistryLog(_text, _mode, USERNAME);
-                /* NO WRITE TO LOG FILE
-                string filename = "";
-                if (_mode == "") filename = "log-" + USERNAME + ".txt";
-                if (_mode == "logblock") filename = "logblock-" + USERNAME + ".txt";
+                string filename = "log-" + USERNAME + ".txt";
                 try
                 {
                     var file = File.AppendText(filename);
@@ -213,9 +209,8 @@ namespace Napominator
                 }
                 catch (Exception e) 
                 {
-                    eventLog.WriteEntry(username + " " + e.ToString(), EventLogEntryType.Error, 3, 1);
+                    WriteToRegistryLog(USERNAME + " " + e.ToString(), EventLogEntryType.Error, USERNAME);
                 }
-                */
             }
 
             if (textBox_Log.Lines.Count() > 100)
