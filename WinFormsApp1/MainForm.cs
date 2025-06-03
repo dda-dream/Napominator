@@ -35,7 +35,6 @@ namespace Napominator
 
 
 
-
         MMDevice? device = null;
         const int constCountNoMicrophoneDetected = 5;
         int count_NoMicrophoneDetected = constCountNoMicrophoneDetected;
@@ -78,9 +77,9 @@ namespace Napominator
                 Add_textBox_Log("No microphone detected.");
                 if (GetDoubleFromSettings("[LockWorkStation_NoMicrophone]") == 1)
                 {
-                    Add_textBox_Log("Подключи микрофон!");
+                    Add_textBox_Log("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ!");
                     ShuminatorPlaySoundWarning("podkluchi_microfon.mp3", false);
-                    Show_Message_To_Polina("ПОДКЛЮЧИ МИКРОФОН! \n СЧИТАЮ ДО 0-ля! "+ count_NoMicrophoneDetected.ToString(), "ПОДКЛЮЧИ МИКРОФОН!", true, false, false, 5);
+                    Show_Message_To_Polina("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ! \n пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ 0-пїЅпїЅ! "+ count_NoMicrophoneDetected.ToString(), "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ!", true, false, false, 5);
                     count_NoMicrophoneDetected--;
                     if (count_NoMicrophoneDetected == 0)
                     {
@@ -166,9 +165,9 @@ namespace Napominator
                 if (GetDoubleFromSettings("[Show_Message_To_Polina]") == 1)
                 {
                     if (USERNAME.Contains("d"))
-                        Show_Message_To_Polina("НЕ ШУМИ!!! \n ДАЙ ПОСПАТЬ!!!", "НЕ ШУМИ!!! " + levelsStr, true,  true, false, 15);
+                        Show_Message_To_Polina("пїЅпїЅ пїЅпїЅпїЅпїЅ!!! \n пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ!!!", "пїЅпїЅ пїЅпїЅпїЅпїЅ!!! " + levelsStr, true,  true, false, 15);
                     else
-                        Show_Message_To_Polina("НЕ ШУМИ!!! \n ДАЙ ПОСПАТЬ!!!", "НЕ ШУМИ!!! " + levelsStr, true, false, false, 15);
+                        Show_Message_To_Polina("пїЅпїЅ пїЅпїЅпїЅпїЅ!!! \n пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ!!!", "пїЅпїЅ пїЅпїЅпїЅпїЅ!!! " + levelsStr, true, false, false, 15);
                 }
                 if (GetDoubleFromSettings("[LockWorkStation]") == 1)
                 {
@@ -369,7 +368,7 @@ namespace Napominator
 
             //checkBox_Polina.CheckState = CheckState.Checked;//TODO: DEBUG
             if (checkBox_Polina.CheckState == CheckState.Checked)
-            {//для Полины
+            {//пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                 if (audioSource == null)
                 {
                     //Start_NoiseDetector_executing = false;
@@ -380,35 +379,35 @@ namespace Napominator
                 if (!timeAllowed)
                     timeAllowed = ((dt_from > dt_to) && (DateTime.Now > dt_to));
                 if (timeAllowed)
-                {//разрешенное время
+                {//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
                     if( GetDoubleFromSettings("[BlockChrome]")==1 )
                         if (curWinTitle.Contains("chrome") || curWinTitle.Contains("edge") || curWinTitle.Contains("firefox"))
                         {
                             bool foundany = curWinTitle == "" || CheckStringContainsInList(curWinTitle, GetStringFromSettings("[ExcludeFromBlock]"));
                             if (!foundany)
-                                Show_Message_To_Polina("BlockChrome" + Parse_NotifyText(), "НАПОМИНАТОР! BlockChrome " + curWinTitle);
+                                Show_Message_To_Polina("BlockChrome" + Parse_NotifyText(), "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ! BlockChrome " + curWinTitle);
                         }
 
                     if ( GetDoubleFromSettings("[BlockTotal]")==1 )
-                        Show_Message_To_Polina("TotalBlock" + Parse_NotifyText(), "НАПОМИНАТОР! TotalBlock " + curWinTitle);
+                        Show_Message_To_Polina("TotalBlock" + Parse_NotifyText(), "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ! TotalBlock " + curWinTitle);
                 }
                 else
-                {//не разрешенное время
+                {//пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
                     bool foundany = curWinTitle == "" || CheckStringContainsInList(curWinTitle, GetStringFromSettings("[ExcludeFromBlock]"));
                     if (!foundany)
-                        Show_Message_To_Polina("Allowed time from " + dt_from.ToShortTimeString() + " to " + dt_to.ToShortTimeString() + Parse_NotifyText(), "НАПОМИНАТОР! Allowed time " + curWinTitle);
+                        Show_Message_To_Polina("Allowed time from " + dt_from.ToShortTimeString() + " to " + dt_to.ToShortTimeString() + Parse_NotifyText(), "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ! Allowed time " + curWinTitle);
                 }
-                //блок по списку
+                //пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                 if( CheckStringContainsInList(curWinTitle, GetStringFromSettings("[Blocklist]")) )
-                    Show_Message_To_Polina("BlockList", "НАПОМИНАТОР! BlockList " + curWinTitle);
+                    Show_Message_To_Polina("BlockList", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ! BlockList " + curWinTitle);
             }
             else
             {// MAMA and PAPA
-             //блок по списку
+             //пїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
                 if (checkBox_Mama.Checked == true)
                 {
                     if (CheckStringContainsInList(curWinTitle, GetStringFromSettings("[Blocklist]")))
-                        Show_Message_To_Polina("BlockList" + Parse_NotifyText(), "НАПОМИНАТОР! BlockList " + curWinTitle);
+                        Show_Message_To_Polina("BlockList" + Parse_NotifyText(), "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ! BlockList " + curWinTitle);
 
                     if (DateTime.Now.Hour == 04 && DateTime.Now.Minute == 44)
                     {
@@ -418,7 +417,7 @@ namespace Napominator
                 }
                 if (checkBox_Papa.Checked == true || checkBox_Mama.Checked == true)
                 {
-                    Show_Message_To_Polina(Parse_NotifyText(), "НАПОМИНАТОР!", false, true);
+                    Show_Message_To_Polina(Parse_NotifyText(), "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ!", false, true);
                 }
             }
             executing_Tick = false;
@@ -513,7 +512,7 @@ namespace Napominator
             Add_textBox_Log("NAPOMINATOR version:"+__VERSION);
             Add_textBox_Log("ReadSettingFile() executed", false);
 
-            //HACK: Если нужно запустить под другим пользователем, то менять тут.
+            //HACK: пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ.
             //USERNAME = "i";
 
             ReadSettingFile();
