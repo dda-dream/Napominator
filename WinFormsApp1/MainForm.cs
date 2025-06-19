@@ -35,7 +35,6 @@ namespace Napominator
 
 
 
-
         MMDevice? device = null;
         const int constCountNoMicrophoneDetected = 5;
         int count_NoMicrophoneDetected = constCountNoMicrophoneDetected;
@@ -425,9 +424,6 @@ namespace Napominator
         }
         void Show_Message_To_Polina(string _messageToShow, string _formCaption, Boolean _showDesktop = true, Boolean _dontCloseWindow = false, bool _write_textBox_Log = true, int _notifyLenghCounter = 5)
         {
-            if (GetStringFromSettings("[Disable_MessageWindow]") == "true")
-                return;
-
             Message_To_Polina Message_To_Polina = new Message_To_Polina();
             Message_To_Polina.Set_NotifyText(_messageToShow);
             Message_To_Polina.Set_counter(_notifyLenghCounter);
@@ -524,8 +520,6 @@ namespace Napominator
                 checkBox_Papa.Checked = true;
             if (USERNAME == "p")
                 checkBox_Polina.Checked = true;
-
-            Add_textBox_Log($"USERNAME = {USERNAME}", false);
 
             string tmpUser = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
             if (!tmpUser.Contains("d") )
