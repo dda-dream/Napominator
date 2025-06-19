@@ -229,7 +229,6 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="&#xD;&#xA;&#xD;&#xA;" />
   </Target>
 
 </Project>
