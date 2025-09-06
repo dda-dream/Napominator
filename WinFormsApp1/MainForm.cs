@@ -430,8 +430,9 @@ namespace Napominator
              //блок по списку
                 if (checkBox_Mama.Checked == true)
                 {
-                    if (CheckStringContainsInList(curWinTitle, GetStringFromSettings("[Blocklist]")))
-                        Show_Message_To_Polina("BlockList" + Parse_NotifyText(), "НАПОМИНАТОР! BlockList " + curWinTitle);
+                    if(GetDoubleFromSettings("[DisableNotify]") == 0)
+                        if (CheckStringContainsInList(curWinTitle, GetStringFromSettings("[Blocklist]")))
+                            Show_Message_To_Polina("BlockList" + Parse_NotifyText(), "НАПОМИНАТОР! BlockList " + curWinTitle);
 
                     if (DateTime.Now.Hour == 04 && DateTime.Now.Minute == 44)
                     {
@@ -439,10 +440,9 @@ namespace Napominator
                         logController.Add_textBox_Log("LockWorkStation by time " + DateTime.Now.Hour + ":" + DateTime.Now.Minute + "", true, EventLogEntryType.Warning);
                     }
                 }
-                if (checkBox_Papa.Checked == true || checkBox_Mama.Checked == true)
-                {
-                    Show_Message_To_Polina(Parse_NotifyText(), "НАПОМИНАТОР!", false, true);
-                }
+                if (GetDoubleFromSettings("[DisableNotify]") == 0)
+                    if (checkBox_Papa.Checked == true || checkBox_Mama.Checked == true)
+                        Show_Message_To_Polina(Parse_NotifyText(), "НАПОМИНАТОР!", false, true);
             }
             executing_Tick = false;
         }
