@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Management;
 using System.Runtime.InteropServices;
+using System.Text;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
@@ -11,6 +12,28 @@ namespace Napominator
 {
     public partial class MainForm : Form
     {
+        LogController logController;
+
+        //====================================
+        [DllImport("user32.dll")]
+        static extern IntPtr GetForegroundWindow();
+        [DllImport("user32.dll")]
+        static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
+        //====================================
+        [DllImport("user32.dll")]
+        public static extern void LockWorkStation();
+        //====================================
+        public const int KEYEVENTF_EXTENTEDKEY = 1;
+        public const int KEYEVENTF_KEYUP = 0;
+        public const int VK_MEDIA_NEXT_TRACK = 0xB0;
+        public const int VK_MEDIA_PLAY_PAUSE = 0xB3;
+        public const int VK_MEDIA_PREV_TRACK = 0xB1;
+
+        [DllImport("user32.dll")]
+        public static extern void keybd_event(byte virtualKey, byte scanCode, uint flags, IntPtr extraInfo);
+        //====================================
+
+
         const string __VERSION = "21.05.2025";
         Boolean allowFormClose = false;
         string USERNAME="";
@@ -24,9 +47,9 @@ namespace Napominator
         public MainForm()
         {
             InitializeComponent();
-            Add_textBox_Log("Started. initial version created at 29.12.2022 11:50");
-            Add_textBox_Log("NAPOMINATOR MainForm()");
-            Add_textBox_Log($"Exec FileName : {System.IO.Path.GetFileName(Application.ExecutablePath)}");
+            logController.Add_textBox_Log("Started. initial version created at 29.12.2022 11:50");
+            logController.Add_textBox_Log("NAPOMINATOR MainForm()");
+            logController.Add_textBox_Log($"Exec FileName : {System.IO.Path.GetFileName(Application.ExecutablePath)}");
 
             GlobalMouseHook.OnMouseClick += CaptureScreenshotByMouseClick;
             GlobalMouseHook.Start();
@@ -48,7 +71,7 @@ namespace Napominator
                 return;
             Start_NoiseDetector_executing = true;
 
-            Add_textBox_Log("s: Start_NoiseDetector()");
+            logController.Add_textBox_Log("s: Start_NoiseDetector()");
 
             try
             {
@@ -56,14 +79,14 @@ namespace Napominator
                 var devices = new MMDeviceEnumerator().EnumerateAudioEndPoints(DataFlow.Capture,DeviceState.Active);
                 foreach (var devitem in devices)
                 {
-                    Add_textBox_Log("Microphone name:" + devitem.FriendlyName + " mic level" + devitem.AudioEndpointVolume.MasterVolumeLevelScalar);
+                    logController.Add_textBox_Log("Microphone name:" + devitem.FriendlyName + " mic level" + devitem.AudioEndpointVolume.MasterVolumeLevelScalar);
                     if (device is null && devitem.FriendlyName.Contains(GetStringFromSettings("[Shuminator_MicrophoneName]")))
                         device = devitem;
                 }
                 if (device is null)
                     throw new Exception("No microphone detected.");
 
-                Add_textBox_Log("Microphone selected. Name:" + device.FriendlyName + " mic level"+ device.AudioEndpointVolume.MasterVolumeLevelScalar);
+                logController.Add_textBox_Log("Microphone selected. Name:" + device.FriendlyName + " mic level"+ device.AudioEndpointVolume.MasterVolumeLevelScalar);
 
                 audioSource = new WaveIn();
                 audioSource.DataAvailable += new EventHandler<WaveInEventArgs>(Microphone_DataAvailable);
@@ -74,10 +97,10 @@ namespace Napominator
             catch
             {
                 audioSource = null;
-                Add_textBox_Log("No microphone detected.");
+                logController.Add_textBox_Log("No microphone detected.");
                 if (GetDoubleFromSettings("[LockWorkStation_NoMicrophone]") == 1)
                 {
-                    Add_textBox_Log("Подключи микрофон!");
+                    logController.Add_textBox_Log("Подключи микрофон!");
                     ShuminatorPlaySoundWarning("podkluchi_microfon.mp3", false);
                     Show_Message_To_Polina("ПОДКЛЮЧИ МИКРОФОН! \n СЧИТАЮ ДО 0-ля! "+ count_NoMicrophoneDetected.ToString(), "ПОДКЛЮЧИ МИКРОФОН!", true, false, false, 5);
                     count_NoMicrophoneDetected--;
@@ -90,7 +113,7 @@ namespace Napominator
                 }
             }
             Start_NoiseDetector_executing = false;
-            Add_textBox_Log("e: Start_NoiseDetector()");
+            logController.Add_textBox_Log("e: Start_NoiseDetector()");
         }
                     
 
@@ -100,7 +123,7 @@ namespace Napominator
         {
             if (device.AudioEndpointVolume.MasterVolumeLevelScalar < GetDoubleFromSettings("[LockWorkStation_Microphone_MasterVolumeLevelScalar]"))
             {
-                this.Invoke((MethodInvoker)delegate { Add_textBox_Log("SHUMINATOR LockWorkStation: MasterVolumeLevelScalar!", true, EventLogEntryType.Error); });
+                this.Invoke((MethodInvoker)delegate { logController.Add_textBox_Log("SHUMINATOR LockWorkStation: MasterVolumeLevelScalar!", true, EventLogEntryType.Error); });
                 LockWorkStation();
             }
 
@@ -128,7 +151,7 @@ namespace Napominator
 
             if (continuousBig > prevcontinuousBig)
             {
-                this.Invoke((MethodInvoker)delegate { Add_textBox_Log("SHUMINATOR soundlevel up: " + continuousBig.ToString("N6"), true);
+                this.Invoke((MethodInvoker)delegate { logController.Add_textBox_Log("SHUMINATOR soundlevel up: " + continuousBig.ToString("N6"), true);
                     //notifyIcon1.BalloonTipText = "SHUMINATOR soundlevel up: " + continuousBig.ToString("N6");
                     //notifyIcon1.ShowBalloonTip(1000);
                     });            
@@ -140,21 +163,21 @@ namespace Napominator
 
             if (continuousBig >= maxNoiseLevel)
             {
-                Add_textBox_Log("Microphone name:" + device.FriendlyName + " level:"+ device.AudioEndpointVolume.MasterVolumeLevelScalar);
+                logController.Add_textBox_Log("Microphone name:" + device.FriendlyName + " level:"+ device.AudioEndpointVolume.MasterVolumeLevelScalar);
                 shuminatorCount++;
                 tot_shuminatorCount++;
                 messageShown = true;
 
                 this.Invoke((MethodInvoker)delegate { 
-                    Add_textBox_Log("SHUMINATOR FIRED at soundLevel: " + levelsStr, true, EventLogEntryType.Warning);
-                    Add_textBox_Log("Microphone name:" + device.FriendlyName + " mic level" + device.AudioEndpointVolume.MasterVolumeLevelScalar, true, EventLogEntryType.Warning );
+                    logController.Add_textBox_Log("SHUMINATOR FIRED at soundLevel: " + levelsStr, true, EventLogEntryType.Warning);
+                    logController.Add_textBox_Log("Microphone name:" + device.FriendlyName + " mic level" + device.AudioEndpointVolume.MasterVolumeLevelScalar, true, EventLogEntryType.Warning );
                     });
 
                 if (/*Get photo from cam*/1 == 1)
                 {
-                    this.Invoke((MethodInvoker)delegate { Add_textBox_Log("s: taking photo from camera. Sound levels:" + levelsStr, true, EventLogEntryType.Warning); });
+                    this.Invoke((MethodInvoker)delegate { logController.Add_textBox_Log("s: taking photo from camera. Sound levels:" + levelsStr, true, EventLogEntryType.Warning); });
                     TakeScreenshotFromWEBCameraViaEmguCV();
-                    this.Invoke((MethodInvoker)delegate { Add_textBox_Log("e: taking photo from camera. Sound levels:" + levelsStr, true); });
+                    this.Invoke((MethodInvoker)delegate { logController.Add_textBox_Log("e: taking photo from camera. Sound levels:" + levelsStr, true); });
                     //Get photo from cam
                 }
                 if (GetDoubleFromSettings("[ShuminatorPlaySoundWarning]") == 1)
@@ -171,21 +194,21 @@ namespace Napominator
                 }
                 if (GetDoubleFromSettings("[LockWorkStation]") == 1)
                 {
-                    this.Invoke((MethodInvoker)delegate { Add_textBox_Log("LockWorkStation_shuminatorCount_check: ", true); });
+                    this.Invoke((MethodInvoker)delegate { logController.Add_textBox_Log("LockWorkStation_shuminatorCount_check: ", true); });
                     if (shuminatorCount >= GetDoubleFromSettings("[LockWorkStation_shuminatorCount]"))
                     {
-                        this.Invoke((MethodInvoker)delegate { Add_textBox_Log("LockWorkStation_shuminatorCount_exec: ", true, EventLogEntryType.Warning); });
+                        this.Invoke((MethodInvoker)delegate { logController.Add_textBox_Log("LockWorkStation_shuminatorCount_exec: ", true, EventLogEntryType.Warning); });
                         shuminatorCount = 0;
                         LockWorkStation();
                     }
                 }
                 if (GetDoubleFromSettings("[KillProcess]") == 1)
                 {
-                    this.Invoke((MethodInvoker)delegate { Add_textBox_Log("KillProcess_check: " + GetStringFromSettings("[KillProcess_ProcessName]"), true); });
+                    this.Invoke((MethodInvoker)delegate { logController.Add_textBox_Log("KillProcess_check: " + GetStringFromSettings("[KillProcess_ProcessName]"), true); });
 
                     if (shuminatorCount >= GetDoubleFromSettings("[KillProcess_shuminatorCount]"))
                     {
-                        this.Invoke((MethodInvoker)delegate { Add_textBox_Log("KillProcess_exec: " + GetStringFromSettings("[KillProcess_ProcessName]"), true, EventLogEntryType.Warning); });
+                        this.Invoke((MethodInvoker)delegate { logController.Add_textBox_Log("KillProcess_exec: " + GetStringFromSettings("[KillProcess_ProcessName]"), true, EventLogEntryType.Warning); });
                         KillProcess(GetStringFromSettings("[KillProcess_ProcessName]"), true);
                         shuminatorCount = 0;
                     }
@@ -229,7 +252,7 @@ namespace Napominator
                 waveOut0.PlaybackStopped += WaveOut0_PlaybackStopped;
             } catch (Exception ex)
             {
-                WriteToRegistryLog("ShuminatorPlaySoundWarning: "+ex.ToString() , EventLogEntryType.Error, "NO_USERNAME");
+                LogController.WriteToRegistryLog("ShuminatorPlaySoundWarning: "+ex.ToString() , EventLogEntryType.Error, "NO_USERNAME");
             }
         }
         private static void WaveOut1_PlaybackStopped(object? sender, NAudio.Wave.StoppedEventArgs e)
@@ -279,7 +302,7 @@ namespace Napominator
         }
         void Microphone_RecordingStopped(object? sender, NAudio.Wave.StoppedEventArgs e)
         {
-            this.Invoke((MethodInvoker) delegate { Add_textBox_Log("microphone_RecordingStopped!!!!!!!!! ", true, EventLogEntryType.Error); });
+            this.Invoke((MethodInvoker) delegate { logController.Add_textBox_Log("microphone_RecordingStopped!!!!!!!!! ", true, EventLogEntryType.Error); });
             audioSource.Dispose();
             audioSource = null;
         }
@@ -301,21 +324,21 @@ namespace Napominator
                     DisableControls(this);
 
                 notifyIcon1.Icon = Napominator.Properties.Resources.Icon1;
-                Add_textBox_Log("NAPOMINATOR startTimer() - start");
+                logController.Add_textBox_Log("NAPOMINATOR startTimer() - start");
                 if (checkBox_Polina.CheckState == CheckState.Checked)
                     if (GetDoubleFromSettings("[Enabled]") == 1)
                         Start_NoiseDetector();
 
                 Hide();
             } else {
-                Add_textBox_Log("Stopped");
+                logController.Add_textBox_Log("Stopped");
                 timer1.Stop();
                 button_StartStop.Text = "Start";
                 notifyIcon1.Visible = true;
-                Add_textBox_Log("NAPOMINATOR startTimer() - stop");
+                logController.Add_textBox_Log("NAPOMINATOR startTimer() - stop");
                 Show();
             }
-            Add_textBox_Log("startTimer()-exit from func");
+            logController.Add_textBox_Log("startTimer()-exit from func");
         }
 
         string prev_curWinTitle = "";
@@ -327,7 +350,7 @@ namespace Napominator
             string curWinTitle = GetActiveWindowTitle();
             curWinTitle = curWinTitle.ToLower();
             if (prev_curWinTitle != curWinTitle)
-                Add_textBox_Log("curWindowsTitle=" + curWinTitle, true);
+                logController.Add_textBox_Log("curWindowsTitle=" + curWinTitle, true);
             prev_curWinTitle = curWinTitle;
 
             if (DateTime.Now > lastReadSettingsFile.AddSeconds(59))
@@ -413,7 +436,7 @@ namespace Napominator
                     if (DateTime.Now.Hour == 04 && DateTime.Now.Minute == 44)
                     {
                         LockWorkStation();
-                        Add_textBox_Log("LockWorkStation by time " + DateTime.Now.Hour + ":" + DateTime.Now.Minute + "", true, EventLogEntryType.Warning);
+                        logController.Add_textBox_Log("LockWorkStation by time " + DateTime.Now.Hour + ":" + DateTime.Now.Minute + "", true, EventLogEntryType.Warning);
                     }
                 }
                 if (checkBox_Papa.Checked == true || checkBox_Mama.Checked == true)
@@ -434,7 +457,7 @@ namespace Napominator
             Message_To_Polina.ShowDialog();
             Message_To_Polina.Focus();
             if(_write_textBox_Log)
-                Add_textBox_Log("Block by " + _messageToShow, true);
+                logController.Add_textBox_Log("Block by " + _messageToShow, true);
         }
         private void NotifyIcon1_DoubleClick(object sender, EventArgs e)
         {
@@ -483,7 +506,7 @@ namespace Napominator
         {
             if (!allowFormClose)
             {
-                Add_textBox_Log("NAPOMINATOR Form1_FormClosing() - Dont allowed.");
+                logController.Add_textBox_Log("NAPOMINATOR Form1_FormClosing() - Dont allowed.");
                 e.Cancel = true;
             }
         }
@@ -491,7 +514,7 @@ namespace Napominator
         {
             if (keyData == (Keys.Control | Keys.X))
             {
-                Add_textBox_Log("allowFormClose = true");
+                logController.Add_textBox_Log("allowFormClose = true");
                 allowFormClose = true;
                 this.Close();
                 return true;
@@ -507,8 +530,8 @@ namespace Napominator
         {
             USERNAME = username2USERNAME(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1]);
 
-            Add_textBox_Log("NAPOMINATOR version:"+__VERSION);
-            Add_textBox_Log("ReadSettingFile() executed", false);
+            logController.Add_textBox_Log("NAPOMINATOR version:"+__VERSION);
+            logController.Add_textBox_Log("ReadSettingFile() executed", false);
 
             //HACK: Если нужно запустить под другим пользователем, то менять тут.
             //USERNAME = "i";
@@ -525,6 +548,9 @@ namespace Napominator
             string tmpUser = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
             if (!tmpUser.Contains("d") )
                 StartTimer();
+
+            logController = LogController.GetInstance(textBox_Log, USERNAME);
+
         }
 
         private void Form1_Resize(object sender, EventArgs e)

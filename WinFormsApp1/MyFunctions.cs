@@ -35,7 +35,7 @@ namespace Napominator
         {
             if (_name == "")
                 return;
-            this.Invoke((MethodInvoker)delegate { Add_textBox_Log("s: KillProcess(): _name=" + _name, true); });
+            this.Invoke((MethodInvoker)delegate { logController.Add_textBox_Log("s: KillProcess(): _name=" + _name, true); });
             foreach (var process in Process.GetProcessesByName(_name))
             {
                 string process_username = GetProcessOwner(process.Id).Split('\\')[1];
@@ -43,7 +43,7 @@ namespace Napominator
                 if (process_username == current_username)
                 {
                     if (_add_textBox_Log)
-                        this.Invoke((MethodInvoker)delegate { Add_textBox_Log("KillProcess(): Killing start. Id = " + process.Id, true, EventLogEntryType.Warning); });
+                        this.Invoke((MethodInvoker)delegate { logController.Add_textBox_Log("KillProcess(): Killing start. Id = " + process.Id, true, EventLogEntryType.Warning); });
                     try
                     {
                         //System.Diagnostics.Process.Start ("taskkill.exe", "/f /im " + _name);
@@ -51,13 +51,13 @@ namespace Napominator
                     }
                     catch (Exception ex)
                     {
-                        this.Invoke((MethodInvoker)delegate { Add_textBox_Log("KillProcess(): exception: " + ex.ToString(), true, EventLogEntryType.Error); });
+                        this.Invoke((MethodInvoker)delegate { logController.Add_textBox_Log("KillProcess(): exception: " + ex.ToString(), true, EventLogEntryType.Error); });
                     }
                     if (_add_textBox_Log)
-                        this.Invoke((MethodInvoker)delegate { Add_textBox_Log("KillProcess(): Killing end: " + process.ProcessName, true); });
+                        this.Invoke((MethodInvoker)delegate { logController.Add_textBox_Log("KillProcess(): Killing end: " + process.ProcessName, true); });
                 }
             }
-            this.Invoke((MethodInvoker)delegate { Add_textBox_Log("e: KillProcess(): _name=" + _name, true); });
+            this.Invoke((MethodInvoker)delegate { logController.Add_textBox_Log("e: KillProcess(): _name=" + _name, true); });
         }
         private void DisableControls(Control con)
         {
@@ -192,48 +192,6 @@ namespace Napominator
             }
             return foundany;
         }
-        void Add_textBox_Log(string _text, bool _writeToLogFileOrRegistry = true, EventLogEntryType _mode = EventLogEntryType.Information)
-        {
-            string timeStr = DateTime.Now.ToString("dd-MM-yyyy") + " " + DateTime.Now.ToLongTimeString() + ": ";
-
-            if (_writeToLogFileOrRegistry)
-            {
-                WriteToRegistryLog(_text, _mode, USERNAME);
-                string filename = "log-" + USERNAME + ".txt";
-                try
-                {
-                    var file = File.AppendText(filename);
-                    file.AutoFlush = false;
-                    file.WriteLine(timeStr + _text);
-                    file.Close();
-                }
-                catch (Exception e) 
-                {
-                    WriteToRegistryLog(USERNAME + " " + e.ToString(), EventLogEntryType.Error, USERNAME);
-                }
-            }
-
-            if (textBox_Log.Lines.Count() > 100)
-                textBox_Log.Text = "";
-
-            textBox_Log.Text = textBox_Log.Text + timeStr + _text + Environment.NewLine;
-            textBox_Log.SelectionStart = textBox_Log.Text.Length;
-            textBox_Log.SelectionLength = 0;
-            textBox_Log.ScrollToCaret();
-        }
-        static void WriteToRegistryLog(string _text, EventLogEntryType _mode, string _USERNAME)
-        {
-            EventLog eventLog = new EventLog();
-
-            if (!EventLog.Exists("NAPOMINATOR")) // RUN AS ADMIN FIRST TIME
-            {
-                MessageBox.Show(" RUN AS ADMIN FIRST TIME to allow create EventLog.CreateEventSource(NAPOMINATOR)");
-                EventLog.CreateEventSource("NAPOMINATOR", "NAPOMINATOR");
-            }
-            eventLog.Source = "NAPOMINATOR";
-
-            eventLog.WriteEntry(_USERNAME + " : " + _text, _mode, 1, 1);
-        }
         string GetActiveWindowTitle()
         {
             const int nChars = 256;
@@ -267,7 +225,7 @@ namespace Napominator
             }
             catch (Exception)
             {
-                this.Invoke((MethodInvoker)delegate { Add_textBox_Log("err: GetProcessOwner(): processId=" + processId.ToString(), true); });
+                this.Invoke((MethodInvoker)delegate { logController.Add_textBox_Log("err: GetProcessOwner(): processId=" + processId.ToString(), true); });
                 return "ERR_DOMAIN\\ERR_OWNER";
             }
 
