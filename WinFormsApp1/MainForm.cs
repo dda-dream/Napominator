@@ -47,10 +47,6 @@ namespace Napominator
         public MainForm()
         {
             InitializeComponent();
-            logController.Add_textBox_Log("Started. initial version created at 29.12.2022 11:50");
-            logController.Add_textBox_Log("NAPOMINATOR MainForm()");
-            logController.Add_textBox_Log($"Exec FileName : {System.IO.Path.GetFileName(Application.ExecutablePath)}");
-
             GlobalMouseHook.OnMouseClick += CaptureScreenshotByMouseClick;
             GlobalMouseHook.Start();
         }
@@ -529,6 +525,12 @@ namespace Napominator
         private void Form1_Shown(object sender, EventArgs e)
         {
             USERNAME = username2USERNAME(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1]);
+            logController = LogController.GetInstance(textBox_Log, USERNAME);
+
+            logController.Add_textBox_Log("Started. initial version created at 29.12.2022 11:50");
+            logController.Add_textBox_Log("NAPOMINATOR MainForm()");
+            logController.Add_textBox_Log($"Exec FileName : {System.IO.Path.GetFileName(Application.ExecutablePath)}");
+
 
             logController.Add_textBox_Log("NAPOMINATOR version:"+__VERSION);
             logController.Add_textBox_Log("ReadSettingFile() executed", false);
@@ -549,7 +551,6 @@ namespace Napominator
             if (!tmpUser.Contains("d") )
                 StartTimer();
 
-            logController = LogController.GetInstance(textBox_Log, USERNAME);
 
         }
 
