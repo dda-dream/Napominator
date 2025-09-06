@@ -34,7 +34,7 @@ namespace Napominator
         //====================================
 
 
-        const string __VERSION = "21.05.2025";
+        const string __VERSION = "06.09.2025";
         Boolean allowFormClose = false;
         string USERNAME="";
 
