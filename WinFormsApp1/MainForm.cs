@@ -331,11 +331,12 @@ namespace Napominator
             prev_curWinTitle = curWinTitle;
 
             if (DateTime.Now > lastReadSettingsFile.AddSeconds(59))
-            {
+            {   // reread setting file every 59 seconds
                 lastReadSettingsFile = DateTime.Now;
                 ReadSettingFile();
             }
 
+            // периодичность проверки 
             if (DateTime.Now > lastExec_Tick.AddSeconds(Int32.Parse(textBox_Period.Text)))
                 lastExec_Tick = DateTime.Now;
             else
