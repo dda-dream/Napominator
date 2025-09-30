@@ -2,7 +2,7 @@
 using NAudio.Wave;
 using System.Diagnostics;
 using System.Drawing.Imaging;
-using System.Management;
+//using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
@@ -36,12 +36,12 @@ namespace Napominator
 
         const string __VERSION = "06.09.2025";
         Boolean allowFormClose = false;
-        string USERNAME="";
+        string USERNAME = "";
 
         static WaveIn? audioSource;
         double soundLevel;
         double continuousBig;
-        double shuminatorCount = 0, tot_shuminatorCount=0;
+        double shuminatorCount = 0, tot_shuminatorCount = 0;
         static bool messageShown = false;
 
         public MainForm()
@@ -60,7 +60,7 @@ namespace Napominator
         bool Start_NoiseDetector_executing = false;
         public void Start_NoiseDetector()
         {
-            if(GetStringFromSettings("[Shuminator_Enabled]")=="0")
+            if (GetStringFromSettings("[Shuminator_Enabled]") == "0")
                 return;
 
             if (Start_NoiseDetector_executing == true)
@@ -72,7 +72,7 @@ namespace Napominator
             try
             {
                 //device = new MMDeviceEnumerator().GetDefaultAudioEndpoint(DataFlow.Capture, Role.Multimedia);
-                var devices = new MMDeviceEnumerator().EnumerateAudioEndPoints(DataFlow.Capture,DeviceState.Active);
+                var devices = new MMDeviceEnumerator().EnumerateAudioEndPoints(DataFlow.Capture, DeviceState.Active);
                 foreach (var devitem in devices)
                 {
                     logController.Add_textBox_Log("Microphone name:" + devitem.FriendlyName + " mic level" + devitem.AudioEndpointVolume.MasterVolumeLevelScalar);
@@ -82,7 +82,7 @@ namespace Napominator
                 if (device is null)
                     throw new Exception("No microphone detected.");
 
-                logController.Add_textBox_Log("Microphone selected. Name:" + device.FriendlyName + " mic level"+ device.AudioEndpointVolume.MasterVolumeLevelScalar);
+                logController.Add_textBox_Log("Microphone selected. Name:" + device.FriendlyName + " mic level" + device.AudioEndpointVolume.MasterVolumeLevelScalar);
 
                 audioSource = new WaveIn();
                 audioSource.DataAvailable += new EventHandler<WaveInEventArgs>(Microphone_DataAvailable);
@@ -98,7 +98,7 @@ namespace Napominator
                 {
                     logController.Add_textBox_Log("Подключи микрофон!");
                     ShuminatorPlaySoundWarning("podkluchi_microfon.mp3", false);
-                    Show_Message_To_Polina("ПОДКЛЮЧИ МИКРОФОН! \n СЧИТАЮ ДО 0-ля! "+ count_NoMicrophoneDetected.ToString(), "ПОДКЛЮЧИ МИКРОФОН!", true, false, false, 5);
+                    Show_Message_To_Polina("ПОДКЛЮЧИ МИКРОФОН! \n СЧИТАЮ ДО 0-ля! " + count_NoMicrophoneDetected.ToString(), "ПОДКЛЮЧИ МИКРОФОН!", true, false, false, 5);
                     count_NoMicrophoneDetected--;
                     if (count_NoMicrophoneDetected == 0)
                     {
@@ -111,7 +111,7 @@ namespace Napominator
             Start_NoiseDetector_executing = false;
             logController.Add_textBox_Log("e: Start_NoiseDetector()");
         }
-                    
+
 
         bool microphone_DataAvailable_wait = false;
         DateTime microphone_DataAvailable_nextExec = DateTime.MinValue;
@@ -123,7 +123,7 @@ namespace Napominator
                 LockWorkStation();
             }
 
-            
+
             if (messageShown == true)
                 return;
             if (microphone_DataAvailable_wait == true)
@@ -131,26 +131,30 @@ namespace Napominator
                 if (DateTime.Now > microphone_DataAvailable_nextExec)
                 {
                     microphone_DataAvailable_wait = false;
-                } else {
+                }
+                else
+                {
                     return;
                 }
             }
-            
+
             double prevcontinuousBig = continuousBig;
             for (int index = 0; index < e.BytesRecorded; index += 2)
             {
                 soundLevel = (short)((e.Buffer[index + 1] << 8) | e.Buffer[index + 0]) / 32768f;
-                
+
                 if (continuousBig < soundLevel)
                     continuousBig = soundLevel;
             }
 
             if (continuousBig > prevcontinuousBig)
             {
-                this.Invoke((MethodInvoker)delegate { logController.Add_textBox_Log("SHUMINATOR soundlevel up: " + continuousBig.ToString("N6"), true);
+                this.Invoke((MethodInvoker)delegate
+                {
+                    logController.Add_textBox_Log("SHUMINATOR soundlevel up: " + continuousBig.ToString("N6"), true);
                     //notifyIcon1.BalloonTipText = "SHUMINATOR soundlevel up: " + continuousBig.ToString("N6");
                     //notifyIcon1.ShowBalloonTip(1000);
-                    });            
+                });
             }
 
             double maxNoiseLevel = GetDoubleFromSettings("[ShuminatorPlaySoundWarning_MaxNoiseLevel]");
@@ -159,15 +163,16 @@ namespace Napominator
 
             if (continuousBig >= maxNoiseLevel)
             {
-                logController.Add_textBox_Log("Microphone name:" + device.FriendlyName + " level:"+ device.AudioEndpointVolume.MasterVolumeLevelScalar);
+                logController.Add_textBox_Log("Microphone name:" + device.FriendlyName + " level:" + device.AudioEndpointVolume.MasterVolumeLevelScalar);
                 shuminatorCount++;
                 tot_shuminatorCount++;
                 messageShown = true;
 
-                this.Invoke((MethodInvoker)delegate { 
+                this.Invoke((MethodInvoker)delegate
+                {
                     logController.Add_textBox_Log("SHUMINATOR FIRED at soundLevel: " + levelsStr, true, EventLogEntryType.Warning);
-                    logController.Add_textBox_Log("Microphone name:" + device.FriendlyName + " mic level" + device.AudioEndpointVolume.MasterVolumeLevelScalar, true, EventLogEntryType.Warning );
-                    });
+                    logController.Add_textBox_Log("Microphone name:" + device.FriendlyName + " mic level" + device.AudioEndpointVolume.MasterVolumeLevelScalar, true, EventLogEntryType.Warning);
+                });
 
                 if (/*Get photo from cam*/1 == 1)
                 {
@@ -184,7 +189,7 @@ namespace Napominator
                 if (GetDoubleFromSettings("[Show_Message_To_Polina]") == 1)
                 {
                     if (USERNAME.Contains("d"))
-                        Show_Message_To_Polina("НЕ ШУМИ!!! \n ДАЙ ПОСПАТЬ!!!", "НЕ ШУМИ!!! " + levelsStr, true,  true, false, 15);
+                        Show_Message_To_Polina("НЕ ШУМИ!!! \n ДАЙ ПОСПАТЬ!!!", "НЕ ШУМИ!!! " + levelsStr, true, true, false, 15);
                     else
                         Show_Message_To_Polina("НЕ ШУМИ!!! \n ДАЙ ПОСПАТЬ!!!", "НЕ ШУМИ!!! " + levelsStr, true, false, false, 15);
                 }
@@ -246,9 +251,10 @@ namespace Napominator
                 waveOut0.Init(reader0);
                 waveOut0.Play();
                 waveOut0.PlaybackStopped += WaveOut0_PlaybackStopped;
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-                LogController.WriteToRegistryLog("ShuminatorPlaySoundWarning: "+ex.ToString() , EventLogEntryType.Error, "NO_USERNAME");
+                LogController.WriteToRegistryLog("ShuminatorPlaySoundWarning: " + ex.ToString(), EventLogEntryType.Error, "NO_USERNAME");
             }
         }
         private static void WaveOut1_PlaybackStopped(object? sender, NAudio.Wave.StoppedEventArgs e)
@@ -286,7 +292,7 @@ namespace Napominator
             }
             catch { }
         }
-        public static void FillArray(double[,] array, double _fillValue=0)
+        public static void FillArray(double[,] array, double _fillValue = 0)
         {
             for (int i = 0; i < array.GetLength(0); i++)
             {
@@ -298,7 +304,7 @@ namespace Napominator
         }
         void Microphone_RecordingStopped(object? sender, NAudio.Wave.StoppedEventArgs e)
         {
-            this.Invoke((MethodInvoker) delegate { logController.Add_textBox_Log("microphone_RecordingStopped!!!!!!!!! ", true, EventLogEntryType.Error); });
+            this.Invoke((MethodInvoker)delegate { logController.Add_textBox_Log("microphone_RecordingStopped!!!!!!!!! ", true, EventLogEntryType.Error); });
             audioSource.Dispose();
             audioSource = null;
         }
@@ -316,7 +322,7 @@ namespace Napominator
                 timer1.Start();
                 button_StartStop.Text = "Stop";
 
-                if(USERNAME!="d")
+                if (USERNAME != "d")
                     DisableControls(this);
 
                 notifyIcon1.Icon = Napominator.Properties.Resources.Icon1;
@@ -326,7 +332,9 @@ namespace Napominator
                         Start_NoiseDetector();
 
                 Hide();
-            } else {
+            }
+            else
+            {
                 logController.Add_textBox_Log("Stopped");
                 timer1.Stop();
                 button_StartStop.Text = "Start";
@@ -337,8 +345,29 @@ namespace Napominator
             logController.Add_textBox_Log("startTimer()-exit from func");
         }
 
+        void Persona_StartTimer()
+        {
+            if (btnPersonalTimerStartStop.Text == "START")
+            {
+                if (int.TryParse(textBox_PersonalPeriod.Text, out int secondsToStop))
+                {
+                    timer_Personal.Interval = 1000 * secondsToStop;
+                    timer_Personal.Start();
+                    btnPersonalTimerStartStop.Text = "STOP";
+                    logController.Add_textBox_Log($"Personal timer started for {secondsToStop} sec.");
+                }
+            }
+            else
+            {
+                logController.Add_textBox_Log("Personal timer stopped.");
+                timer_Personal.Stop();
+                btnPersonalTimerStartStop.Text = "START";
+            }
+        }
+
+
         string prev_curWinTitle = "";
-        DateTime lastExec_Tick=DateTime.MinValue;
+        DateTime lastExec_Tick = DateTime.MinValue;
         DateTime lastReadSettingsFile = DateTime.MinValue;
         bool executing_Tick = false;
         private void Timer1_Tick(object sender, EventArgs e)
@@ -400,7 +429,7 @@ namespace Napominator
                     timeAllowed = ((dt_from > dt_to) && (DateTime.Now > dt_to));
                 if (timeAllowed)
                 {//разрешенное время
-                    if( GetDoubleFromSettings("[BlockChrome]")==1 )
+                    if (GetDoubleFromSettings("[BlockChrome]") == 1)
                         if (curWinTitle.Contains("chrome") || curWinTitle.Contains("edge") || curWinTitle.Contains("firefox"))
                         {
                             bool foundany = curWinTitle == "" || CheckStringContainsInList(curWinTitle, GetStringFromSettings("[ExcludeFromBlock]"));
@@ -408,7 +437,7 @@ namespace Napominator
                                 Show_Message_To_Polina("BlockChrome" + Parse_NotifyText(), "НАПОМИНАТОР! BlockChrome " + curWinTitle);
                         }
 
-                    if ( GetDoubleFromSettings("[BlockTotal]")==1 )
+                    if (GetDoubleFromSettings("[BlockTotal]") == 1)
                         Show_Message_To_Polina("TotalBlock" + Parse_NotifyText(), "НАПОМИНАТОР! TotalBlock " + curWinTitle);
                 }
                 else
@@ -418,7 +447,7 @@ namespace Napominator
                         Show_Message_To_Polina("Allowed time from " + dt_from.ToShortTimeString() + " to " + dt_to.ToShortTimeString() + Parse_NotifyText(), "НАПОМИНАТОР! Allowed time " + curWinTitle);
                 }
                 //блок по списку
-                if( CheckStringContainsInList(curWinTitle, GetStringFromSettings("[Blocklist]")) )
+                if (CheckStringContainsInList(curWinTitle, GetStringFromSettings("[Blocklist]")))
                     Show_Message_To_Polina("BlockList", "НАПОМИНАТОР! BlockList " + curWinTitle);
             }
             else
@@ -426,7 +455,7 @@ namespace Napominator
              //блок по списку
                 if (checkBox_Mama.Checked == true)
                 {
-                    if(GetDoubleFromSettings("[DisableNotify]") == 0)
+                    if (GetDoubleFromSettings("[DisableNotify]") == 0)
                         if (CheckStringContainsInList(curWinTitle, GetStringFromSettings("[Blocklist]")))
                             Show_Message_To_Polina("BlockList" + Parse_NotifyText(), "НАПОМИНАТОР! BlockList " + curWinTitle);
 
@@ -452,7 +481,7 @@ namespace Napominator
             Message_To_Polina.Set_DontCloseWindow(_dontCloseWindow);
             Message_To_Polina.ShowDialog();
             Message_To_Polina.Focus();
-            if(_write_textBox_Log)
+            if (_write_textBox_Log)
                 logController.Add_textBox_Log("Block by " + _messageToShow, true);
         }
         private void NotifyIcon1_DoubleClick(object sender, EventArgs e)
@@ -525,6 +554,11 @@ namespace Napominator
         private void Form1_Shown(object sender, EventArgs e)
         {
             USERNAME = username2USERNAME(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1]);
+            //TODO: debug
+            //USERNAME = "d";
+            //TODO: debug
+
+
             logController = LogController.GetInstance(textBox_Log, USERNAME);
 
             logController.Add_textBox_Log("Started. initial version created at 29.12.2022 11:50");
@@ -532,7 +566,7 @@ namespace Napominator
             logController.Add_textBox_Log($"Exec FileName : {System.IO.Path.GetFileName(Application.ExecutablePath)}");
 
 
-            logController.Add_textBox_Log("NAPOMINATOR version:"+__VERSION);
+            logController.Add_textBox_Log("NAPOMINATOR version:" + __VERSION);
             logController.Add_textBox_Log("ReadSettingFile() executed", false);
 
             //HACK: Если нужно запустить под другим пользователем, то менять тут.
@@ -548,7 +582,7 @@ namespace Napominator
                 checkBox_Polina.Checked = true;
 
             string tmpUser = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
-            if (!tmpUser.Contains("d") )
+            if (!tmpUser.Contains("d"))
                 StartTimer();
 
 
@@ -561,6 +595,18 @@ namespace Napominator
                 notifyIcon1.Icon = Napominator.Properties.Resources.Icon1;
                 Hide();
             }
+        }
+
+        private void btnPersonalTimerStartStop_Click(object sender, EventArgs e)
+        {
+            Persona_StartTimer();
+        }
+
+        private void timer_Personal_Tick(object sender, EventArgs e)
+        {
+            Persona_StartTimer();
+            Show_Message_To_Polina($"Personal timer DONE.", "Personal timer message.");
+            
         }
     }
 }
