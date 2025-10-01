@@ -1,7 +1,10 @@
 ﻿using NAudio.CoreAudioApi;
 using NAudio.Wave;
+using System.Data;
 using System.Diagnostics;
 using System.Drawing.Imaging;
+using System.Linq.Expressions;
+
 //using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -345,25 +348,7 @@ namespace Napominator
             logController.Add_textBox_Log("startTimer()-exit from func");
         }
 
-        void Persona_StartTimer()
-        {
-            if (btnPersonalTimerStartStop.Text == "START")
-            {
-                if (int.TryParse(textBox_PersonalPeriod.Text, out int secondsToStop))
-                {
-                    timer_Personal.Interval = 1000 * secondsToStop;
-                    timer_Personal.Start();
-                    btnPersonalTimerStartStop.Text = "STOP";
-                    logController.Add_textBox_Log($"Personal timer started for {secondsToStop} sec.");
-                }
-            }
-            else
-            {
-                logController.Add_textBox_Log("Personal timer stopped.");
-                timer_Personal.Stop();
-                btnPersonalTimerStartStop.Text = "START";
-            }
-        }
+
 
 
         string prev_curWinTitle = "";
@@ -597,6 +582,40 @@ namespace Napominator
             }
         }
 
+
+
+        int personalTimes_secondsToStop;
+        void Persona_StartTimer()
+        {
+            if (btnPersonalTimerStartStop.Text == "START")
+            {
+                try
+                {
+                    var table = new DataTable();
+                    personalTimes_secondsToStop = (int)table.Compute(textBox_PersonalPeriod.Text, null);
+                }
+                catch {
+                    textBox_PersonalPeriod.Text = "5";
+                    return;
+                }
+                if (personalTimes_secondsToStop <= 1)
+                {
+                    textBox_PersonalPeriod.Text = "5";
+                    return;
+                }
+
+                timer_Personal.Interval = 1000;
+                timer_Personal.Start();
+                btnPersonalTimerStartStop.Text = "STOP";
+                logController.Add_textBox_Log($"Personal timer started for {personalTimes_secondsToStop} sec.");
+            }
+            else
+            {
+                logController.Add_textBox_Log("Personal timer stopped.");
+                timer_Personal.Stop();
+                btnPersonalTimerStartStop.Text = "START";
+            }
+        }
         private void btnPersonalTimerStartStop_Click(object sender, EventArgs e)
         {
             Persona_StartTimer();
@@ -604,8 +623,14 @@ namespace Napominator
 
         private void timer_Personal_Tick(object sender, EventArgs e)
         {
+            if (personalTimes_secondsToStop > 0)
+            {
+                personalTimes_secondsToStop--;
+                btnPersonalTimerStartStop.Text = personalTimes_secondsToStop.ToString();
+                return;
+            }
             Persona_StartTimer();
-            Show_Message_To_Polina($"Personal timer DONE.", "Personal timer message.");
+            Show_Message_To_Polina($"Personal timer DONE.", $"Personal timer message Alert. Seconds: {textBox_PersonalPeriod.Text}", false, true);
             
         }
     }
