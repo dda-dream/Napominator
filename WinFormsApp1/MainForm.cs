@@ -37,7 +37,7 @@ namespace Napominator
         //====================================
 
 
-        const string __VERSION = "06.09.2025";
+        const string __VERSION = "ver 02.10.2025";
         Boolean allowFormClose = false;
         string USERNAME = "";
 
@@ -594,7 +594,8 @@ namespace Napominator
                     var table = new DataTable();
                     personalTimes_secondsToStop = (int)table.Compute(textBox_PersonalPeriod.Text, null);
                 }
-                catch {
+                catch
+                {
                     textBox_PersonalPeriod.Text = "5";
                     return;
                 }
@@ -630,8 +631,13 @@ namespace Napominator
                 return;
             }
             Persona_StartTimer();
-            Show_Message_To_Polina($"Personal timer DONE.", $"Personal timer message Alert. Seconds: {textBox_PersonalPeriod.Text}", false, true);
-            
+            Show_Message_To_Polina( $"Personal timer message: {textBox_PersonalPeriodText.Text}.\n Прошедшее время в секундах: {textBox_PersonalPeriod.Text}", $"Personal timer DONE.", false, true);
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
