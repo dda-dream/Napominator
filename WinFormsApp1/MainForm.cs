@@ -550,14 +550,13 @@ namespace Napominator
             logController.Add_textBox_Log("NAPOMINATOR MainForm()");
             logController.Add_textBox_Log($"Exec FileName : {System.IO.Path.GetFileName(Application.ExecutablePath)}");
 
-
             logController.Add_textBox_Log("NAPOMINATOR version:" + __VERSION);
+            ReadSettingFile();
             logController.Add_textBox_Log("ReadSettingFile() executed", false);
 
             //HACK: Если нужно запустить под другим пользователем, то менять тут.
             //USERNAME = "i";
 
-            ReadSettingFile();
 
             if (USERNAME == "i")
                 checkBox_Mama.Checked = true;
