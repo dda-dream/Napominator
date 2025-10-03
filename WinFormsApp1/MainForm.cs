@@ -631,7 +631,7 @@ namespace Napominator
                 return;
             }
             Persona_StartTimer();
-            Show_Message_To_Polina( $"Personal timer message: {textBox_PersonalPeriodText.Text}.\n Прошедшее время в секундах: {textBox_PersonalPeriod.Text}", $"Personal timer DONE.", false, true);
+            Show_Message_To_Polina( $"Message: {textBox_PersonalPeriodText.Text}.\n Прошедшее время в секундах: {textBox_PersonalPeriod.Text}", $"Personal timer DONE.", false, true);
 
         }
 
