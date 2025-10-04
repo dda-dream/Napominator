@@ -37,7 +37,18 @@ namespace Napominator
         //====================================
 
 
-        const string __VERSION = "ver 02.10.2025";
+        [DllImport("user32.dll")]
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        private const int SW_RESTORE = 9;
+
+
+
+
+        const string __VERSION = "ver 04.10.2025";
         Boolean allowFormClose = false;
         string USERNAME = "";
 
@@ -471,7 +482,16 @@ namespace Napominator
         }
         private void NotifyIcon1_DoubleClick(object sender, EventArgs e)
         {
-            Show();
+            // если свернуто — восстанавливаем
+            if (this.WindowState == FormWindowState.Minimized)
+                ShowWindow(this.Handle, SW_RESTORE);
+
+            // показываем (если скрыта)
+            this.Show();
+
+            // активируем
+            this.Activate();
+            SetForegroundWindow(this.Handle);
         }
         private void CheckBox_Polina_CheckedChanged(object? sender, EventArgs e)
         {
