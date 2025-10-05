@@ -634,6 +634,7 @@ namespace Napominator
                 logController.Add_textBox_Log("Personal timer stopped.");
                 timer_Personal.Stop();
                 btnPersonalTimerStartStop.Text = "START";
+                notifyIcon1.Text = ".Napominator.";
             }
         }
         private void btnPersonalTimerStartStop_Click(object sender, EventArgs e)
