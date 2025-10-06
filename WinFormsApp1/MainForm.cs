@@ -48,7 +48,7 @@ namespace Napominator
 
 
 
-        const string __VERSION = "ver 04.10.2025";
+        const string __VERSION = "ver 06.10.2025";
         Boolean allowFormClose = false;
         string USERNAME = "";
 
@@ -648,7 +648,7 @@ namespace Napominator
             {
                 personalTimes_secondsToStop--;
                 btnPersonalTimerStartStop.Text = personalTimes_secondsToStop.ToString();
-                notifyIcon1.Text = $"Осталось: секунд {personalTimes_secondsToStop.ToString()} минут: {((int)(personalTimes_secondsToStop/60)).ToString()}";
+                notifyIcon1.Text = $"Осталось: в секундах {personalTimes_secondsToStop.ToString()} или в минутах: {((int)(personalTimes_secondsToStop/60)).ToString()}";
                 return;
             }
             Persona_StartTimer();
