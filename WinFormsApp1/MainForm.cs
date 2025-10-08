@@ -635,6 +635,7 @@ namespace Napominator
                 timer_Personal.Stop();
                 btnPersonalTimerStartStop.Text = "START";
                 notifyIcon1.Text = ".Napominator.";
+                this.Text = ".Napominator."; 
             }
         }
         private void btnPersonalTimerStartStop_Click(object sender, EventArgs e)
@@ -648,7 +649,9 @@ namespace Napominator
             {
                 personalTimes_secondsToStop--;
                 btnPersonalTimerStartStop.Text = personalTimes_secondsToStop.ToString();
-                notifyIcon1.Text = $"Осталось: в секундах {personalTimes_secondsToStop.ToString()} или в минутах: {((int)(personalTimes_secondsToStop/60)).ToString()}";
+                string _ = $"Осталось: в секундах {personalTimes_secondsToStop.ToString()} или в минутах: {((int)(personalTimes_secondsToStop / 60)).ToString()}";
+                notifyIcon1.Text = _;
+                this.Text = _;
                 return;
             }
             Persona_StartTimer();
