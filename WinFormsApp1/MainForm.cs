@@ -59,10 +59,11 @@ namespace Napominator
         static bool messageShown = false;
 
         public MainForm()
-        {
+        { 
             InitializeComponent();
             GlobalMouseHook.OnMouseClick += CaptureScreenshotByMouseClick;
             GlobalMouseHook.Start();
+            
         }
 
 
@@ -588,8 +589,6 @@ namespace Napominator
             string tmpUser = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
             if (!tmpUser.Contains("d"))
                 StartTimer();
-
-
         }
 
         private void Form1_Resize(object sender, EventArgs e)
