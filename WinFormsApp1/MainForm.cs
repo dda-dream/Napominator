@@ -48,7 +48,7 @@ namespace Napominator
 
 
 
-        const string __VERSION = "ver 06.10.2025";
+        const string __VERSION = "ver 15.11.2025";
         Boolean allowFormClose = false;
         string USERNAME = "";
 
@@ -59,11 +59,11 @@ namespace Napominator
         static bool messageShown = false;
 
         public MainForm()
-        { 
+        {
             InitializeComponent();
             GlobalMouseHook.OnMouseClick += CaptureScreenshotByMouseClick;
             GlobalMouseHook.Start();
-            
+
         }
 
 
@@ -634,7 +634,7 @@ namespace Napominator
                 timer_Personal.Stop();
                 btnPersonalTimerStartStop.Text = "START";
                 notifyIcon1.Text = ".Napominator.";
-                this.Text = ".Napominator."; 
+                this.Text = ".Napominator.";
             }
         }
         private void btnPersonalTimerStartStop_Click(object sender, EventArgs e)
@@ -654,13 +654,20 @@ namespace Napominator
                 return;
             }
             Persona_StartTimer();
-            Show_Message_To_Polina( $"Message: {textBox_PersonalPeriodText.Text}.\n Прошедшее время в секундах: {textBox_PersonalPeriod.Text}", $"Personal timer DONE.", false, true);
+            Show_Message_To_Polina($"Message: {textBox_PersonalPeriodText.Text}.\n Прошедшее время в секундах: {textBox_PersonalPeriod.Text}", $"Personal timer DONE.", false, true);
 
         }
 
-        private void label3_Click(object sender, EventArgs e)
-        {
 
+
+
+
+        private async void btn_IPInfo_Click(object sender, EventArgs e)
+        {
+            string proxy = "http://192.168.5.42:8888";
+            var ipInfoData = await new IpInfo(proxy).Process();
+            logController.Add_textBox_Log($"IP detecting with proxy:{proxy}");
+            logController.Add_textBox_Log($"IP: {ipInfoData.query} - {ipInfoData.countryCode} - {ipInfoData.country}");
         }
     }
 }

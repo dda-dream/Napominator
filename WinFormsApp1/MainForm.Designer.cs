@@ -34,9 +34,6 @@
             timer1 = new System.Windows.Forms.Timer(components);
             notifyIcon1 = new NotifyIcon(components);
             groupBox1 = new GroupBox();
-            btnPersonalTimerStartStop = new Button();
-            textBox_PersonalPeriod = new TextBox();
-            label8 = new Label();
             textBox_Period = new TextBox();
             label6 = new Label();
             label5 = new Label();
@@ -52,10 +49,14 @@
             textBox_NotifyText = new TextBox();
             checkBox_Polina = new CheckBox();
             groupBox2 = new GroupBox();
+            textBox_PersonalPeriod = new TextBox();
+            textBox_PersonalPeriodText = new TextBox();
+            label8 = new Label();
+            btnPersonalTimerStartStop = new Button();
             label7 = new Label();
             tb_noiselevel = new TextBox();
             timer_Personal = new System.Windows.Forms.Timer(components);
-            textBox_PersonalPeriodText = new TextBox();
+            btn_IPInfo = new Button();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             SuspendLayout();
@@ -112,34 +113,6 @@
             groupBox1.TabIndex = 2;
             groupBox1.TabStop = false;
             groupBox1.Text = "Параметры";
-            // 
-            // btnPersonalTimerStartStop
-            // 
-            btnPersonalTimerStartStop.Location = new Point(216, 15);
-            btnPersonalTimerStartStop.Name = "btnPersonalTimerStartStop";
-            btnPersonalTimerStartStop.Size = new Size(86, 24);
-            btnPersonalTimerStartStop.TabIndex = 19;
-            btnPersonalTimerStartStop.Text = "START";
-            btnPersonalTimerStartStop.UseVisualStyleBackColor = true;
-            btnPersonalTimerStartStop.Click += btnPersonalTimerStartStop_Click;
-            // 
-            // textBox_PersonalPeriod
-            // 
-            textBox_PersonalPeriod.Location = new Point(137, 16);
-            textBox_PersonalPeriod.Name = "textBox_PersonalPeriod";
-            textBox_PersonalPeriod.Size = new Size(73, 23);
-            textBox_PersonalPeriod.TabIndex = 17;
-            textBox_PersonalPeriod.Text = "5";
-            textBox_PersonalPeriod.TextAlign = HorizontalAlignment.Center;
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Location = new Point(6, 19);
-            label8.Name = "label8";
-            label8.Size = new Size(125, 15);
-            label8.TabIndex = 16;
-            label8.Text = "Личный таймер в сек";
             // 
             // textBox_Period
             // 
@@ -225,7 +198,6 @@
             label3.Size = new Size(115, 15);
             label3.TabIndex = 7;
             label3.Text = "Текст напоминания";
-            label3.Click += label3_Click;
             // 
             // textBox_NotifyLenght
             // 
@@ -289,6 +261,45 @@
             groupBox2.TabStop = false;
             groupBox2.Text = "Дополнительный таймер";
             // 
+            // textBox_PersonalPeriod
+            // 
+            textBox_PersonalPeriod.Location = new Point(137, 16);
+            textBox_PersonalPeriod.Name = "textBox_PersonalPeriod";
+            textBox_PersonalPeriod.Size = new Size(73, 23);
+            textBox_PersonalPeriod.TabIndex = 17;
+            textBox_PersonalPeriod.Text = "5";
+            textBox_PersonalPeriod.TextAlign = HorizontalAlignment.Center;
+            // 
+            // textBox_PersonalPeriodText
+            // 
+            textBox_PersonalPeriodText.Font = new Font("Segoe UI", 8.25F);
+            textBox_PersonalPeriodText.Location = new Point(6, 40);
+            textBox_PersonalPeriodText.Multiline = true;
+            textBox_PersonalPeriodText.Name = "textBox_PersonalPeriodText";
+            textBox_PersonalPeriodText.ScrollBars = ScrollBars.Vertical;
+            textBox_PersonalPeriodText.Size = new Size(582, 43);
+            textBox_PersonalPeriodText.TabIndex = 21;
+            textBox_PersonalPeriodText.Text = "Что делать?";
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(6, 19);
+            label8.Name = "label8";
+            label8.Size = new Size(125, 15);
+            label8.TabIndex = 16;
+            label8.Text = "Личный таймер в сек";
+            // 
+            // btnPersonalTimerStartStop
+            // 
+            btnPersonalTimerStartStop.Location = new Point(216, 15);
+            btnPersonalTimerStartStop.Name = "btnPersonalTimerStartStop";
+            btnPersonalTimerStartStop.Size = new Size(86, 24);
+            btnPersonalTimerStartStop.TabIndex = 19;
+            btnPersonalTimerStartStop.Text = "START";
+            btnPersonalTimerStartStop.UseVisualStyleBackColor = true;
+            btnPersonalTimerStartStop.Click += btnPersonalTimerStartStop_Click;
+            // 
             // label7
             // 
             label7.AutoSize = true;
@@ -312,22 +323,22 @@
             // 
             timer_Personal.Tick += timer_Personal_Tick;
             // 
-            // textBox_PersonalPeriodText
+            // btn_IPInfo
             // 
-            textBox_PersonalPeriodText.Font = new Font("Segoe UI", 8.25F);
-            textBox_PersonalPeriodText.Location = new Point(6, 40);
-            textBox_PersonalPeriodText.Multiline = true;
-            textBox_PersonalPeriodText.Name = "textBox_PersonalPeriodText";
-            textBox_PersonalPeriodText.ScrollBars = ScrollBars.Vertical;
-            textBox_PersonalPeriodText.Size = new Size(582, 43);
-            textBox_PersonalPeriodText.TabIndex = 21;
-            textBox_PersonalPeriodText.Text = "Что делать?";
+            btn_IPInfo.Location = new Point(1, 68);
+            btn_IPInfo.Name = "btn_IPInfo";
+            btn_IPInfo.Size = new Size(86, 23);
+            btn_IPInfo.TabIndex = 19;
+            btn_IPInfo.Text = "IP Info";
+            btn_IPInfo.UseVisualStyleBackColor = true;
+            btn_IPInfo.Click += btn_IPInfo_Click;
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(705, 456);
+            Controls.Add(btn_IPInfo);
             Controls.Add(tb_noiselevel);
             Controls.Add(label7);
             Controls.Add(groupBox1);
@@ -376,5 +387,6 @@
         private GroupBox groupBox2;
         public System.Windows.Forms.Timer timer_Personal;
         private TextBox textBox_PersonalPeriodText;
+        private Button btn_IPInfo;
     }
 }
