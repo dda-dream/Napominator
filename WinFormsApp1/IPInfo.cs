@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Text.Json;
 
 public class IpInfoData
@@ -20,7 +21,7 @@ public class IpInfo
         this.proxy = proxy;
 	}
 
-    public async Task<IpInfoData> Process()
+    public async Task<(IpInfoData, PingReply)> Process()
     {
         IpInfoData ipInfoData = new IpInfoData();
 
@@ -32,7 +33,6 @@ public class IpInfo
 
         try
         {
-            
             var h = new HttpClient(handler);
             h.Timeout = TimeSpan.FromSeconds(10);
 
@@ -53,7 +53,14 @@ public class IpInfo
             Console.WriteLine("Исключение: " + ex.Message);
         }
 
-        return ipInfoData;
+        PingReply reply;
+        using (Ping pingSender = new Ping())
+        {
+            reply = pingSender.Send(ipInfoData.query, 5000);
+        }
+
+
+        return (ipInfoData, reply);
     }
 }
 

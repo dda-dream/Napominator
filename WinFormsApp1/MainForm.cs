@@ -4,6 +4,8 @@ using System.Data;
 using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Linq.Expressions;
+using System.Net.NetworkInformation;
+
 
 //using System.Management;
 using System.Runtime.InteropServices;
@@ -665,9 +667,17 @@ namespace Napominator
         private async void btn_IPInfo_Click(object sender, EventArgs e)
         {
             string proxy = "http://192.168.5.42:8888";
-            var ipInfoData = await new IpInfo(proxy).Process();
+            var (ipInfoData, pingResult) = await new IpInfo(proxy).Process();
             logController.Add_textBox_Log($"IP detecting with proxy:{proxy}");
             logController.Add_textBox_Log($"IP: {ipInfoData.query} - {ipInfoData.countryCode} - {ipInfoData.country}");
+            if (pingResult.Status == IPStatus.Success)
+            {
+                logController.Add_textBox_Log($"Пинг успешен! Время задержки: {pingResult.RoundtripTime} мс");
+            }
+            else
+            {
+                logController.Add_textBox_Log($"Пинг неудачен. Статус: {pingResult.Status}");
+            }
         }
     }
 }
