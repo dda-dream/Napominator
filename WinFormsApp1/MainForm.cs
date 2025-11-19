@@ -652,7 +652,6 @@ namespace Napominator
                 btnPersonalTimerStartStop.Text = personalTimes_secondsToStop.ToString();
                 string _ = $"Осталось: в секундах {personalTimes_secondsToStop.ToString()} или в минутах: {((int)(personalTimes_secondsToStop / 60)).ToString()}";
                 notifyIcon1.Text = _;
-                this.Text = _;
                 return;
             }
             Persona_StartTimer();
