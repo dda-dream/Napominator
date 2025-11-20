@@ -278,7 +278,72 @@ namespace Napominator
             var codecs = ImageCodecInfo.GetImageEncoders();
             return codecs.FirstOrDefault(codec => codec.FormatID == format.Guid);
         }
+
         public void ManageFolderSize(string path, double maxFolderSizeInGB, int days)
+        {
+            try
+            {
+                if (!Directory.Exists(path))
+                    return;
+
+                long maxFolderSizeInBytes = (long)(maxFolderSizeInGB * 1024 * 1024 * 1024);
+
+                // Получаем файлы один раз и сортируем по дате создания
+                var files = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories)
+                                     .Select(f => new FileInfo(f))
+                                     .OrderBy(f => f.CreationTime)
+                                     .ToList();
+
+                // Считаем текущий размер
+                long currentFolderSize = files.Sum(f => f.Length);
+
+                // Если размер превышен, удаляем старые файлы
+                if (currentFolderSize > maxFolderSizeInBytes)
+                {
+                    DateTime cutoffDate = DateTime.Now.AddDays(-days);
+
+                    foreach (var file in files)
+                    {
+                        // Сначала удаляем файлы старше заданного количества дней
+                        if (file.CreationTime < cutoffDate)
+                        {
+                            try
+                            {
+                                file.Delete();
+                                currentFolderSize -= file.Length;
+                            }
+                            catch { /* Пропускаем файл, если не удалось удалить */ }
+                        }
+
+                        // Если размер уже в норме, выходим из цикла
+                        if (currentFolderSize <= maxFolderSizeInBytes)
+                            break;
+                    }
+
+                    // Если еще превышен размер, удаляем самые старые файлы
+                    if (currentFolderSize > maxFolderSizeInBytes)
+                    {
+                        foreach (var file in files.Where(f => f.CreationTime >= cutoffDate))
+                        {
+                            try
+                            {
+                                file.Delete();
+                                currentFolderSize -= file.Length;
+                            }
+                            catch { /* Пропускаем файл */ }
+
+                            if (currentFolderSize <= maxFolderSizeInBytes)
+                                break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                // Optionally handle or log the exception
+            }
+        }
+        public void OLD_ManageFolderSize(string path, double maxFolderSizeInGB, int days)
         {
             try
             {
@@ -299,7 +364,54 @@ namespace Napominator
                 // Optionally handle the exception or log it
             }
         }
+
         public void CaptureScreenshotByMouseClick()
+        {
+            // Запустить в фоновом потоке, чтобы не блокировать UI
+            Task.Run(() => CaptureScreenshotAsync());
+        }
+
+        private void CaptureScreenshotAsync()
+        {
+            string dirToStore = @"C:\NAPOMINATOR\screenshots";
+            try
+            {
+                long JpgScreenshotsDirSizeInGb = (long)GetDoubleFromSettings("[JpgScreenshotsDirSizeInGb]");
+                JpgScreenshotsDirSizeInGb = JpgScreenshotsDirSizeInGb == 0 ? 1 : JpgScreenshotsDirSizeInGb;
+                //ManageFolderSize(dirToStore, JpgScreenshotsDirSizeInGb, 7);
+                Task.Run(() => ManageFolderSize(dirToStore, JpgScreenshotsDirSizeInGb, 7));
+
+                int screenWidth = 0, screenHeight = 0;
+                if (Screen.PrimaryScreen != null)
+                    (screenWidth, screenHeight) = (Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
+
+                using (Bitmap bitmap = new Bitmap(screenWidth, screenHeight))
+                {
+                    using (Graphics g = Graphics.FromImage(bitmap))
+                    {
+                        g.CopyFromScreen(0, 0, 0, 0, bitmap.Size);
+                    }
+
+                    long jpgQuality = (long)GetDoubleFromSettings("[JpgQuality]");
+                    if (jpgQuality < 1)
+                        return;
+
+                    string filePath = $@"C:\NAPOMINATOR\screenshots\{USERNAME}_scr_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
+                    if (!System.IO.Directory.Exists(dirToStore))
+                        System.IO.Directory.CreateDirectory(dirToStore);
+
+                    using (EncoderParameters encoderParameters = new EncoderParameters(1))
+                    {
+                        encoderParameters.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, jpgQuality);
+                        ImageCodecInfo jpegCodec = GetEncoder(ImageFormat.Jpeg);
+                        bitmap.Save(filePath, jpegCodec, encoderParameters);
+                    }
+                }
+            }
+            catch { }
+        }
+
+        public void DEL_CaptureScreenshotByMouseClick()
         {
             string dirToStore = @"C:\NAPOMINATOR\screenshots";
             try
