@@ -17,6 +17,9 @@ namespace Napominator
 {
     public partial class MainForm : Form
     {
+
+
+
         LogController logController;
 
         //====================================
@@ -668,15 +671,17 @@ namespace Napominator
         {
             string proxy = "http://192.168.5.42:8888";
             var (ipInfoData, pingResult) = await new IpInfo(proxy).Process();
-            logController.Add_textBox_Log($"IP detecting with proxy:{proxy}");
+
+            logController.Add_textBox_Log($"IP detecting with proxy : {proxy}");
             logController.Add_textBox_Log($"IP: {ipInfoData.query} - {ipInfoData.countryCode} - {ipInfoData.country}");
-            if (pingResult.Status == IPStatus.Success)
+
+            if (pingResult.FirstOrDefault(k => k.Key == "Status").Value == IPStatus.Success.ToString())
             {
-                logController.Add_textBox_Log($"Пинг успешен! Время задержки: {pingResult.RoundtripTime} мс");
+                logController.Add_textBox_Log($"Пинг успешен! Время задержки: {pingResult.FirstOrDefault(k => k.Key == "RoundtripTime").Value} мс");
             }
             else
             {
-                logController.Add_textBox_Log($"Пинг неудачен. Статус: {pingResult.Status}");
+                logController.Add_textBox_Log($"Пинг неудачен. Статус: {pingResult.FirstOrDefault(k => k.Key == "Status").Value}");
             }
         }
     }

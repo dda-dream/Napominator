@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Emgu.CV.Aruco;
+using System;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Text.Json;
@@ -21,9 +22,10 @@ public class IpInfo
         this.proxy = proxy;
 	}
 
-    public async Task<(IpInfoData, PingReply)> Process()
+    public async Task<(IpInfoData, Dictionary<string, string>)> Process()
     {
         IpInfoData ipInfoData = new IpInfoData();
+        Dictionary<string, string> replyResult = new Dictionary<string, string>();
 
         var handler = new HttpClientHandler
         {
@@ -42,6 +44,15 @@ public class IpInfo
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
                 ipInfoData = JsonSerializer.Deserialize<IpInfoData>(jsonResponse);
+
+                PingReply reply;
+                using (Ping pingSender = new Ping())
+                {
+                    reply = pingSender.Send(ipInfoData.query, 5000);
+                    replyResult.Add("RoundtripTime", reply.RoundtripTime.ToString());
+                    replyResult.Add("Status", reply.Status.ToString());
+                }
+
             }
             else
             {
@@ -53,14 +64,9 @@ public class IpInfo
             Console.WriteLine("Исключение: " + ex.Message);
         }
 
-        PingReply reply;
-        using (Ping pingSender = new Ping())
-        {
-            reply = pingSender.Send(ipInfoData.query, 5000);
-        }
 
 
-        return (ipInfoData, reply);
+        return (ipInfoData, replyResult);
     }
 }
 
