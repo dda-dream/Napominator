@@ -683,5 +683,9 @@ namespace Napominator
                 logController.Add_textBox_Log($"Пинг неудачен. Статус: {pingResult.FirstOrDefault(k => k.Key == "Status").Value}");
             }
         }
+
+
+
+
     }
 }

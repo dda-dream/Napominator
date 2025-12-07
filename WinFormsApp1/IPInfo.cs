@@ -48,7 +48,8 @@ public class IpInfo
                 PingReply reply;
                 using (Ping pingSender = new Ping())
                 {
-                    reply = pingSender.Send(ipInfoData.query, 5000);
+                    reply = await pingSender.SendPingAsync(ipInfoData.query, 5000);
+                    //reply = pingSender.Send(ipInfoData.query, 5000);
                     replyResult.Add("RoundtripTime", reply.RoundtripTime.ToString());
                     replyResult.Add("Status", reply.Status.ToString());
                 }
