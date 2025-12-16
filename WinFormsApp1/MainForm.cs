@@ -342,7 +342,7 @@ namespace Napominator
                 timer1.Start();
                 button_StartStop.Text = "Stop";
 
-                if (USERNAME != "d" && USERNAME != "r")
+                if (USERNAME != "d" && USERNAME != "i")
                     DisableControls(this);
 
                 notifyIcon1.Icon = Napominator.Properties.Resources.Icon1;

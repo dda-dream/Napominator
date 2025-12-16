@@ -5,7 +5,7 @@ namespace Napominator
 {
     internal static class Program
     {
-        static Mutex mutex = new Mutex(true, System.IO.Path.GetFileName(Application.ExecutablePath));
+        static Mutex mutex = new Mutex(true, Application.ExecutablePath.Replace("\\",""));//System.IO.Path.GetFileName(Application.ExecutablePath));
         
         [STAThread]
         static void Main()
@@ -24,7 +24,7 @@ namespace Napominator
             {
                 if (mutex != null)
                 {
-                    mutex.ReleaseMutex();
+                    //mutex.ReleaseMutex();
                     mutex.Dispose();
                 }
             }
