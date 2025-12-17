@@ -348,7 +348,7 @@ namespace Napominator
                 notifyIcon1.Icon = Napominator.Properties.Resources.Icon1;
                 logController.Add_textBox_Log("NAPOMINATOR startTimer() - start");
                 if (checkBox_Polina.CheckState == CheckState.Checked)
-                    if (GetDoubleFromSettings("[Enabled]") == 1)
+                    if (GetDoubleFromSettings("[Shuminator_Enabled]") == 1)
                         Start_NoiseDetector();
 
                 Hide();
@@ -566,7 +566,7 @@ namespace Napominator
         {
             USERNAME = username2USERNAME(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1]);
             //TODO: debug
-            //USERNAME = "d";
+            USERNAME = "p";
             //TODO: debug
 
 
