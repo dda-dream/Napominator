@@ -566,7 +566,7 @@ namespace Napominator
         {
             USERNAME = username2USERNAME(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1]);
             //TODO: debug
-            USERNAME = "p";
+            //USERNAME = "p";
             //TODO: debug
 
 
