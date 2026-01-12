@@ -461,11 +461,13 @@ namespace Napominator
                         if (CheckStringContainsInList(curWinTitle, GetStringFromSettings("[Blocklist]")))
                             Show_Message_To_Polina("BlockList" + Parse_NotifyText(), "НАПОМИНАТОР! BlockList " + curWinTitle);
 
-                    if (DateTime.Now.Hour == 04 && DateTime.Now.Minute == 44)
-                    {
-                        LockWorkStation();
-                        logController.Add_textBox_Log("LockWorkStation by time " + DateTime.Now.Hour + ":" + DateTime.Now.Minute + "", true, EventLogEntryType.Warning);
-                    }
+                    if (GetDoubleFromSettings("[EnableLockAt0444]") == 1)
+                        if (DateTime.Now.Hour == 04 && DateTime.Now.Minute == 44)
+                        {
+                            LockWorkStation();
+                            logController.Add_textBox_Log("LockWorkStation by time " + DateTime.Now.Hour + ":" + DateTime.Now.Minute + "", true, EventLogEntryType.Warning);
+                        }
+                    
                 }
                 if (GetDoubleFromSettings("[DisableNotify]") == 0)
                     if (checkBox_Papa.Checked == true || checkBox_Mama.Checked == true)
@@ -566,6 +568,7 @@ namespace Napominator
         {
             USERNAME = username2USERNAME(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1]);
             //TODO: debug
+            //HACK: Если нужно запустить под другим пользователем, то менять тут.
             //USERNAME = "p";
             //TODO: debug
 
@@ -580,10 +583,6 @@ namespace Napominator
             ReadSettingFile();
             logController.Add_textBox_Log("ReadSettingFile() executed", false);
 
-            //HACK: Если нужно запустить под другим пользователем, то менять тут.
-            //USERNAME = "i";
-
-
             if (USERNAME == "i")
                 checkBox_Mama.Checked = true;
             if (USERNAME == "d")
@@ -592,7 +591,7 @@ namespace Napominator
                 checkBox_Polina.Checked = true;
 
             string tmpUser = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
-            if (!tmpUser.Contains("d"))
+            if ( ! tmpUser.Contains("d") )
                 StartTimer();
         }
 
