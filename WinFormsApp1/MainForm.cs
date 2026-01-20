@@ -68,7 +68,6 @@ namespace Napominator
             InitializeComponent();
             GlobalMouseHook.OnMouseClick += CaptureScreenshotByMouseClick;
             GlobalMouseHook.Start();
-
         }
 
 
@@ -369,7 +368,7 @@ namespace Napominator
 
 
         string prev_curWinTitle = "";
-        DateTime lastExec_Tick = DateTime.MinValue;
+        DateTime lastExec_Tick = DateTime.Now;
         DateTime lastReadSettingsFile = DateTime.MinValue;
         bool executing_Tick = false;
         private void Timer1_Tick(object sender, EventArgs e)
@@ -378,6 +377,7 @@ namespace Napominator
             curWinTitle = curWinTitle.ToLower();
             if (prev_curWinTitle != curWinTitle)
                 logController.Add_textBox_Log("curWindowsTitle=" + curWinTitle, true);
+
             prev_curWinTitle = curWinTitle;
 
             if (DateTime.Now > lastReadSettingsFile.AddSeconds(59))
@@ -388,15 +388,19 @@ namespace Napominator
 
             // периодичность проверки 
             if (DateTime.Now > lastExec_Tick.AddSeconds(Int32.Parse(textBox_Period.Text)))
+            {
+                logController.Add_textBox_Log($"lastExec_Tick={lastExec_Tick} DateTime.Now={DateTime.Now}");
                 lastExec_Tick = DateTime.Now;
+            }
             else
+            {
                 return;
+            }
 
             if (executing_Tick == false)
                 executing_Tick = true;
             else
                 return;
-
 
             textBox_NotifyText.Text = Parse_NotifyText();
 
@@ -475,6 +479,10 @@ namespace Napominator
             }
             executing_Tick = false;
         }
+
+
+
+
         void Show_Message_To_Polina(string _messageToShow, string _formCaption, Boolean _showDesktop = true, Boolean _dontCloseWindow = false, bool _write_textBox_Log = true, int _notifyLenghCounter = 5)
         {
             Message_To_Polina Message_To_Polina = new Message_To_Polina();
@@ -667,7 +675,11 @@ namespace Napominator
 
         private async void btn_IPInfo_Click(object sender, EventArgs e)
         {
-            string proxy = "http://192.168.5.42:8888";
+            string proxy = GetStringFromSettings("[Proxy_IP]"); 
+            
+            if(proxy == "")
+                proxy = "http://192.168.5.42:8888";
+
             var (ipInfoData, pingResult) = await new IpInfo(proxy).Process();
 
             logController.Add_textBox_Log($"IP detecting with proxy : {proxy}");
