@@ -79,18 +79,6 @@
     <None Update="Settings.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="SETTINGS_Shuminator\AllowedTime-RRCDOM-dementev_d.txt">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="SETTINGS_Shuminator\BlockList-RRCDOM-dementev_d.txt">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="SETTINGS_Shuminator\ExcludeFromBlock-RRCDOM-dementev_d.txt">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-    <None Update="SETTINGS_Shuminator\Shuminator-RRCDOM-dementev_d.txt">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
     <None Update="sounds\bedroom_slippers.mp3">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
