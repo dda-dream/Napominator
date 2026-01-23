@@ -132,7 +132,7 @@ namespace Napominator
                 logController.Add_textBox_Log($"ReadSettingFile:Непредвиденная ошибка: {ex.Message}");
             }
             finally
-            {
+            { 
                 if(cts != null)
                     cts.Dispose();
                 if(client != null)
