@@ -139,7 +139,7 @@ namespace Napominator
                     client.Dispose();
             }
 
-            if (lines.Length == 0)
+            if (lines.Length <= 1)
             {
                 try
                 {
