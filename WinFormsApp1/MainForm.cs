@@ -384,6 +384,7 @@ namespace Napominator
             {   // reread setting file every 59 seconds
                 lastReadSettingsFile = DateTime.Now;
                 ReadSettingFile();
+                textBox_NotifyText.Text = Parse_NotifyText();
             }
 
             // периодичность проверки 
@@ -402,7 +403,6 @@ namespace Napominator
             else
                 return;
 
-            textBox_NotifyText.Text = Parse_NotifyText();
 
             DateTime dt_from, dt_to;
             DateTime dtFFile, dtTFile;
@@ -588,8 +588,9 @@ namespace Napominator
             logController.Add_textBox_Log($"Exec FileName : {System.IO.Path.GetFileName(Application.ExecutablePath)}");
 
             logController.Add_textBox_Log("NAPOMINATOR version:" + __VERSION);
-            ReadSettingFile();
+
             logController.Add_textBox_Log("ReadSettingFile() executed", false);
+            ReadSettingFile();
 
             if (USERNAME == "i")
                 checkBox_Mama.Checked = true;

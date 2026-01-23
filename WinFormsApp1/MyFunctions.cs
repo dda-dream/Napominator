@@ -5,11 +5,18 @@ using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Management;
+using System.Net;
+using System.Net.Sockets;
+
+
 
 //using System.Management;
 using System.Runtime.InteropServices;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Net.WebRequestMethods;
 
 namespace Napominator
 {
@@ -81,49 +88,100 @@ namespace Napominator
 
         List<string> settingsLines = new List<string>();
         List<string> settingsNotifyLines = new List<string>();
-        void ReadSettingFile(string settingFileName = "Settings.txt")
+        async void ReadSettingFile(string settingFileName = "Settings.txt")
         {
+            string[] lines= { };
+
+            CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+            var handler = new HttpClientHandler
+            {
+                UseProxy = false,
+                Proxy = null
+            };
+
+
+            HttpClient client = new HttpClient(handler);
+            
             try
             {
-                bool startFound = false;
-                bool startNotifyFound = false;
-                if (File.Exists(settingFileName))
+                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+                client.DefaultRequestHeaders.Add("Accept", "text/plain, */*");
+                //client.DefaultRequestHeaders.ExpectContinue = false;
+
+                var host = Dns.GetHostEntry(Dns.GetHostName());
+                var ip = host.AddressList.FirstOrDefault(addr => addr.AddressFamily == AddressFamily.InterNetwork);
+                var ip_last_digit = ip.ToString().Split(".")[3];
+                string url = $"http://10.66.66.42:5005/napominator/Get/{ip_last_digit}";
+
+                HttpResponseMessage response = await client.GetAsync(url, cts.Token);
+                string content = await response.Content.ReadAsStringAsync(cts.Token);
+                content = content.Replace("\t", "");
+
+                lines = content.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+            }
+            catch (OperationCanceledException)
+            {
+                logController.Add_textBox_Log("ReadSettingFile:Запрос был отменен по таймауту.");
+            }
+            catch (HttpRequestException ex)
+            {
+                logController.Add_textBox_Log($"ReadSettingFile:Ошибка запроса: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                logController.Add_textBox_Log($"ReadSettingFile:Непредвиденная ошибка: {ex.Message}");
+            }
+            finally
+            {
+                if(cts != null)
+                    cts.Dispose();
+                if(client != null)
+                    client.Dispose();
+            }
+
+            if (lines.Length == 0)
+            {
+                try
                 {
-                    settingsLines = new List<string>();
-                    settingsNotifyLines = new List<string>();
-                    string[] lines = File.ReadAllLines(settingFileName);
-                    foreach (string line in lines)
+                    if (System.IO.File.Exists(settingFileName))
                     {
-                        if (line.Contains("[USER][ANYCOMPUTER][" + USERNAME + "][START]"))
-                        {
-                            startFound = true;
-                            continue;
-                        }
-                        if (startFound && line.Contains("[NOTIFYTEXTSTART]"))
-                        {
-                            startNotifyFound = true;
-                            continue;
-                        }
-
-                        if (line.Contains("[NOTIFYTEXTEND]"))
-                        {
-                            startNotifyFound = false;
-                            continue;
-                        }
-                        if (line.Contains("[USER][ANYCOMPUTER][" + USERNAME + "][END]"))
-                            break;
-
-                        if (startFound == true && startNotifyFound == false)
-                            settingsLines.Add(line.TrimStart().TrimEnd());
-                        if (startNotifyFound == true)
-                            settingsNotifyLines.Add(line.TrimStart().TrimEnd());
+                        lines = System.IO.File.ReadAllLines(settingFileName);
                     }
                 }
+                catch { }
             }
-            catch
+
+            bool startFound = false;
+            bool startNotifyFound = false;
+            settingsLines = new List<string>();
+            settingsNotifyLines = new List<string>();
+            foreach (string line in lines)
             {
-                //мало ли файл будет открыт или изменен в один и тот же момент.
+                if (line.Contains("[USER][ANYCOMPUTER][" + USERNAME + "][START]"))
+                {
+                    startFound = true;
+                    continue;
+                }
+                if (startFound && line.Contains("[NOTIFYTEXTSTART]"))
+                {
+                    startNotifyFound = true;
+                    continue;
+                }
+
+                if (line.Contains("[NOTIFYTEXTEND]"))
+                {
+                    startNotifyFound = false;
+                    continue;
+                }
+                if (line.Contains("[USER][ANYCOMPUTER][" + USERNAME + "][END]"))
+                    break;
+
+                if (startFound == true && startNotifyFound == false)
+                    settingsLines.Add(line.TrimStart().TrimEnd());
+                if (startNotifyFound == true)
+                    settingsNotifyLines.Add(line.TrimStart().TrimEnd());
             }
+            
             return;
         }
         public DateTime GetDateTimeFromSettings(string _settingName)// [allowed time from] [allowed to time]
@@ -356,7 +414,7 @@ namespace Napominator
                     Directory.GetFiles(path, "*.*", SearchOption.AllDirectories)
                              .Where(file => (DateTime.Now - new FileInfo(file).CreationTime).TotalDays > days)
                              .ToList()
-                             .ForEach(File.Delete);
+                             .ForEach(System.IO.File.Delete);
                 }
             }
             catch (Exception ex)
