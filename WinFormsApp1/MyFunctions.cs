@@ -98,7 +98,7 @@ namespace Napominator
                 UseProxy = false,
                 Proxy = null
             };
-
+            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
 
             HttpClient client = new HttpClient(handler);
             
@@ -111,7 +111,7 @@ namespace Napominator
                 var host = Dns.GetHostEntry(Dns.GetHostName());
                 var ip = host.AddressList.FirstOrDefault(addr => addr.AddressFamily == AddressFamily.InterNetwork);
                 var ip_last_digit = ip.ToString().Split(".")[3];
-                string url = $"http://10.66.66.42:5005/napominator/Get/{ip_last_digit}";
+                string url = $"https://10.66.66.42:5005/napominator/Get/{ip_last_digit}";
 
                 HttpResponseMessage response = await client.GetAsync(url, cts.Token);
                 string content = await response.Content.ReadAsStringAsync(cts.Token);
