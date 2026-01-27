@@ -1,5 +1,6 @@
 ﻿using Emgu.CV;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing.Imaging;
@@ -22,6 +23,8 @@ namespace Napominator
 {
     partial class MainForm
     {
+        BlockingCollection<int> aa= new BlockingCollection<int>()
+
         public static void TakeScreenshotFromWEBCameraViaEmguCV()
         {
             try
