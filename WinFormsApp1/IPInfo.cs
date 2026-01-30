@@ -1,6 +1,7 @@
 ﻿using Emgu.CV.Aruco;
 using System;
 using System.Net;
+using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Text.Json;
 
@@ -35,6 +36,7 @@ public class IpInfo
 
         try
         {
+            
             var h = new HttpClient(handler);
             h.Timeout = TimeSpan.FromSeconds(10);
 

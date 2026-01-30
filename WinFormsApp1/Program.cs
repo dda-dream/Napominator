@@ -25,8 +25,6 @@ namespace Napominator
             }
             finally
             {
-
-
                 if (mutex != null)
                 {
                     if(mutexHasCapture)

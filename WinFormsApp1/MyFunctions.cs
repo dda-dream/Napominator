@@ -23,8 +23,6 @@ namespace Napominator
 {
     partial class MainForm
     {
-        BlockingCollection<int> aa= new BlockingCollection<int>()
-
         public static void TakeScreenshotFromWEBCameraViaEmguCV()
         {
             try

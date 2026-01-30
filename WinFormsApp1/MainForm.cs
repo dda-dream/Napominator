@@ -1,5 +1,6 @@
 ﻿using NAudio.CoreAudioApi;
 using NAudio.Wave;
+using System.Collections.Concurrent;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing.Imaging;
@@ -17,9 +18,6 @@ namespace Napominator
 {
     public partial class MainForm : Form
     {
-
-
-
         LogController logController;
 
         //====================================
@@ -65,6 +63,7 @@ namespace Napominator
 
         public MainForm()
         {
+
             InitializeComponent();
             GlobalMouseHook.OnMouseClick += CaptureScreenshotByMouseClick;
             GlobalMouseHook.Start();
@@ -390,7 +389,7 @@ namespace Napominator
             // периодичность проверки 
             if (DateTime.Now > lastExec_Tick.AddSeconds(Int32.Parse(textBox_Period.Text)))
             {
-                logController.Add_textBox_Log($"lastExec_Tick={lastExec_Tick} DateTime.Now={DateTime.Now}");
+                //logController.Add_textBox_Log($"lastExec_Tick={lastExec_Tick} DateTime.Now={DateTime.Now}");
                 lastExec_Tick = DateTime.Now;
             }
             else
