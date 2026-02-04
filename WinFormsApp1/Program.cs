@@ -6,7 +6,7 @@ namespace Napominator
 {
     internal static class Program
     {
-        static Mutex mutex = new Mutex(true, Application.ExecutablePath.Replace("\\",""));//System.IO.Path.GetFileName(Application.ExecutablePath));
+        static Mutex mutex = new Mutex(true, Application.ExecutablePath.Replace("\\",""));
         static bool mutexHasCapture = false;
 
         [STAThread]

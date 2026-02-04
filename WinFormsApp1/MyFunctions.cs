@@ -403,28 +403,6 @@ namespace Napominator
                 // Optionally handle or log the exception
             }
         }
-        public void OLD_ManageFolderSize(string path, double maxFolderSizeInGB, int days)
-        {
-            try
-            {
-                long maxFolderSizeInBytes = (long)(maxFolderSizeInGB * 1024 * 1024 * 1024);
-                long currentFolderSize = Directory.GetFiles(path, "*.*", SearchOption.AllDirectories)
-                                             .Sum(file => new FileInfo(file).Length);
-
-                if (currentFolderSize > maxFolderSizeInBytes)
-                {
-                    Directory.GetFiles(path, "*.*", SearchOption.AllDirectories)
-                             .Where(file => (DateTime.Now - new FileInfo(file).CreationTime).TotalDays > days)
-                             .ToList()
-                             .ForEach(System.IO.File.Delete);
-                }
-            }
-            catch (Exception ex)
-            {
-                // Optionally handle the exception or log it
-            }
-        }
-
         public void CaptureScreenshotByMouseClick()
         {
             // Запустить в фоновом потоке, чтобы не блокировать UI

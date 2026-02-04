@@ -6,9 +6,6 @@ using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Linq.Expressions;
 using System.Net.NetworkInformation;
-
-
-//using System.Management;
 using System.Runtime.InteropServices;
 using System.Text;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
@@ -48,9 +45,6 @@ namespace Napominator
 
         private const int SW_RESTORE = 9;
 
-
-
-
         const string __VERSION = "ver 15.11.2025";
         Boolean allowFormClose = false;
         string USERNAME = "";
@@ -63,14 +57,10 @@ namespace Napominator
 
         public MainForm()
         {
-
             InitializeComponent();
             GlobalMouseHook.OnMouseClick += CaptureScreenshotByMouseClick;
             GlobalMouseHook.Start();
         }
-
-
-
 
         MMDevice? device = null;
         const int constCountNoMicrophoneDetected = 5;
@@ -285,40 +275,6 @@ namespace Napominator
             reader0.Dispose();
             waveOut0.Dispose();
             keybd_event(VK_MEDIA_PLAY_PAUSE, 0, KEYEVENTF_EXTENTEDKEY, IntPtr.Zero);    // Play/Pause
-        }
-        public static void WriteArrayToFile(double[,] rArr)
-        {
-            try
-            {
-                StreamWriter outputfile;
-                string comma = "";
-
-                File.WriteAllText("rArr.Txt", string.Empty);
-                outputfile = File.AppendText("rArr.Txt");
-
-                for (int i = 0; i < (rArr.GetLength(0)); i++)
-                {
-                    for (int j = 0; j < (rArr.GetLength(1)); j++)
-                    {
-                        outputfile.Write(comma);
-                        outputfile.Write(rArr[i, j]);
-                        comma = "   ";
-                    }
-                    comma = System.Environment.NewLine;
-                }
-                outputfile.Close();
-            }
-            catch { }
-        }
-        public static void FillArray(double[,] array, double _fillValue = 0)
-        {
-            for (int i = 0; i < array.GetLength(0); i++)
-            {
-                for (int j = 0; j < array.GetLength(1); j++)
-                {
-                    array[i, j] = _fillValue;
-                }
-            }
         }
         void Microphone_RecordingStopped(object? sender, NAudio.Wave.StoppedEventArgs e)
         {
@@ -675,10 +631,10 @@ namespace Napominator
 
         private async void btn_IPInfo_Click(object sender, EventArgs e)
         {
-            string proxy = GetStringFromSettings("[Proxy_IP]"); 
-            
-            if(proxy == "")
-                proxy = "http://192.168.5.42:8888";
+            string proxy = GetStringFromSettings("[Proxy_IP]");
+
+            if (proxy == "")
+                proxy = AppSettings.Network.Proxy;
 
             var (ipInfoData, pingResult) = await new IpInfo(proxy).Process();
 

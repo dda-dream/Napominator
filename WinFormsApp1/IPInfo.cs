@@ -1,4 +1,5 @@
 ﻿using Emgu.CV.Aruco;
+using Napominator;
 using System;
 using System.Net;
 using System.Net.Http;
@@ -14,33 +15,31 @@ public class IpInfoData
 
 public class IpInfo
 {
-    private static readonly HttpClient httpClient = new HttpClient();
+    private readonly HttpClient httpClient;
+    HttpClientHandler handlerHttpClient;
     string proxy;
-    string url = "http://ip-api.com/json/";
+    string url = AppSettings.Network.IpInfoUrl;
 
     public IpInfo(string proxy)
 	{
         this.proxy = proxy;
-	}
+        handlerHttpClient = new HttpClientHandler
+        {
+            Proxy = new WebProxy(proxy),
+            UseProxy = true
+        };
+        httpClient = new HttpClient(handlerHttpClient);
+        httpClient.Timeout = TimeSpan.FromSeconds(AppSettings.Network.HttpClientTimeoutSeconds);
+    }
 
     public async Task<(IpInfoData, Dictionary<string, string>)> Process()
     {
         IpInfoData ipInfoData = new IpInfoData();
         Dictionary<string, string> replyResult = new Dictionary<string, string>();
 
-        var handler = new HttpClientHandler
-        {
-            Proxy = new WebProxy(proxy),
-            UseProxy = true
-        };
-
         try
         {
-            
-            var h = new HttpClient(handler);
-            h.Timeout = TimeSpan.FromSeconds(10);
-
-            HttpResponseMessage response = await h.GetAsync(url);
+            HttpResponseMessage response = await httpClient.GetAsync(url);
 
             if (response.IsSuccessStatusCode)
             {
@@ -51,11 +50,9 @@ public class IpInfo
                 using (Ping pingSender = new Ping())
                 {
                     reply = await pingSender.SendPingAsync(ipInfoData.query, 5000);
-                    //reply = pingSender.Send(ipInfoData.query, 5000);
                     replyResult.Add("RoundtripTime", reply.RoundtripTime.ToString());
                     replyResult.Add("Status", reply.Status.ToString());
                 }
-
             }
             else
             {
@@ -67,7 +64,10 @@ public class IpInfo
             Console.WriteLine("Исключение: " + ex.Message);
         }
 
-
+        if (handlerHttpClient != null)
+            handlerHttpClient.Dispose();
+        if (httpClient != null)
+            httpClient.Dispose();
 
         return (ipInfoData, replyResult);
     }

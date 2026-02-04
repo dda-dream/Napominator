@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Emgu.CV.CvEnum;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -9,6 +10,34 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace Napominator
 {
+
+    public interface ILogger
+    {
+        void Log(string message, LogLevel level);
+    }
+
+    public class FileLogger : ILogger
+    {
+        void ILogger.Log(string message, LogLevel level)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class EventViewerLogger : ILogger
+    {
+        public void Log(string message, LogLevel level)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class TextBoxLogger : ILogger
+    {
+        void ILogger.Log(string message, LogLevel level)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     class LogController
     {
         private static LogController logController;
