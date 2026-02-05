@@ -1,52 +1,90 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Emgu.CV.Ocl;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static Napominator.AppSettings;
 
 namespace Napominator
 {
-    public class AppSettings
+
+    public static class ServiceCollectionExtensions
     {
-        
-        private static readonly Lazy<IConfiguration> _configuration = new
-            (
-                () =>
-                        {
-                            string ENV = Environment.GetEnvironmentVariable("NAPOMINATOR_ENVIRONMENT");
-
-                            var builder = new ConfigurationBuilder()
-                                .AddJsonFile("appsettings.json", optional: true)
-                                .AddEnvironmentVariables();
-
-                            if(!String.IsNullOrEmpty(ENV))
-                                builder.AddJsonFile($"appsettings.{ENV}.json", optional: true);
-
-                            return builder.Build();
-                        }
-            );
-
-        public static class Network
+        public static IServiceCollection AddAppServices(this IServiceCollection services)
         {
-            public static string IpInfoUrl =>
-                _configuration.Value["Network:IpInfoUrl"] ?? "http://ip-api.com/json/";
+            services.AddSingleton<IConfigService, AppSettings>();
 
-            public static string Proxy
-            {
-                get
-                {
-                    string ret;
-                    ret = _configuration.Value["Network:Proxy"] ?? string.Empty;
-                    if (String.IsNullOrEmpty(ret))
-                        ret = "http://10.66.66.42:8888";
-                    return ret;
-                }
-            }
-
-            public static int HttpClientTimeoutSeconds =>
-                int.TryParse(_configuration.Value["Network:HttpClientTimeoutSeconds"], out var timeout) ? timeout : 10;
+            return services;
         }
     }
+
+    public interface IConfigService
+    {
+        IConfiguration Config { get; }
+    }
+
+
+    public class AppSettings : IConfigService
+    {
+        private readonly IConfiguration _configuration;
+
+        public AppSettings()
+        { 
+            string ENV = Environment.GetEnvironmentVariable("NAPOMINATOR_ENVIRONMENT");
+
+            var builder = new ConfigurationBuilder()
+                .AddJsonFile("appsettings.json", optional: true)
+                .AddEnvironmentVariables();
+
+            if (!String.IsNullOrEmpty(ENV))
+                builder.AddJsonFile($"appsettings.{ENV}.json", optional: true);
+
+            _configuration = builder.Build();
+            
+            NetworkConfig = new NetworkConfig(this);
+        }
+
+        public IConfiguration Config
+        {
+            get {
+                return _configuration;
+            }
+        }
+        public NetworkConfig NetworkConfig { get; }
+
+
+    }
+
+
+    public class NetworkConfig
+    {
+        public string IpInfoUrl { get; }
+        public string Proxy { get; }
+        public int HttpClientTimeoutSeconds { get; }
+
+
+
+        public NetworkConfig(AppSettings appSettings)
+        {
+            var s = appSettings.Config["Network:IpInfoUrl"];
+            if (string.IsNullOrEmpty(s))
+                s = "http://ip-api.com/json/";
+            IpInfoUrl = s;
+
+            s = appSettings.Config["Network:Proxy"];
+            if (String.IsNullOrEmpty(s))
+                s = "http://10.66.66.42:8888";
+            Proxy = s;
+
+            var i = appSettings.Config.GetValue<int>("Network:HttpClientTimeoutSeconds");
+            if (i <= 0)
+                i = 10;
+            HttpClientTimeoutSeconds = i;
+        }
+    }
+
 }

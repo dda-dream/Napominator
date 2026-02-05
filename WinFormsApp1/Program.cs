@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Concurrent;
 using System.Drawing.Imaging;
 using System.Reflection;
@@ -8,17 +9,29 @@ namespace Napominator
     {
         static Mutex mutex = new Mutex(true, Application.ExecutablePath.Replace("\\",""));
         static bool mutexHasCapture = false;
+        public static ServiceProvider _serviceProvider;
 
         [STAThread]
         static void Main()
         {
+            var services = new ServiceCollection();
+            services.AddAppServices();
+            services.AddTransient<IpInfo>();
+            services.AddTransient<MainForm>();
+            _serviceProvider = services.BuildServiceProvider();
+
             try
             {
                 if (mutex.WaitOne(TimeSpan.Zero, true))
                 {
                     mutexHasCapture = true;
                     ApplicationConfiguration.Initialize();
-                    Application.Run(new MainForm());
+
+
+                    var mainForm = _serviceProvider.GetRequiredService<MainForm>();
+                    Application.Run(mainForm);
+
+                    //Application.Run(new MainForm());
 
                     mutex.ReleaseMutex();
                 }

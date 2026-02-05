@@ -76,15 +76,15 @@ namespace Napominator
                 }
             }
 
-            if (textBox_Log.Lines.Count() > 100)
+            if (textBox_Log.Lines.Length > 100)
                 textBox_Log.Text = "";
 
-            textBox_Log.Text = textBox_Log.Text + timeStr + _text + Environment.NewLine;
+            textBox_Log.AppendText(timeStr + _text + Environment.NewLine);
             textBox_Log.SelectionStart = textBox_Log.Text.Length;
             textBox_Log.SelectionLength = 0;
             textBox_Log.ScrollToCaret();
         }
-        public static void WriteToRegistryLog(string _text, EventLogEntryType _mode, string _USERNAME)
+        public void WriteToRegistryLog(string _text, EventLogEntryType _mode, string _USERNAME)
         {
             EventLog eventLog = new EventLog();
 

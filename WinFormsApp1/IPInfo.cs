@@ -1,10 +1,13 @@
 ﻿using Emgu.CV.Aruco;
+using Microsoft.Extensions.DependencyInjection;
 using Napominator;
 using System;
+using System.Collections.Concurrent;
 using System.Net;
 using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Text.Json;
+using static Napominator.AppSettings;
 
 public class IpInfoData
 {
@@ -13,23 +16,39 @@ public class IpInfoData
     public string country { get; set; } = "";
 }
 
-public class IpInfo
+public class IpInfo : IDisposable
 {
     private readonly HttpClient httpClient;
     HttpClientHandler handlerHttpClient;
-    string proxy;
-    string url = AppSettings.Network.IpInfoUrl;
+    public string url { get; set; } = "";
+    public string Proxy { get; set; } = "";
+    int httpClientTimeoutSeconds=0;
 
-    public IpInfo(string proxy)
+    public IpInfo(IConfigService _settings)
 	{
-        this.proxy = proxy;
+        var settings = (AppSettings)_settings;
+
+        url = settings.NetworkConfig.IpInfoUrl;
+        if (String.IsNullOrEmpty(Proxy) && !String.IsNullOrEmpty(settings.NetworkConfig.Proxy))
+            Proxy = settings.NetworkConfig.Proxy;
+
+        httpClientTimeoutSeconds = settings.NetworkConfig.HttpClientTimeoutSeconds;
+
         handlerHttpClient = new HttpClientHandler
         {
-            Proxy = new WebProxy(proxy),
+            Proxy = new WebProxy(Proxy),
             UseProxy = true
         };
         httpClient = new HttpClient(handlerHttpClient);
-        httpClient.Timeout = TimeSpan.FromSeconds(AppSettings.Network.HttpClientTimeoutSeconds);
+        httpClient.Timeout = TimeSpan.FromSeconds(httpClientTimeoutSeconds);
+    }
+
+    public void Dispose()
+    {
+        if (handlerHttpClient != null)
+            handlerHttpClient.Dispose();
+        if (httpClient != null)
+            httpClient.Dispose();
     }
 
     public async Task<(IpInfoData, Dictionary<string, string>)> Process()
@@ -63,11 +82,6 @@ public class IpInfo
         {
             Console.WriteLine("Исключение: " + ex.Message);
         }
-
-        if (handlerHttpClient != null)
-            handlerHttpClient.Dispose();
-        if (httpClient != null)
-            httpClient.Dispose();
 
         return (ipInfoData, replyResult);
     }

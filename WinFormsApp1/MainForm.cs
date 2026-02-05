@@ -1,11 +1,14 @@
-﻿using NAudio.CoreAudioApi;
+﻿using Microsoft.Extensions.DependencyInjection;
+using NAudio.CoreAudioApi;
 using NAudio.Wave;
+using System;
 using System.Collections.Concurrent;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Linq.Expressions;
 using System.Net.NetworkInformation;
+using System.Runtime;
 using System.Runtime.InteropServices;
 using System.Text;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
@@ -57,6 +60,7 @@ namespace Napominator
 
         public MainForm()
         {
+            
             InitializeComponent();
             GlobalMouseHook.OnMouseClick += CaptureScreenshotByMouseClick;
             GlobalMouseHook.Start();
@@ -105,7 +109,7 @@ namespace Napominator
                 if (GetDoubleFromSettings("[LockWorkStation_NoMicrophone]") == 1)
                 {
                     logController.Add_textBox_Log("Подключи микрофон!");
-                    ShuminatorPlaySoundWarning("podkluchi_microfon.mp3", false);
+                    ShuminatorPlaySoundWarning("podkluchi_microfon.mp3", false, logController);
                     Show_Message_To_Polina("ПОДКЛЮЧИ МИКРОФОН! \n СЧИТАЮ ДО 0-ля! " + count_NoMicrophoneDetected.ToString(), "ПОДКЛЮЧИ МИКРОФОН!", true, false, false, 5);
                     count_NoMicrophoneDetected--;
                     if (count_NoMicrophoneDetected == 0)
@@ -192,7 +196,7 @@ namespace Napominator
                 if (GetDoubleFromSettings("[ShuminatorPlaySoundWarning]") == 1)
                 {
                     keybd_event(VK_MEDIA_PLAY_PAUSE, 0, KEYEVENTF_EXTENTEDKEY, IntPtr.Zero);    // Play/Pause
-                    ShuminatorPlaySoundWarning("neshumi.mpeg");
+                    ShuminatorPlaySoundWarning("neshumi.mpeg", true, logController);
                 }
                 if (GetDoubleFromSettings("[Show_Message_To_Polina]") == 1)
                 {
@@ -231,7 +235,7 @@ namespace Napominator
 
         static Mp3FileReader? reader0, reader1;
         static WaveOut? waveOut0, waveOut1;
-        static void ShuminatorPlaySoundWarning(string _warningSound, bool _playOtherSounds = true)
+        static void ShuminatorPlaySoundWarning(string _warningSound, bool _playOtherSounds = true, LogController logController = null)
         {
             try
             {
@@ -262,7 +266,8 @@ namespace Napominator
             }
             catch (Exception ex)
             {
-                LogController.WriteToRegistryLog("ShuminatorPlaySoundWarning: " + ex.ToString(), EventLogEntryType.Error, "NO_USERNAME");
+                if(logController != null)
+                    logController.WriteToRegistryLog("ShuminatorPlaySoundWarning: " + ex.ToString(), EventLogEntryType.Error, "NO_USERNAME");
             }
         }
         private static void WaveOut1_PlaybackStopped(object? sender, NAudio.Wave.StoppedEventArgs e)
@@ -633,21 +638,25 @@ namespace Napominator
         {
             string proxy = GetStringFromSettings("[Proxy_IP]");
 
-            if (proxy == "")
-                proxy = AppSettings.Network.Proxy;
-
-            var (ipInfoData, pingResult) = await new IpInfo(proxy).Process();
-
-            logController.Add_textBox_Log($"IP detecting with proxy : {proxy}");
-            logController.Add_textBox_Log($"IP: {ipInfoData.query} - {ipInfoData.countryCode} - {ipInfoData.country}");
-
-            if (pingResult.FirstOrDefault(k => k.Key == "Status").Value == IPStatus.Success.ToString())
+            var ipInfo = Program._serviceProvider.GetRequiredService<IpInfo>(); 
+            using (ipInfo)
             {
-                logController.Add_textBox_Log($"Пинг успешен! Время задержки: {pingResult.FirstOrDefault(k => k.Key == "RoundtripTime").Value} мс");
-            }
-            else
-            {
-                logController.Add_textBox_Log($"Пинг неудачен. Статус: {pingResult.FirstOrDefault(k => k.Key == "Status").Value}");
+                if (!String.IsNullOrEmpty(proxy))
+                    ipInfo.Proxy = proxy;
+
+                var (ipInfoData, pingResult) = await ipInfo.Process();
+
+                logController.Add_textBox_Log($"IP detecting with proxy : {ipInfo.Proxy}");
+                logController.Add_textBox_Log($"IP: {ipInfoData.query} - {ipInfoData.countryCode} - {ipInfoData.country}");
+
+                if (pingResult.FirstOrDefault(k => k.Key == "Status").Value == IPStatus.Success.ToString())
+                {
+                    logController.Add_textBox_Log($"Пинг успешен! Время задержки: {pingResult.FirstOrDefault(k => k.Key == "RoundtripTime").Value} мс");
+                }
+                else
+                {
+                    logController.Add_textBox_Log($"Пинг неудачен. Статус: {pingResult.FirstOrDefault(k => k.Key == "Status").Value}");
+                }
             }
         }
 
