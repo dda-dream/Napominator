@@ -18,6 +18,7 @@ namespace Napominator
             services.AddAppServices();
             services.AddTransient<IpInfo>();
             services.AddTransient<MainForm>();
+
             _serviceProvider = services.BuildServiceProvider();
 
             try

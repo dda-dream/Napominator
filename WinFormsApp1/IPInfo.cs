@@ -9,7 +9,7 @@ using System.Net.NetworkInformation;
 using System.Text.Json;
 using static Napominator.AppSettings;
 
-public class IpInfoData
+public class IpInfoDTO
 {
     public string query { get; set; } = "";
     public string countryCode { get; set; } = "";
@@ -51,9 +51,9 @@ public class IpInfo : IDisposable
             httpClient.Dispose();
     }
 
-    public async Task<(IpInfoData, Dictionary<string, string>)> Process()
+    public async Task<(IpInfoDTO, Dictionary<string, string>)> Process()
     {
-        IpInfoData ipInfoData = new IpInfoData();
+        IpInfoDTO ipInfoData = new IpInfoDTO();
         Dictionary<string, string> replyResult = new Dictionary<string, string>();
 
         try
@@ -63,7 +63,7 @@ public class IpInfo : IDisposable
             if (response.IsSuccessStatusCode)
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
-                ipInfoData = JsonSerializer.Deserialize<IpInfoData>(jsonResponse);
+                ipInfoData = JsonSerializer.Deserialize<IpInfoDTO>(jsonResponse);
 
                 PingReply reply;
                 using (Ping pingSender = new Ping())

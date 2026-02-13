@@ -66,10 +66,9 @@ namespace Napominator
         public string Proxy { get; }
         public int HttpClientTimeoutSeconds { get; }
 
-
-
         public NetworkConfig(AppSettings appSettings)
         {
+
             var s = appSettings.Config["Network:IpInfoUrl"];
             if (string.IsNullOrEmpty(s))
                 s = "http://ip-api.com/json/";

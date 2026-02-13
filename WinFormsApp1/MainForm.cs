@@ -267,7 +267,8 @@ namespace Napominator
             catch (Exception ex)
             {
                 if(logController != null)
-                    logController.WriteToRegistryLog("ShuminatorPlaySoundWarning: " + ex.ToString(), EventLogEntryType.Error, "NO_USERNAME");
+                    //logController.WriteToRegistryLog("ShuminatorPlaySoundWarning: " + ex.ToString(), EventLogEntryType.Error, "NO_USERNAME");
+                    logController.Log("ShuminatorPlaySoundWarning: " + ex.ToString(), EventLogEntryType.Error);
             }
         }
         private static void WaveOut1_PlaybackStopped(object? sender, NAudio.Wave.StoppedEventArgs e)
@@ -541,7 +542,13 @@ namespace Napominator
             //TODO: debug
 
 
-            logController = LogController.GetInstance(textBox_Log, USERNAME);
+            //logController = LogController.GetInstance(textBox_Log, USERNAME);
+            logController = LogController.Builder();//
+            logController.AddUSERNAME(USERNAME);
+            logController.AddTextBoxLogger(textBox_Log);
+            logController.AddFileLogger();
+            logController.AddEventViewerLogger();
+
 
             logController.Add_textBox_Log("Started. initial version created at 29.12.2022 11:50");
             logController.Add_textBox_Log("NAPOMINATOR MainForm()");
@@ -644,10 +651,10 @@ namespace Napominator
                 if (!String.IsNullOrEmpty(proxy))
                     ipInfo.Proxy = proxy;
 
-                var (ipInfoData, pingResult) = await ipInfo.Process();
+                var (ipInfoDTO, pingResult) = await ipInfo.Process();
 
                 logController.Add_textBox_Log($"IP detecting with proxy : {ipInfo.Proxy}");
-                logController.Add_textBox_Log($"IP: {ipInfoData.query} - {ipInfoData.countryCode} - {ipInfoData.country}");
+                logController.Add_textBox_Log($"IP: {ipInfoDTO.query} - {ipInfoDTO.countryCode} - {ipInfoDTO.country}");
 
                 if (pingResult.FirstOrDefault(k => k.Key == "Status").Value == IPStatus.Success.ToString())
                 {
