@@ -18,6 +18,7 @@ namespace Napominator
 {
     public partial class MainForm : Form
     {
+        LogMediator logMediator;
         LogController logController;
 
         //====================================
@@ -533,6 +534,33 @@ namespace Napominator
         {
         }
 
+        private void LogMediator_subscriber(object? sender, LogEventArgs e)
+        {
+            Add_TextBox_Log(e.Message, e.level, e.USERNAME);
+        }
+
+        private void Add_TextBox_Log(string message, EventLogEntryType level, string USERNAME)
+        {
+            const int MAX_LINES = 100;
+            if (textBox_Log.Lines.Length > MAX_LINES)
+                textBox_Log.Text = "";
+
+            string timeStr = DateTime.Now.ToString("dd-MM-yyyy") + " " + DateTime.Now.ToLongTimeString() + ": ";
+            string logEntry;
+
+            if (String.IsNullOrEmpty(message))
+                logEntry = Environment.NewLine;
+            else 
+                logEntry = timeStr + message + Environment.NewLine;
+
+            
+            textBox_Log.AppendText(logEntry);
+            textBox_Log.SelectionStart = textBox_Log.Text.Length;
+            textBox_Log.SelectionLength = 0;
+            textBox_Log.ScrollToCaret();
+        }
+
+
         private void Form1_Shown(object sender, EventArgs e)
         {
             USERNAME = username2USERNAME(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1]);
@@ -541,13 +569,17 @@ namespace Napominator
             //USERNAME = "p";
             //TODO: debug
 
-
-            //logController = LogController.GetInstance(textBox_Log, USERNAME);
+            
             logController = LogController.Builder();//
+            logMediator = new LogMediator();
+
             logController.AddUSERNAME(USERNAME);
-            logController.AddTextBoxLogger(textBox_Log);
-            logController.AddFileLogger();
+
+            logMediator.subscriber += LogMediator_subscriber;
+            logController.AddTextBoxLogger(logMediator);
+
             logController.AddEventViewerLogger();
+            logController.AddFileLogger();
 
 
             logController.Add_textBox_Log("Started. initial version created at 29.12.2022 11:50");
@@ -570,6 +602,8 @@ namespace Napominator
             if ( ! tmpUser.Contains("d") )
                 StartTimer();
         }
+
+
 
         private void Form1_Resize(object sender, EventArgs e)
         {
@@ -652,7 +686,7 @@ namespace Napominator
                     ipInfo.Proxy = proxy;
 
                 var (ipInfoDTO, pingResult) = await ipInfo.Process();
-
+                logController.Add_textBox_Log($"");
                 logController.Add_textBox_Log($"IP detecting with proxy : {ipInfo.Proxy}");
                 logController.Add_textBox_Log($"IP: {ipInfoDTO.query} - {ipInfoDTO.countryCode} - {ipInfoDTO.country}");
 

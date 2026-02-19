@@ -42,31 +42,20 @@ namespace Napominator
     }
     public class TextBoxLogger : ILogger
     {
-        TextBox textBox_Log;
-        
-        public TextBoxLogger(TextBox textBox)
+        LogMediator _logHandler;
+
+        public TextBoxLogger(LogMediator logHandler)
         {
-            textBox_Log = textBox;
+            _logHandler = logHandler;
         }
         public void Log(string message, EventLogEntryType level, string USERNAME)
         {
-            string timeStr = DateTime.Now.ToString("dd-MM-yyyy") + " " + DateTime.Now.ToLongTimeString() + ": ";
-
-            if (textBox_Log.Lines.Length > 100)
-                textBox_Log.Text = "";
-
-            textBox_Log.AppendText(timeStr + message + Environment.NewLine);
-            textBox_Log.SelectionStart = textBox_Log.Text.Length;
-            textBox_Log.SelectionLength = 0;
-            textBox_Log.ScrollToCaret();
-
+            _logHandler.AddLog(message, level, USERNAME);
         }
     }
 
     class LogController
     {
-        //private static LogController logController;
-        //private TextBox textBox_Log;
         private string USERNAME;
 
         private TextBoxLogger _textBoxLogger;
@@ -85,17 +74,8 @@ namespace Napominator
                 _fileLogger.Log(message, level, USERNAME);
         }
 
-        /*
-        public static LogController GetInstance(TextBox textBox, string USERNAME)
-        {
-            LazyInitializer.EnsureInitialized(ref logController);
 
-            logController.textBox_Log = textBox;
-            logController.USERNAME = USERNAME;
 
-            return logController;
-        }
-        */
         public LogController()
         {
         }
@@ -110,9 +90,9 @@ namespace Napominator
             return this;
         }
 
-        public LogController AddTextBoxLogger(TextBox textBox)
+        public LogController AddTextBoxLogger(LogMediator logHandler)
         {
-            _textBoxLogger = new TextBoxLogger(textBox);
+            _textBoxLogger = new TextBoxLogger(logHandler);
             return this;
         }
         public LogController AddEventViewerLogger()
@@ -133,51 +113,8 @@ namespace Napominator
             this.Log(_text, _mode);
         }
 
-        /*
-        public void Add_textBox_Log(string _text, bool _writeToLogFileOrRegistry = true, EventLogEntryType _mode = EventLogEntryType.Information)
-        {
-            string timeStr = DateTime.Now.ToString("dd-MM-yyyy") + " " + DateTime.Now.ToLongTimeString() + ": ";
-
-            if (_writeToLogFileOrRegistry)
-            {
-                WriteToRegistryLog(_text, _mode, USERNAME);
-                string filename = "log-" + USERNAME + ".txt";
-                try
-                {
-                    var file = File.AppendText(filename);
-                    file.AutoFlush = false;
-                    file.WriteLine(timeStr + _text);
-                    file.Close();
-                }
-                catch (Exception e)
-                {
-                    WriteToRegistryLog(USERNAME + " " + e.ToString(), EventLogEntryType.Error, USERNAME);
-                }
-            }
-
-            if (textBox_Log.Lines.Length > 100)
-                textBox_Log.Text = "";
-
-            textBox_Log.AppendText(timeStr + _text + Environment.NewLine);
-            textBox_Log.SelectionStart = textBox_Log.Text.Length;
-            textBox_Log.SelectionLength = 0;
-            textBox_Log.ScrollToCaret();
-        }
 
 
-        public void WriteToRegistryLog(string _text, EventLogEntryType _mode, string _USERNAME)
-        {
-            EventLog eventLog = new EventLog();
 
-            if (!EventLog.Exists("NAPOMINATOR")) // RUN AS ADMIN FIRST TIME
-            {
-                MessageBox.Show(" RUN AS ADMIN FIRST TIME to allow create EventLog.CreateEventSource(NAPOMINATOR)");
-                EventLog.CreateEventSource("NAPOMINATOR", "NAPOMINATOR");
-            }
-            eventLog.Source = "NAPOMINATOR";
-
-            eventLog.WriteEntry(_USERNAME + " : " + _text, _mode, 1, 1);
-        }
-        */
     }
 }
