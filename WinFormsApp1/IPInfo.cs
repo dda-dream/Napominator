@@ -1,13 +1,10 @@
-﻿using Emgu.CV.Aruco;
-using Microsoft.Extensions.DependencyInjection;
-using Napominator;
-using System;
-using System.Collections.Concurrent;
-using System.Net;
-using System.Net.Http;
+﻿using System.Net;
 using System.Net.NetworkInformation;
 using System.Text.Json;
-using static Napominator.AppSettings;
+
+
+namespace Napominator;
+
 
 public class IpInfoDTO
 {
@@ -18,37 +15,51 @@ public class IpInfoDTO
 
 public class IpInfo : IDisposable
 {
-    private readonly HttpClient httpClient;
+    Dictionary<string, HttpClient> httpClients;
+    //private HttpClient httpClient;
+
+
     HttpClientHandler handlerHttpClient;
     public string url { get; set; } = "";
     public string Proxy { get; set; } = "";
-    int httpClientTimeoutSeconds=0;
+    int httpClientTimeoutSeconds = 0;
+    IConfigService _settings;
 
-    public IpInfo(IConfigService _settings)
-	{
-        var settings = (AppSettings)_settings;
+    public IpInfo(IConfigService settings)
+    {
+        _settings = settings;
+        httpClients = new Dictionary<string, HttpClient>();
+    }
 
-        url = settings.NetworkConfig.IpInfoUrl;
-        if (String.IsNullOrEmpty(Proxy) && !String.IsNullOrEmpty(settings.NetworkConfig.Proxy))
-            Proxy = settings.NetworkConfig.Proxy;
+    public void Create()
+    { 
+        url = _settings.NetworkConfig.IpInfoUrl;
+        if (String.IsNullOrEmpty(Proxy) && !String.IsNullOrEmpty(_settings.NetworkConfig.Proxy))
+            Proxy = _settings.NetworkConfig.Proxy;
 
-        httpClientTimeoutSeconds = settings.NetworkConfig.HttpClientTimeoutSeconds;
+        httpClientTimeoutSeconds = _settings.NetworkConfig.HttpClientTimeoutSeconds;
 
         handlerHttpClient = new HttpClientHandler
         {
             Proxy = new WebProxy(Proxy),
             UseProxy = true
         };
-        httpClient = new HttpClient(handlerHttpClient);
-        httpClient.Timeout = TimeSpan.FromSeconds(httpClientTimeoutSeconds);
+
+        if (httpClients.ContainsKey(Proxy) == false)
+        {
+
+            HttpClient httpClient = new HttpClient(handlerHttpClient);
+            httpClient.Timeout = TimeSpan.FromSeconds(httpClientTimeoutSeconds);
+            httpClients.Add(Proxy, httpClient);
+        }
     }
 
     public void Dispose()
     {
         if (handlerHttpClient != null)
             handlerHttpClient.Dispose();
-        if (httpClient != null)
-            httpClient.Dispose();
+        //if (httpClient != null)
+        //    httpClient.Dispose();
     }
 
     public async Task<(IpInfoDTO, Dictionary<string, string>)> Process()
@@ -58,7 +69,7 @@ public class IpInfo : IDisposable
 
         try
         {
-            HttpResponseMessage response = await httpClient.GetAsync(url);
+            HttpResponseMessage response = await httpClients[Proxy].GetAsync(url);
 
             if (response.IsSuccessStatusCode)
             {
@@ -86,4 +97,3 @@ public class IpInfo : IDisposable
         return (ipInfoData, replyResult);
     }
 }
-
