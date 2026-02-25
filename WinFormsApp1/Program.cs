@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Immutable;
 
 namespace Napominator;
 
@@ -12,6 +13,10 @@ internal static class Program
     [STAThread]
     static void Main()
     {
+        ImmutableList
+        
+
+
         var services = new ServiceCollection();
         services.AddTransient<IpInfo>();
         services.AddSingleton<MainForm>();
@@ -28,6 +33,7 @@ internal static class Program
 
 
                 var mainForm = _serviceProvider.GetRequiredService<MainForm>();
+                //var mainForm = new MainForm();
                 Application.Run(mainForm);
 
                 mutex.ReleaseMutex();

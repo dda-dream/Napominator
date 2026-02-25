@@ -15,7 +15,7 @@ public partial class MainForm : Form
     Functions functions;
     GlobalMouseHook globalMouseHook;
 
-    const string __VERSION = "ver 19.02.2026";
+    const string __VERSION = "ver 25.02.2026";
     Boolean allowFormClose = false;
 
     static WaveIn? audioSource;
@@ -28,7 +28,6 @@ public partial class MainForm : Form
     {
         InitializeComponent();
 
-        globalMouseHook = new GlobalMouseHook();
 
         logController = LogController.Builder();
         logMediator = new LogMediator();
@@ -46,6 +45,7 @@ public partial class MainForm : Form
 
 
 
+        globalMouseHook = new GlobalMouseHook();
         globalMouseHook.OnMouseClick += functions.CaptureScreenshotByMouseClick;
         globalMouseHook.Start();
     }
@@ -251,7 +251,6 @@ public partial class MainForm : Form
         catch (Exception ex)
         {
             if(logController != null)
-                //logController.WriteToRegistryLog("ShuminatorPlaySoundWarning: " + ex.ToString(), EventLogEntryType.Error, "NO_USERNAME");
                 logController.Log("ShuminatorPlaySoundWarning: " + ex.ToString(), EventLogEntryType.Error);
         }
     }
@@ -318,111 +317,120 @@ public partial class MainForm : Form
     bool executing_Tick = false;
     private void Timer1_Tick(object sender, EventArgs e)
     {
-        string curWinTitle = functions.GetActiveWindowTitle();
-        curWinTitle = curWinTitle.ToLower();
-        if (prev_curWinTitle != curWinTitle)
-            logController.Log("curWindowsTitle=" + curWinTitle, EventLogEntryType.Information);
-
-        prev_curWinTitle = curWinTitle;
-
-        if (DateTime.Now > lastReadSettingsFile.AddSeconds(59))
-        {   // reread setting file every 59 seconds
-            lastReadSettingsFile = DateTime.Now;
-            functions.ReadSettingFile();
-            textBox_NotifyText.Text = functions.Parse_NotifyText();
-        }
-
-        // периодичность проверки 
-        if (DateTime.Now > lastExec_Tick.AddSeconds(Int32.Parse(textBox_Period.Text)))
+        try
         {
-            //logController.Add_textBox_Log($"lastExec_Tick={lastExec_Tick} DateTime.Now={DateTime.Now}");
-            lastExec_Tick = DateTime.Now;
-        }
-        else
-        {
-            return;
-        }
-
-        if (executing_Tick == false)
-            executing_Tick = true;
-        else
-            return;
 
 
-        DateTime dt_from, dt_to;
-        DateTime dtFFile, dtTFile;
-        dtFFile = functions.GetDateTimeFromSettings("[allowed time from]");
-        dtTFile = functions.GetDateTimeFromSettings("[allowed time to]");
+            string curWinTitle = functions.GetActiveWindowTitle();
+            curWinTitle = curWinTitle.ToLower();
+            if (prev_curWinTitle != curWinTitle)
+                logController.Log("curWindowsTitle=" + curWinTitle, EventLogEntryType.Information);
 
-        dt_from = DateTime.Now;
-        dt_from = dt_from.AddHours(-DateTime.Now.Hour);
-        dt_from = dt_from.AddHours(dtFFile.Hour);
-        dt_from = dt_from.AddMinutes(-DateTime.Now.Minute);
-        dt_from = dt_from.AddMinutes(dtFFile.Minute);
+            prev_curWinTitle = curWinTitle;
 
-        dt_to = DateTime.Now;
-        dt_to = dt_to.AddHours(-DateTime.Now.Hour);
-        dt_to = dt_to.AddHours(dtTFile.Hour);
-        dt_to = dt_to.AddMinutes(-DateTime.Now.Minute);
-        dt_to = dt_to.AddMinutes(dtTFile.Minute);
-
-        //checkBox_Polina.CheckState = CheckState.Checked;//TODO: DEBUG
-        if (checkBox_Polina.CheckState == CheckState.Checked)
-        {//для Полины
-            if (audioSource == null)
-            {
-                //Start_NoiseDetector_executing = false;
-                //messageShown = false;                    
-                Start_NoiseDetector();
+            if (DateTime.Now > lastReadSettingsFile.AddSeconds(59))
+            {   // reread setting file every 59 seconds
+                lastReadSettingsFile = DateTime.Now;
+                functions.ReadSettingFile();
+                textBox_NotifyText.Text = functions.Parse_NotifyText();
             }
-            var timeAllowed = ((dt_from < dt_to) && (DateTime.Now > dt_from && DateTime.Now < dt_to));
-            if (!timeAllowed)
-                timeAllowed = ((dt_from > dt_to) && (DateTime.Now > dt_to));
-            if (timeAllowed)
-            {//разрешенное время
-                if (functions.GetDoubleFromSettings("[BlockChrome]") == 1)
-                    if (curWinTitle.Contains("chrome") || curWinTitle.Contains("edge") || curWinTitle.Contains("firefox"))
-                    {
-                        bool foundany = curWinTitle == "" || functions.CheckStringContainsInList(curWinTitle, functions.GetStringFromSettings("[ExcludeFromBlock]"));
-                        if (!foundany)
-                            Show_Message_To_Polina("BlockChrome" + functions.Parse_NotifyText(), "НАПОМИНАТОР! BlockChrome " + curWinTitle);
-                    }
 
-                if (functions.GetDoubleFromSettings("[BlockTotal]") == 1)
-                    Show_Message_To_Polina("TotalBlock" + functions.Parse_NotifyText(), "НАПОМИНАТОР! TotalBlock " + curWinTitle);
+            // периодичность проверки 
+            if (DateTime.Now > lastExec_Tick.AddSeconds(Int32.Parse(textBox_Period.Text)))
+            {
+                //logController.Add_textBox_Log($"lastExec_Tick={lastExec_Tick} DateTime.Now={DateTime.Now}");
+                lastExec_Tick = DateTime.Now;
             }
             else
-            {//не разрешенное время
-                bool foundany = curWinTitle == "" || functions.CheckStringContainsInList(curWinTitle, functions.GetStringFromSettings("[ExcludeFromBlock]"));
-                if (!foundany)
-                    Show_Message_To_Polina("Allowed time from " + dt_from.ToShortTimeString() + " to " + dt_to.ToShortTimeString() + functions.Parse_NotifyText(), "НАПОМИНАТОР! Allowed time " + curWinTitle);
-            }
-            //блок по списку
-            if (functions.CheckStringContainsInList(curWinTitle, functions.GetStringFromSettings("[Blocklist]")))
-                Show_Message_To_Polina("BlockList", "НАПОМИНАТОР! BlockList " + curWinTitle);
-        }
-        else
-        {// MAMA and PAPA
-         //блок по списку
-            if (checkBox_Mama.Checked == true)
             {
-                if (functions.GetDoubleFromSettings("[DisableNotify]") == 0)
-                    if (functions.CheckStringContainsInList(curWinTitle, functions.GetStringFromSettings("[Blocklist]")))
-                        Show_Message_To_Polina("BlockList" + functions.Parse_NotifyText(), "НАПОМИНАТОР! BlockList " + curWinTitle);
-
-                if (functions.GetDoubleFromSettings("[EnableLockAt0444]") == 1)
-                    if (DateTime.Now.Hour == 04 && DateTime.Now.Minute == 44)
-                    {
-                        Functions.LockWorkStation();
-                        logController.Log("LockWorkStation by time " + DateTime.Now.Hour + ":" + DateTime.Now.Minute + "", EventLogEntryType.Warning);
-                    }
-                
+                return;
             }
-            if (functions.GetDoubleFromSettings("[DisableNotify]") == 0)
-                if (checkBox_Papa.Checked == true || checkBox_Mama.Checked == true)
-                    Show_Message_To_Polina(functions.Parse_NotifyText(), "НАПОМИНАТОР!", false, true);
+
+            if (executing_Tick == false)
+                executing_Tick = true;
+            else
+                return;
+
+
+            DateTime dt_from, dt_to;
+            DateTime dtFFile, dtTFile;
+            dtFFile = functions.GetDateTimeFromSettings("[allowed time from]");
+            dtTFile = functions.GetDateTimeFromSettings("[allowed time to]");
+
+            dt_from = DateTime.Now;
+            dt_from = dt_from.AddHours(-DateTime.Now.Hour);
+            dt_from = dt_from.AddHours(dtFFile.Hour);
+            dt_from = dt_from.AddMinutes(-DateTime.Now.Minute);
+            dt_from = dt_from.AddMinutes(dtFFile.Minute);
+
+            dt_to = DateTime.Now;
+            dt_to = dt_to.AddHours(-DateTime.Now.Hour);
+            dt_to = dt_to.AddHours(dtTFile.Hour);
+            dt_to = dt_to.AddMinutes(-DateTime.Now.Minute);
+            dt_to = dt_to.AddMinutes(dtTFile.Minute);
+
+            //checkBox_Polina.CheckState = CheckState.Checked;//TODO: DEBUG
+            if (checkBox_Polina.CheckState == CheckState.Checked)
+            {//для Полины
+                if (audioSource == null)
+                {
+                    //Start_NoiseDetector_executing = false;
+                    //messageShown = false;                    
+                    Start_NoiseDetector();
+                }
+                var timeAllowed = ((dt_from < dt_to) && (DateTime.Now > dt_from && DateTime.Now < dt_to));
+                if (!timeAllowed)
+                    timeAllowed = ((dt_from > dt_to) && (DateTime.Now > dt_to));
+                if (timeAllowed)
+                {//разрешенное время
+                    if (functions.GetDoubleFromSettings("[BlockChrome]") == 1)
+                        if (curWinTitle.Contains("chrome") || curWinTitle.Contains("edge") || curWinTitle.Contains("firefox"))
+                        {
+                            bool foundany = curWinTitle == "" || functions.CheckStringContainsInList(curWinTitle, functions.GetStringFromSettings("[ExcludeFromBlock]"));
+                            if (!foundany)
+                                Show_Message_To_Polina("BlockChrome" + functions.Parse_NotifyText(), "НАПОМИНАТОР! BlockChrome " + curWinTitle);
+                        }
+
+                    if (functions.GetDoubleFromSettings("[BlockTotal]") == 1)
+                        Show_Message_To_Polina("TotalBlock" + functions.Parse_NotifyText(), "НАПОМИНАТОР! TotalBlock " + curWinTitle);
+                }
+                else
+                {//не разрешенное время
+                    bool foundany = curWinTitle == "" || functions.CheckStringContainsInList(curWinTitle, functions.GetStringFromSettings("[ExcludeFromBlock]"));
+                    if (!foundany)
+                        Show_Message_To_Polina("Allowed time from " + dt_from.ToShortTimeString() + " to " + dt_to.ToShortTimeString() + functions.Parse_NotifyText(), "НАПОМИНАТОР! Allowed time " + curWinTitle);
+                }
+                //блок по списку
+                if (functions.CheckStringContainsInList(curWinTitle, functions.GetStringFromSettings("[Blocklist]")))
+                    Show_Message_To_Polina("BlockList", "НАПОМИНАТОР! BlockList " + curWinTitle);
+            }
+            else
+            {// MAMA and PAPA
+             //блок по списку
+                if (checkBox_Mama.Checked == true)
+                {
+                    if (functions.GetDoubleFromSettings("[DisableNotify]") == 0)
+                        if (functions.CheckStringContainsInList(curWinTitle, functions.GetStringFromSettings("[Blocklist]")))
+                            Show_Message_To_Polina("BlockList" + functions.Parse_NotifyText(), "НАПОМИНАТОР! BlockList " + curWinTitle);
+
+                    if (functions.GetDoubleFromSettings("[EnableLockAt0444]") == 1)
+                        if (DateTime.Now.Hour == 04 && DateTime.Now.Minute == 44)
+                        {
+                            Functions.LockWorkStation();
+                            logController.Log("LockWorkStation by time " + DateTime.Now.Hour + ":" + DateTime.Now.Minute + "", EventLogEntryType.Warning);
+                        }
+
+                }
+                if (functions.GetDoubleFromSettings("[DisableNotify]") == 0)
+                    if (checkBox_Papa.Checked == true || checkBox_Mama.Checked == true)
+                        Show_Message_To_Polina(functions.Parse_NotifyText(), "НАПОМИНАТОР!", false, true);
+            }
+            executing_Tick = false;
         }
-        executing_Tick = false;
+        catch (Exception ex)
+        {
+            Console.WriteLine("Err");
+        }
     }
 
 

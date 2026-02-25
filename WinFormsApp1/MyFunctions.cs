@@ -37,6 +37,8 @@ class Functions
 
 
     LogController logController;
+
+    HttpClient client;
     public string USERNAME { get; }
     List<string> settingsLines = new List<string>();
     List<string> settingsNotifyLines = new List<string>();
@@ -152,22 +154,26 @@ class Functions
     public async void ReadSettingFile(string settingFileName = "Settings.txt")
     {
         string[] lines = { };
+        
 
-        CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-        var handler = new HttpClientHandler
+
+        if (client == null)
         {
-            UseProxy = false,
-            Proxy = null
-        };
-        handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+            var handler = new HttpClientHandler
+            {
+                UseProxy = false,
+                Proxy = null
+            };
+            handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
 
-        HttpClient client = new HttpClient(handler);
+            client = new HttpClient(handler);
+        }
+        
 
         try
         {
             client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
             client.DefaultRequestHeaders.Add("Accept", "text/plain, */*");
-            //client.DefaultRequestHeaders.ExpectContinue = false;
 
             var host = Dns.GetHostEntry(Dns.GetHostName());
             var ip = host.AddressList.FirstOrDefault(addr => addr.AddressFamily == AddressFamily.InterNetwork);
@@ -175,6 +181,7 @@ class Functions
             //string url = $"https://45.9.73.136:5005/napominator/Get/{ip_last_digit}"; 
             string url = $"https://fbdda.duckdns.org:5005/napominator/Get/{ip_last_digit}";
 
+            CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
             HttpResponseMessage response = await client.GetAsync(url, cts.Token);
             string content = await response.Content.ReadAsStringAsync(cts.Token);
             content = content.Replace("\t", "");
@@ -195,10 +202,6 @@ class Functions
         }
         finally
         {
-            if (cts != null)
-                cts.Dispose();
-            if (client != null)
-                client.Dispose();
         }
 
         if (lines.Length <= 1)
@@ -262,10 +265,11 @@ class Functions
     }
     public string GetStringFromSettings(string _settingName)
     {
+        /*
         string? ret = settingsLines.Where(u => u.Contains(_settingName)).FirstOrDefault();
         ret = ret == null ? "" : ret.Replace(_settingName, "");
-
-        /*
+        */
+        string ret="";
         foreach (string line in (List<string>)settingsLines)
         {
             if (line.Contains(_settingName))
@@ -274,7 +278,7 @@ class Functions
                 break;
             }
         }
-        */
+        
         return ret;
     }
     public double GetDoubleFromSettings(string _settingName)
@@ -442,6 +446,10 @@ class Functions
     private void CaptureScreenshotAsync()
     {
         string dirToStore = @"C:\NAPOMINATOR\screenshots";
+        long jpgQuality = (long)GetDoubleFromSettings("[JpgQuality]");
+        if (jpgQuality < 1)
+            return;
+
         try
         {
             long JpgScreenshotsDirSizeInGb = (long)GetDoubleFromSettings("[JpgScreenshotsDirSizeInGb]");
@@ -460,9 +468,6 @@ class Functions
                     g.CopyFromScreen(0, 0, 0, 0, bitmap.Size);
                 }
 
-                long jpgQuality = (long)GetDoubleFromSettings("[JpgQuality]");
-                if (jpgQuality < 1)
-                    return;
 
                 string filePath = $@"C:\NAPOMINATOR\screenshots\{USERNAME}_scr_{DateTime.Now:yyyyMMdd_HHmmss}.jpg";
                 if (!System.IO.Directory.Exists(dirToStore))
@@ -476,7 +481,10 @@ class Functions
                 }
             }
         }
-        catch { }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.ToString());
+        }
     }
 
 
