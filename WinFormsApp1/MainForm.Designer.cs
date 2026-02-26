@@ -49,6 +49,8 @@
             textBox_NotifyText = new TextBox();
             checkBox_Polina = new CheckBox();
             groupBox2 = new GroupBox();
+            btn28min = new Button();
+            btn25min = new Button();
             textBox_PersonalPeriod = new TextBox();
             textBox_PersonalPeriodText = new TextBox();
             label8 = new Label();
@@ -57,8 +59,6 @@
             tb_noiselevel = new TextBox();
             timer_Personal = new System.Windows.Forms.Timer(components);
             btn_IPInfo = new Button();
-            btn25min = new Button();
-            btn28min = new Button();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             SuspendLayout();
@@ -265,6 +265,24 @@
             groupBox2.TabStop = false;
             groupBox2.Text = "Дополнительный таймер";
             // 
+            // btn28min
+            // 
+            btn28min.Location = new Point(383, 16);
+            btn28min.Name = "btn28min";
+            btn28min.Size = new Size(50, 24);
+            btn28min.TabIndex = 23;
+            btn28min.Text = "28min";
+            btn28min.UseVisualStyleBackColor = true;
+            // 
+            // btn25min
+            // 
+            btn25min.Location = new Point(327, 16);
+            btn25min.Name = "btn25min";
+            btn25min.Size = new Size(50, 24);
+            btn25min.TabIndex = 22;
+            btn25min.Text = "25min";
+            btn25min.UseVisualStyleBackColor = true;
+            // 
             // textBox_PersonalPeriod
             // 
             textBox_PersonalPeriod.Location = new Point(137, 16);
@@ -337,24 +355,6 @@
             btn_IPInfo.UseVisualStyleBackColor = true;
             btn_IPInfo.Click += btn_IPInfo_Click;
             // 
-            // btn25min
-            // 
-            btn25min.Location = new Point(327, 16);
-            btn25min.Name = "btn25min";
-            btn25min.Size = new Size(50, 24);
-            btn25min.TabIndex = 22;
-            btn25min.Text = "25min";
-            btn25min.UseVisualStyleBackColor = true;
-            // 
-            // btn28min
-            // 
-            btn28min.Location = new Point(383, 16);
-            btn28min.Name = "btn28min";
-            btn28min.Size = new Size(50, 24);
-            btn28min.TabIndex = 23;
-            btn28min.Text = "28min";
-            btn28min.UseVisualStyleBackColor = true;
-            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -369,6 +369,7 @@
             Name = "MainForm";
             Text = "Напоминатор!";
             FormClosing += Form1_FormClosing;
+            FormClosed += MainForm_FormClosed;
             Load += Form1_Load;
             Shown += Form1_Shown;
             Resize += Form1_Resize;

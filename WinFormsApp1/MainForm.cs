@@ -250,7 +250,7 @@ public partial class MainForm : Form
         }
         catch (Exception ex)
         {
-            if(logController != null)
+            if (logController != null)
                 logController.Log("ShuminatorPlaySoundWarning: " + ex.ToString(), EventLogEntryType.Error);
         }
     }
@@ -538,10 +538,10 @@ public partial class MainForm : Form
 
         if (String.IsNullOrEmpty(message))
             logEntry = Environment.NewLine;
-        else 
+        else
             logEntry = timeStr + message + Environment.NewLine;
 
-        
+
         textBox_Log.AppendText(logEntry);
         textBox_Log.SelectionStart = textBox_Log.Text.Length;
         textBox_Log.SelectionLength = 0;
@@ -574,7 +574,7 @@ public partial class MainForm : Form
             checkBox_Polina.Checked = true;
 
         string tmpUser = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
-        if ( !tmpUser.Contains("d"))
+        if (!tmpUser.Contains("d"))
             StartTimer();
     }
 
@@ -653,7 +653,7 @@ public partial class MainForm : Form
     {
         string proxy = functions.GetStringFromSettings("[Proxy_IP]");
 
-        var ipInfo = Program._serviceProvider.GetRequiredService<IpInfo>(); 
+        var ipInfo = Program._serviceProvider.GetRequiredService<IpInfo>();
         using (ipInfo)
         {
             if (!String.IsNullOrEmpty(proxy))
@@ -677,7 +677,8 @@ public partial class MainForm : Form
         }
     }
 
-
-
-
+    private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+    {
+        globalMouseHook.Dispose();
+    }
 }

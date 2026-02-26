@@ -25,9 +25,10 @@ public class GlobalMouseHook : IDisposable
     private const int WM_LBUTTONDOWN = 0x0201;
     private IntPtr _hookID = IntPtr.Zero;
     public event Action OnMouseClick;
-
     private bool _disposed = false;
+
     private LowLevelMouseProc _proc;
+    private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
 
     public void Start()
     {
@@ -51,21 +52,9 @@ public class GlobalMouseHook : IDisposable
     }
     IntPtr SetHook(LowLevelMouseProc proc)
     {
-
-        using (var curProcess = System.Diagnostics.Process.GetCurrentProcess())
-        {
-            var moduleName = curProcess.MainModule?.ModuleName;
-            if (string.IsNullOrEmpty(moduleName))
-            {
-                // Fallback for scenarios where MainModule is null (services, etc.)
-                moduleName = System.Reflection.Assembly.GetEntryAssembly()?.GetName().Name;
-            }
-
-            return SetWindowsHookEx(WH_MOUSE_LL, proc, GetModuleHandle(moduleName), 0);
-        }
+        return SetWindowsHookEx(WH_MOUSE_LL, proc, IntPtr.Zero, 0);
     }
 
-    private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
     private IntPtr HookCallback(int nCode, IntPtr wParam, IntPtr lParam)
     {
         if (nCode >= 0 && wParam == (IntPtr)WM_LBUTTONDOWN)
@@ -74,8 +63,9 @@ public class GlobalMouseHook : IDisposable
             {
                 OnMouseClick?.Invoke();
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"MouseHook Error: {ex.Message}");
             }
         }
         return CallNextHookEx(_hookID, nCode, wParam, lParam);
