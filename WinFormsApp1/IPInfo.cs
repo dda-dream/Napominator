@@ -20,7 +20,7 @@ public class IpInfo : IDisposable
 
 
     HttpClientHandler handlerHttpClient;
-    public string url { get; set; } = "";
+    public string urlTestIP { get; set; } = "";
     public string Proxy { get; set; } = "";
     int httpClientTimeoutSeconds = 0;
     IConfigService _settings;
@@ -32,8 +32,8 @@ public class IpInfo : IDisposable
     }
 
     public void Create()
-    { 
-        url = _settings.NetworkConfig.IpInfoUrl;
+    {
+        urlTestIP = _settings.NetworkConfig.IpInfoUrl;
         if (String.IsNullOrEmpty(Proxy) && !String.IsNullOrEmpty(_settings.NetworkConfig.Proxy))
             Proxy = _settings.NetworkConfig.Proxy;
 
@@ -69,7 +69,7 @@ public class IpInfo : IDisposable
 
         try
         {
-            HttpResponseMessage response = await httpClients[Proxy].GetAsync(url);
+            HttpResponseMessage response = await httpClients[Proxy].GetAsync(urlTestIP);
 
             if (response.IsSuccessStatusCode)
             {

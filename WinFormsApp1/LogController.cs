@@ -6,11 +6,12 @@ namespace Napominator;
 public interface ILogger
 {
     void Log(string message, EventLogEntryType level, string USERNAME);
+    public void LogClear();
 }
 
-public class FileLogger : LogController
+public class FileLogger : ILogger
 {
-    public override void Log(string message, EventLogEntryType level, string USERNAME)
+    public void Log(string message, EventLogEntryType level, string USERNAME)
     {
         string timeStr = DateTime.Now.ToString("dd-MM-yyyy") + " " + DateTime.Now.ToLongTimeString() + ": ";
         string filename = "log-" + USERNAME + ".txt";
@@ -24,10 +25,15 @@ public class FileLogger : LogController
             System.Diagnostics.Debug.WriteLine($"FileLogger error: {ex}");
         }
     }
+
+    public void LogClear()
+    {
+    }
 }
-public class EventViewerLogger : LogController
+public class EventViewerLogger : ILogger
 {
-    public override void Log(string message, EventLogEntryType level, string USERNAME)
+    
+    public void Log(string message, EventLogEntryType level, string USERNAME)
     {
         EventLog eventLog = new EventLog();
 
@@ -39,8 +45,12 @@ public class EventViewerLogger : LogController
         eventLog.Source = "NAPOMINATOR";
         eventLog.WriteEntry(USERNAME + " : " + message, level, 1, 1);
     }
+
+    public void LogClear()
+    {
+    }
 }
-public class TextBoxLogger : LogController
+public class TextBoxLogger : ILogger
 {
     LogMediator _logHandler;
 
@@ -48,13 +58,18 @@ public class TextBoxLogger : LogController
     {
         _logHandler = logHandler;
     }
-    public override void Log(string message, EventLogEntryType level, string USERNAME)
+    public void Log(string message, EventLogEntryType level, string USERNAME)
     {
         _logHandler.AddLog(message, level, USERNAME);
     }
+
+    public void LogClear()
+    {
+        _logHandler.LogClear();   
+    }
 }
 
-public class LogController : ILogger
+public class LogController 
 {
     private string USERNAME;
 
@@ -94,10 +109,12 @@ public class LogController : ILogger
     }
 
 
-
-    public virtual void Log(string _message, EventLogEntryType _level = EventLogEntryType.Information, string _USERNAME = "")
+    public void LogClear()
     {
-
+        _textBoxLogger.LogClear();
+    }
+    public void Log(string _message, EventLogEntryType _level = EventLogEntryType.Information, string _USERNAME = "")
+    {
         if (_textBoxLogger != null)
             _textBoxLogger.Log(_message, _level, USERNAME);
         if (_eventViewerLogger != null)
@@ -132,6 +149,7 @@ interface ILogMediator
 {
     public event EventHandler<LogEventArgs> subscriber;
     public void AddLog(string _message, EventLogEntryType _level, string _USERNAME);
+    public void LogClear();
 }
 
 
@@ -143,7 +161,13 @@ public class LogMediator : ILogMediator
     public void AddLog(string _message, EventLogEntryType _level, string _USERNAME)
     {
         LogEventArgs a = new LogEventArgs(_message, _level, _USERNAME);
+        subscriber.Invoke(this, a);
+    }
 
+    public void LogClear()
+    {
+
+        LogEventArgs a = new LogEventArgs("***CLEAR***LOG***CONTROL***", EventLogEntryType.Information, "");
         subscriber.Invoke(this, a);
     }
 }

@@ -524,29 +524,36 @@ public partial class MainForm : Form
 
     private void LogMediator_subscriber(object? sender, LogEventArgs e)
     {
-        Add_TextBox_Log(e.Message, e.level, e.USERNAME);
-    }
-
-    private void Add_TextBox_Log(string message, EventLogEntryType level, string USERNAME)
-    {
-        const int MAX_LINES = 100;
-        if (textBox_Log.Lines.Length > MAX_LINES)
-            textBox_Log.Text = "";
-
-        string timeStr = DateTime.Now.ToString("dd-MM-yyyy") + " " + DateTime.Now.ToLongTimeString() + ": ";
-        string logEntry;
-
-        if (String.IsNullOrEmpty(message))
-            logEntry = Environment.NewLine;
+        if (e.Message == "***CLEAR***LOG***CONTROL***")
+            Clear_TextBox_Log();
         else
-            logEntry = timeStr + message + Environment.NewLine;
-
-
-        textBox_Log.AppendText(logEntry);
-        textBox_Log.SelectionStart = textBox_Log.Text.Length;
-        textBox_Log.SelectionLength = 0;
-        textBox_Log.ScrollToCaret();
+            Add_TextBox_Log(e.Message, e.level, e.USERNAME);
     }
+
+        private void Clear_TextBox_Log()
+        {
+            textBox_Log.Text = "";
+        }
+        private void Add_TextBox_Log(string message, EventLogEntryType level, string USERNAME)
+        {
+            const int MAX_LINES = 100;
+            if (textBox_Log.Lines.Length > MAX_LINES)
+                textBox_Log.Text = "";
+
+            string timeStr = DateTime.Now.ToString("dd-MM-yyyy") + " " + DateTime.Now.ToLongTimeString() + ": ";
+            string logEntry;
+
+            if (String.IsNullOrEmpty(message))
+                logEntry = Environment.NewLine;
+            else
+                logEntry = timeStr + message + Environment.NewLine;
+
+
+            textBox_Log.AppendText(logEntry);
+            textBox_Log.SelectionStart = textBox_Log.Text.Length;
+            textBox_Log.SelectionLength = 0;
+            textBox_Log.ScrollToCaret();
+        }
 
 
     private void Form1_Shown(object sender, EventArgs e)
@@ -662,7 +669,8 @@ public partial class MainForm : Form
             ipInfo.Create();
 
             var (ipInfoDTO, pingResult) = await ipInfo.Process();
-            logController.Log($"");
+            
+            logController.LogClear();
             logController.Log($"IP detecting with proxy : {ipInfo.Proxy}");
             logController.Log($"IP: {ipInfoDTO.query} - {ipInfoDTO.countryCode} - {ipInfoDTO.country}");
 

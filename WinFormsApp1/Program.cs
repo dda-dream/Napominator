@@ -3,11 +3,15 @@ using System.Collections.Immutable;
 
 namespace Napominator;
 
+
+
 internal static class Program
 {
     static Mutex mutex = new Mutex(true, Application.ExecutablePath.Replace("\\",""));
     static bool mutexHasCapture = false;
     public static ServiceProvider _serviceProvider;
+
+    //static SpinLock s;
 
 
     [STAThread]
