@@ -42,6 +42,10 @@ class Functions
     public string USERNAME { get; }
     List<string> settingsLines = new List<string>();
     List<string> settingsNotifyLines = new List<string>();
+    IPHostEntry host;
+    IPAddress ip;
+    string ip_last_digit;
+    RabbitMQConnection rabbitMQConnection;
 
 
     public Functions(LogController logController)
@@ -50,6 +54,12 @@ class Functions
         
         USERNAME = username2USERNAME(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1]);
         ArgumentException.ThrowIfNullOrEmpty(USERNAME);
+
+        host = Dns.GetHostEntry(Dns.GetHostName());
+        ip = host.AddressList.FirstOrDefault(addr => addr.AddressFamily == AddressFamily.InterNetwork);
+        ip_last_digit = ip.ToString().Split(".")[3];
+
+        rabbitMQConnection = new RabbitMQConnection(ip_last_digit, "fbdda.duckdns.org", "q", "guestSuperPuper_!", logController);
     }
 
 
@@ -59,7 +69,7 @@ class Functions
     {
         try
         {
-            VideoCapture myVideoCapture = new VideoCapture("rtsp://padmin:Qweqwe123@192.168.2.67:554/stream1");
+            VideoCapture myVideoCapture = new VideoCapture("rtsp://padmin:Qpassword@192.168.2.67:554/stream1");
             Mat frame = new Mat();
             bool ret = myVideoCapture.Read(frame);
             if (ret)
@@ -151,11 +161,24 @@ class Functions
     }
 
 
-    public async void ReadSettingFile(string settingFileName = "Settings.txt")
-    {
-        string[] lines = { };
-        
 
+
+
+
+
+    public async Task<string[]> ReadSettingFile(string settingFileName = "Settings.txt")
+    {
+        string[] lines = [];
+        string RabbitMQRequestStatus;
+        //=> if RabbitMQ commands 
+
+        (RabbitMQRequestStatus, lines) = await rabbitMQConnection.GetConfig();
+
+        if (RabbitMQRequestStatus == "SendCommandGetConfig")
+            return lines;
+        if (lines.Length > 0)
+            return lines;
+        //<= if RabbitMQ commands 
 
         if (client == null)
         {
@@ -165,20 +188,11 @@ class Functions
                 Proxy = null
             };
             handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
-
             client = new HttpClient(handler);
         }
-        
 
         try
         {
-            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
-            client.DefaultRequestHeaders.Add("Accept", "text/plain, */*");
-
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            var ip = host.AddressList.FirstOrDefault(addr => addr.AddressFamily == AddressFamily.InterNetwork);
-            var ip_last_digit = ip.ToString().Split(".")[3];
-            //string url = $"https://45.9.73.136:5005/napominator/Get/{ip_last_digit}"; 
             string url = $"https://fbdda.duckdns.org:5005/napominator/Get/{ip_last_digit}";
 
             CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
@@ -203,8 +217,8 @@ class Functions
         finally
         {
         }
-
-        if (lines.Length <= 1)
+        
+        if (lines.Length <= 1) //if no HTTP response
         {
             try
             {
@@ -215,6 +229,13 @@ class Functions
             }
             catch { }
         }
+        return lines;
+    }
+    public void ParseSettingFile(string[] lines)
+    {
+        if (lines.Length <= 0)
+            return;
+     
 
         bool startFound = false;
         bool startNotifyFound = false;

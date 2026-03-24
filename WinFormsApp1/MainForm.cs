@@ -315,7 +315,7 @@ public partial class MainForm : Form
     DateTime lastExec_Tick = DateTime.Now;
     DateTime lastReadSettingsFile = DateTime.MinValue;
     bool executing_Tick = false;
-    private void Timer1_Tick(object sender, EventArgs e)
+    private async void Timer1_Tick(object sender, EventArgs e)
     {
         try
         {
@@ -331,7 +331,9 @@ public partial class MainForm : Form
             if (DateTime.Now > lastReadSettingsFile.AddSeconds(59))
             {   // reread setting file every 59 seconds
                 lastReadSettingsFile = DateTime.Now;
-                functions.ReadSettingFile();
+                var lines = await functions.ReadSettingFile();
+                functions.ParseSettingFile(lines);
+
                 textBox_NotifyText.Text = functions.Parse_NotifyText();
             }
 
@@ -556,7 +558,7 @@ public partial class MainForm : Form
         }
 
 
-    private void Form1_Shown(object sender, EventArgs e)
+    private async void Form1_Shown(object sender, EventArgs e)
     {
         //TODO: debug
         //HACK: Если нужно запустить под другим пользователем, то менять тут.
@@ -565,13 +567,14 @@ public partial class MainForm : Form
 
 
         logController.Log("Started. initial version created at 29.12.2022 11:50");
-        logController.Log("NAPOMINATOR MainForm()");
+        logController.Log("NAPOMINATOR MainForm()-Form1_Shown()");
         logController.Log($"Exec FileName : {System.IO.Path.GetFileName(Application.ExecutablePath)}");
-
         logController.Log("NAPOMINATOR version:" + __VERSION);
-
         logController.Log("ReadSettingFile() executed", EventLogEntryType.Information);
-        functions.ReadSettingFile();
+
+        var lines = await functions.ReadSettingFile();
+        functions.ParseSettingFile(lines);
+
 
         if (functions.USERNAME == "i")
             checkBox_Mama.Checked = true;
