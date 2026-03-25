@@ -54,6 +54,10 @@ class Functions
         
         USERNAME = username2USERNAME(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1]);
         ArgumentException.ThrowIfNullOrEmpty(USERNAME);
+        //TODO: debug
+        //HACK: Если нужно запустить под другим пользователем, то менять тут.
+        //USERNAME = "p";
+        //TODO: debug
 
         host = Dns.GetHostEntry(Dns.GetHostName());
         ip = host.AddressList.FirstOrDefault(addr => addr.AddressFamily == AddressFamily.InterNetwork);

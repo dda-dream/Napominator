@@ -560,12 +560,6 @@ public partial class MainForm : Form
 
     private async void Form1_Shown(object sender, EventArgs e)
     {
-        //TODO: debug
-        //HACK: Если нужно запустить под другим пользователем, то менять тут.
-        //USERNAME = "p";
-        //TODO: debug
-
-
         logController.Log("Started. initial version created at 29.12.2022 11:50");
         logController.Log("NAPOMINATOR MainForm()-Form1_Shown()");
         logController.Log($"Exec FileName : {System.IO.Path.GetFileName(Application.ExecutablePath)}");
