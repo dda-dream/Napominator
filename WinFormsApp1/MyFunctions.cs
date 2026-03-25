@@ -174,13 +174,13 @@ class Functions
     {
         string[] lines = [];
         string RabbitMQRequestStatus;
-        //=> if RabbitMQ commands 
 
+        //=> if RabbitMQ commands 
         (RabbitMQRequestStatus, lines) = await rabbitMQConnection.GetConfig();
 
         if (RabbitMQRequestStatus == "SendCommandGetConfig")
             return lines;
-        if (lines.Length > 0)
+        if (RabbitMQRequestStatus == "GetResponse" && lines.Length > 0)
             return lines;
         //<= if RabbitMQ commands 
 
@@ -197,6 +197,10 @@ class Functions
 
         try
         {
+            client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
+            client.DefaultRequestHeaders.Add("Accept", "text/plain, */*");
+            //client.DefaultRequestHeaders.ExpectContinue = false;
+
             string url = $"https://fbdda.duckdns.org:5005/napominator/Get/{ip_last_digit}";
 
             CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));

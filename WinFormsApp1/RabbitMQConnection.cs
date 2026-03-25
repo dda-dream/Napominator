@@ -98,8 +98,6 @@ class RabbitMQConnection
             }
 
             //logController.Log($"RabbitMQConnection.GetResponse Received Count = {responseSet.Count}");
-
-
         }
         catch (Exception e)
         {

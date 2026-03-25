@@ -34,7 +34,6 @@
             timer1 = new System.Windows.Forms.Timer(components);
             notifyIcon1 = new NotifyIcon(components);
             groupBox1 = new GroupBox();
-            textBox_Period = new TextBox();
             label6 = new Label();
             label5 = new Label();
             dateTime_to = new DateTimePicker();
@@ -43,9 +42,6 @@
             checkBox_Papa = new CheckBox();
             checkBox_Mama = new CheckBox();
             label3 = new Label();
-            textBox_NotifyLenght = new TextBox();
-            label2 = new Label();
-            label1 = new Label();
             textBox_NotifyText = new TextBox();
             checkBox_Polina = new CheckBox();
             groupBox2 = new GroupBox();
@@ -94,7 +90,6 @@
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(textBox_Period);
             groupBox1.Controls.Add(label6);
             groupBox1.Controls.Add(label5);
             groupBox1.Controls.Add(dateTime_to);
@@ -103,9 +98,6 @@
             groupBox1.Controls.Add(checkBox_Papa);
             groupBox1.Controls.Add(checkBox_Mama);
             groupBox1.Controls.Add(label3);
-            groupBox1.Controls.Add(textBox_NotifyLenght);
-            groupBox1.Controls.Add(label2);
-            groupBox1.Controls.Add(label1);
             groupBox1.Controls.Add(textBox_NotifyText);
             groupBox1.Controls.Add(checkBox_Polina);
             groupBox1.Controls.Add(groupBox2);
@@ -116,19 +108,10 @@
             groupBox1.TabStop = false;
             groupBox1.Text = "Параметры";
             // 
-            // textBox_Period
-            // 
-            textBox_Period.Location = new Point(150, 64);
-            textBox_Period.Name = "textBox_Period";
-            textBox_Period.Size = new Size(82, 23);
-            textBox_Period.TabIndex = 15;
-            textBox_Period.Text = "5";
-            textBox_Period.TextAlign = HorizontalAlignment.Center;
-            // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(11, 92);
+            label6.Location = new Point(11, 100);
             label6.Name = "label6";
             label6.Size = new Size(86, 15);
             label6.TabIndex = 14;
@@ -137,7 +120,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(238, 94);
+            label5.Location = new Point(238, 102);
             label5.Name = "label5";
             label5.Size = new Size(21, 15);
             label5.TabIndex = 13;
@@ -146,7 +129,7 @@
             // dateTime_to
             // 
             dateTime_to.Format = DateTimePickerFormat.Time;
-            dateTime_to.Location = new Point(265, 89);
+            dateTime_to.Location = new Point(265, 97);
             dateTime_to.Name = "dateTime_to";
             dateTime_to.Size = new Size(82, 23);
             dateTime_to.TabIndex = 12;
@@ -155,7 +138,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(131, 92);
+            label4.Location = new Point(131, 100);
             label4.Name = "label4";
             label4.Size = new Size(13, 15);
             label4.TabIndex = 11;
@@ -164,7 +147,7 @@
             // dateTime_from
             // 
             dateTime_from.Format = DateTimePickerFormat.Time;
-            dateTime_from.Location = new Point(150, 89);
+            dateTime_from.Location = new Point(150, 97);
             dateTime_from.Name = "dateTime_from";
             dateTime_from.Size = new Size(82, 23);
             dateTime_from.TabIndex = 10;
@@ -201,33 +184,6 @@
             label3.TabIndex = 7;
             label3.Text = "Текст напоминания";
             // 
-            // textBox_NotifyLenght
-            // 
-            textBox_NotifyLenght.Location = new Point(439, 64);
-            textBox_NotifyLenght.Name = "textBox_NotifyLenght";
-            textBox_NotifyLenght.Size = new Size(29, 23);
-            textBox_NotifyLenght.TabIndex = 6;
-            textBox_NotifyLenght.Text = "5";
-            textBox_NotifyLenght.TextAlign = HorizontalAlignment.Center;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(249, 67);
-            label2.Name = "label2";
-            label2.Size = new Size(184, 15);
-            label2.TabIndex = 5;
-            label2.Text = "Длительность напоминания сек";
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(11, 67);
-            label1.Name = "label1";
-            label1.Size = new Size(115, 15);
-            label1.TabIndex = 4;
-            label1.Text = "Периодичность cek";
-            // 
             // textBox_NotifyText
             // 
             textBox_NotifyText.Font = new Font("Segoe UI", 8.25F);
@@ -235,7 +191,7 @@
             textBox_NotifyText.Multiline = true;
             textBox_NotifyText.Name = "textBox_NotifyText";
             textBox_NotifyText.ScrollBars = ScrollBars.Vertical;
-            textBox_NotifyText.Size = new Size(478, 26);
+            textBox_NotifyText.Size = new Size(478, 54);
             textBox_NotifyText.TabIndex = 2;
             textBox_NotifyText.Text = "Что делать?";
             // 
@@ -388,9 +344,6 @@
         private GroupBox groupBox1;
         private CheckBox checkBox_Polina;
         private Label label3;
-        private TextBox textBox_NotifyLenght;
-        private Label label2;
-        private Label label1;
         private TextBox textBox_NotifyText;
         private CheckBox checkBox_Papa;
         private CheckBox checkBox_Mama;
@@ -399,7 +352,6 @@
         private Label label4;
         private DateTimePicker dateTime_from;
         private Label label6;
-        private TextBox textBox_Period;
         private Label label7;
         private TextBox tb_noiselevel;
         public System.Windows.Forms.Timer timer1;

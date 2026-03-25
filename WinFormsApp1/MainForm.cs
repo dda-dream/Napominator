@@ -317,6 +317,9 @@ public partial class MainForm : Form
     bool executing_Tick = false;
     private async void Timer1_Tick(object sender, EventArgs e)
     {
+        int CHECK_PERIOD_SECONDS = 5;
+
+            CHECK_PERIOD_SECONDS = (int)functions.GetDoubleFromSettings("[CHECK_PERIOD_SECONDS]");
         try
         {
 
@@ -334,13 +337,12 @@ public partial class MainForm : Form
                 var lines = await functions.ReadSettingFile();
                 functions.ParseSettingFile(lines);
 
-                textBox_NotifyText.Text = functions.Parse_NotifyText();
+                RefreshControlsFromSettings();
             }
 
             // периодичность проверки 
-            if (DateTime.Now > lastExec_Tick.AddSeconds(Int32.Parse(textBox_Period.Text)))
+            if (DateTime.Now > lastExec_Tick.AddSeconds(CHECK_PERIOD_SECONDS) )
             {
-                //logController.Add_textBox_Log($"lastExec_Tick={lastExec_Tick} DateTime.Now={DateTime.Now}");
                 lastExec_Tick = DateTime.Now;
             }
             else
@@ -374,7 +376,8 @@ public partial class MainForm : Form
             //checkBox_Polina.CheckState = CheckState.Checked;//TODO: DEBUG
             if (checkBox_Polina.CheckState == CheckState.Checked)
             {//для Полины
-                if (audioSource == null)
+                if (   audioSource == null 
+                    && functions.GetStringFromSettings("[Shuminator_Enabled]") == "1")
                 {
                     //Start_NoiseDetector_executing = false;
                     //messageShown = false;                    
@@ -436,6 +439,12 @@ public partial class MainForm : Form
     }
 
 
+    void RefreshControlsFromSettings()
+    {
+        textBox_NotifyText.Text = functions.Parse_NotifyText();
+        dateTime_from.Text = functions.GetStringFromSettings("[allowed time from]");
+        dateTime_to.Text = functions.GetStringFromSettings("[allowed time to]");
+    }
 
 
     void Show_Message_To_Polina(string _messageToShow, string _formCaption, Boolean _showDesktop = true, Boolean _dontCloseWindow = false, bool _write_textBox_Log = true, int _notifyLenghCounter = 5)
@@ -469,7 +478,6 @@ public partial class MainForm : Form
         checkBox_Mama.CheckState = CheckState.Unchecked;
         checkBox_Papa.CheckState = CheckState.Unchecked;
         textBox_NotifyText.Text = "!!!";
-        textBox_Period.Text = "5";
 
         checkBox_Mama.CheckedChanged += this.CheckBox_Mama_CheckedChanged;
         checkBox_Papa.CheckedChanged += this.CheckBox_Papa_CheckedChanged;
@@ -481,8 +489,6 @@ public partial class MainForm : Form
 
         checkBox_Papa.CheckState = CheckState.Unchecked;
         checkBox_Polina.CheckState = CheckState.Unchecked;
-        textBox_NotifyText.Text = functions.Parse_NotifyText();
-        textBox_Period.Text = (60 * 60).ToString();
 
         checkBox_Papa.CheckedChanged += this.CheckBox_Papa_CheckedChanged;
         checkBox_Polina.CheckedChanged += this.CheckBox_Polina_CheckedChanged;
@@ -494,8 +500,6 @@ public partial class MainForm : Form
 
         checkBox_Polina.CheckState = CheckState.Unchecked;
         checkBox_Mama.CheckState = CheckState.Unchecked;
-        textBox_NotifyText.Text = functions.Parse_NotifyText();
-        textBox_Period.Text = (60 * 60).ToString();
 
         checkBox_Polina.CheckedChanged += this.CheckBox_Polina_CheckedChanged;
         checkBox_Mama.CheckedChanged += this.CheckBox_Mama_CheckedChanged;
@@ -568,6 +572,7 @@ public partial class MainForm : Form
 
         var lines = await functions.ReadSettingFile();
         functions.ParseSettingFile(lines);
+        RefreshControlsFromSettings();
 
 
         if (functions.USERNAME == "i")
