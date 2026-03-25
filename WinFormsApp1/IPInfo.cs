@@ -11,6 +11,7 @@ public class IpInfoDTO
     public string query { get; set; } = "";
     public string countryCode { get; set; } = "";
     public string country { get; set; } = "";
+    public string http_response_status { get; set; } = "";
 }
 
 public class IpInfo : IDisposable
@@ -75,7 +76,8 @@ public class IpInfo : IDisposable
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
                 ipInfoData = JsonSerializer.Deserialize<IpInfoDTO>(jsonResponse);
-
+                ipInfoData.http_response_status = response.StatusCode.ToString();
+                
                 PingReply reply;
                 using (Ping pingSender = new Ping())
                 {
@@ -86,12 +88,12 @@ public class IpInfo : IDisposable
             }
             else
             {
-                Console.WriteLine("Ошибка при получении данных: " + response.StatusCode);
+                ipInfoData.http_response_status = "ERR "+ response.StatusCode;
             }
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Исключение: " + ex.Message);
+            ipInfoData.http_response_status = "ERR";
         }
 
         return (ipInfoData, replyResult);

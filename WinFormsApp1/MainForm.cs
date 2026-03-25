@@ -717,11 +717,11 @@ public partial class MainForm : Form
 
             if (pingResult.FirstOrDefault(k => k.Key == "Status").Value == IPStatus.Success.ToString())
             {
-                Add_TextBox_Log($"{ipInfo.Proxy}. IP: {ipInfoDTO.query} - {ipInfoDTO.countryCode} - {ipInfoDTO.country}. Пинг успешен! Время задержки: {pingResult.FirstOrDefault(k => k.Key == "RoundtripTime").Value} мс.", EventLogEntryType.Information, "");
+                Add_TextBox_Log($"{ipInfo.Proxy}. IP: {ipInfoDTO.query} - {ipInfoDTO.countryCode}. Http status: {ipInfoDTO.http_response_status}. Ping - {pingResult.FirstOrDefault(k => k.Key == "RoundtripTime").Value} мс.", EventLogEntryType.Information, "");
             }
             else
             {
-                Add_TextBox_Log($"{ipInfo.Proxy}. IP: {ipInfoDTO.query} - {ipInfoDTO.countryCode} - {ipInfoDTO.country}. Пинг неудачен. Статус: {pingResult.FirstOrDefault(k => k.Key == "Status").Value}. ", EventLogEntryType.Information, "");
+                Add_TextBox_Log($"{ipInfo.Proxy}. IP: {ipInfoDTO.query} - {ipInfoDTO.countryCode}. Http status: {ipInfoDTO.http_response_status}. Ping error. Status: {pingResult.FirstOrDefault(k => k.Key == "Status").Value}. ", EventLogEntryType.Information, "");
             }
         }
     }
