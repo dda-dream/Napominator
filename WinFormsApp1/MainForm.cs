@@ -319,7 +319,7 @@ public partial class MainForm : Form
     {
         int CHECK_PERIOD_SECONDS = 5;
 
-            CHECK_PERIOD_SECONDS = (int)functions.GetDoubleFromSettings("[CHECK_PERIOD_SECONDS]");
+        CHECK_PERIOD_SECONDS = (int)functions.GetDoubleFromSettings("[CHECK_PERIOD_SECONDS]");
         try
         {
 
@@ -341,7 +341,7 @@ public partial class MainForm : Form
             }
 
             // периодичность проверки 
-            if (DateTime.Now > lastExec_Tick.AddSeconds(CHECK_PERIOD_SECONDS) )
+            if (DateTime.Now > lastExec_Tick.AddSeconds(CHECK_PERIOD_SECONDS))
             {
                 lastExec_Tick = DateTime.Now;
             }
@@ -376,7 +376,7 @@ public partial class MainForm : Form
             //checkBox_Polina.CheckState = CheckState.Checked;//TODO: DEBUG
             if (checkBox_Polina.CheckState == CheckState.Checked)
             {//для Полины
-                if (   audioSource == null 
+                if (audioSource == null
                     && functions.GetStringFromSettings("[Shuminator_Enabled]") == "1")
                 {
                     //Start_NoiseDetector_executing = false;
@@ -536,30 +536,30 @@ public partial class MainForm : Form
             Add_TextBox_Log(e.Message, e.level, e.USERNAME);
     }
 
-        private void Clear_TextBox_Log()
-        {
+    private void Clear_TextBox_Log()
+    {
+        textBox_Log.Text = "";
+    }
+    private void Add_TextBox_Log(string message, EventLogEntryType level, string USERNAME)
+    {
+        const int MAX_LINES = 100;
+        if (textBox_Log.Lines.Length > MAX_LINES)
             textBox_Log.Text = "";
-        }
-        private void Add_TextBox_Log(string message, EventLogEntryType level, string USERNAME)
-        {
-            const int MAX_LINES = 100;
-            if (textBox_Log.Lines.Length > MAX_LINES)
-                textBox_Log.Text = "";
 
-            string timeStr = DateTime.Now.ToString("dd-MM-yyyy") + " " + DateTime.Now.ToLongTimeString() + ": ";
-            string logEntry;
+        string timeStr = DateTime.Now.ToString("dd-MM-yyyy") + " " + DateTime.Now.ToLongTimeString() + ": ";
+        string logEntry;
 
-            if (String.IsNullOrEmpty(message))
-                logEntry = Environment.NewLine;
-            else
-                logEntry = timeStr + message + Environment.NewLine;
+        if (String.IsNullOrEmpty(message))
+            logEntry = Environment.NewLine;
+        else
+            logEntry = timeStr + message + Environment.NewLine;
 
 
-            textBox_Log.AppendText(logEntry);
-            textBox_Log.SelectionStart = textBox_Log.Text.Length;
-            textBox_Log.SelectionLength = 0;
-            textBox_Log.ScrollToCaret();
-        }
+        textBox_Log.AppendText(logEntry);
+        textBox_Log.SelectionStart = textBox_Log.Text.Length;
+        textBox_Log.SelectionLength = 0;
+        textBox_Log.ScrollToCaret();
+    }
 
 
     private async void Form1_Shown(object sender, EventArgs e)
@@ -660,35 +660,69 @@ public partial class MainForm : Form
 
     private async void btn_IPInfo_Click(object sender, EventArgs e)
     {
+        await PingTestProxy();
+    }
+
+    private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+    {
+        globalMouseHook.Dispose();
+    }
+
+    private void cb_IpInfoPeriodically_CheckedChanged(object sender, EventArgs e)
+    {
+        if (IpInfo_timer.Enabled)
+        {
+            IpInfo_timer.Stop();
+            logController.Log("Stop IpInfo_timer.");
+        }
+        else
+        {
+            IpInfo_timer.Interval = 1000*60;
+            IpInfo_timer.Start();
+            logController.Log("Start IpInfo_timer.");
+        }
+
+    }
+
+    private async void IpInfo_timer_Tick(object sender, EventArgs e)
+    {
+        IpInfo_timer.Stop();
+        await PingTestProxy();
+
+        IpInfo_timer.Start();
+    }
+
+    private async Task PingTestProxy()
+    {
         string proxy = functions.GetStringFromSettings("[Proxy_IP]");
 
         var ipInfo = Program._serviceProvider.GetRequiredService<IpInfo>();
         using (ipInfo)
         {
             if (!String.IsNullOrEmpty(proxy))
-                ipInfo.Proxy = proxy;
+            {
+                if (rtbProxyUrl.Text == "")
+                    rtbProxyUrl.Text = proxy;
+            }
+            if (rtbProxyUrl.Text != "")
+            {
+                ipInfo.Proxy = rtbProxyUrl.Text;
+            }
 
             ipInfo.Create();
+            if (rtbProxyUrl.Text == "")
+                rtbProxyUrl.Text = ipInfo.Proxy;
 
             var (ipInfoDTO, pingResult) = await ipInfo.Process();
-            
-            logController.LogClear();
-            logController.Log($"IP detecting with proxy : {ipInfo.Proxy}");
-            logController.Log($"IP: {ipInfoDTO.query} - {ipInfoDTO.countryCode} - {ipInfoDTO.country}");
 
             if (pingResult.FirstOrDefault(k => k.Key == "Status").Value == IPStatus.Success.ToString())
             {
-                logController.Log($"Пинг успешен! Время задержки: {pingResult.FirstOrDefault(k => k.Key == "RoundtripTime").Value} мс");
+                Add_TextBox_Log($"{ipInfo.Proxy}. IP: {ipInfoDTO.query} - {ipInfoDTO.countryCode} - {ipInfoDTO.country}. Пинг успешен! Время задержки: {pingResult.FirstOrDefault(k => k.Key == "RoundtripTime").Value} мс.", EventLogEntryType.Information, "");
             }
             else
             {
-                logController.Log($"Пинг неудачен. Статус: {pingResult.FirstOrDefault(k => k.Key == "Status").Value}");
+                Add_TextBox_Log($"{ipInfo.Proxy}. IP: {ipInfoDTO.query} - {ipInfoDTO.countryCode} - {ipInfoDTO.country}. Пинг неудачен. Статус: {pingResult.FirstOrDefault(k => k.Key == "Status").Value}. ", EventLogEntryType.Information, "");
             }
         }
-    }
-
-    private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
-    {
-        globalMouseHook.Dispose();
     }
 }

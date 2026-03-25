@@ -47,7 +47,7 @@
 	[allowed time from]6:33:33
 	[allowed time to]23:59:11
 
-	[Proxy_IP]192.168.5.42:8888
+	[Proxy_IP]10.66.66.42:8888
 
 	[JpgQuality]99
 

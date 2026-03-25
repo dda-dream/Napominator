@@ -55,6 +55,10 @@
             tb_noiselevel = new TextBox();
             timer_Personal = new System.Windows.Forms.Timer(components);
             btn_IPInfo = new Button();
+            cb_IpInfoPeriodically = new CheckBox();
+            timer2 = new System.Windows.Forms.Timer(components);
+            IpInfo_timer = new System.Windows.Forms.Timer(components);
+            rtbProxyUrl = new RichTextBox();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             SuspendLayout();
@@ -75,7 +79,7 @@
             textBox_Log.Multiline = true;
             textBox_Log.Name = "textBox_Log";
             textBox_Log.ScrollBars = ScrollBars.Both;
-            textBox_Log.Size = new Size(705, 205);
+            textBox_Log.Size = new Size(901, 205);
             textBox_Log.TabIndex = 1;
             // 
             // timer1
@@ -101,7 +105,7 @@
             groupBox1.Controls.Add(textBox_NotifyText);
             groupBox1.Controls.Add(checkBox_Polina);
             groupBox1.Controls.Add(groupBox2);
-            groupBox1.Location = new Point(93, 1);
+            groupBox1.Location = new Point(289, 1);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(613, 207);
             groupBox1.TabIndex = 2;
@@ -294,7 +298,7 @@
             tb_noiselevel.Multiline = true;
             tb_noiselevel.Name = "tb_noiselevel";
             tb_noiselevel.ScrollBars = ScrollBars.Both;
-            tb_noiselevel.Size = new Size(705, 26);
+            tb_noiselevel.Size = new Size(901, 26);
             tb_noiselevel.TabIndex = 18;
             // 
             // timer_Personal
@@ -311,11 +315,37 @@
             btn_IPInfo.UseVisualStyleBackColor = true;
             btn_IPInfo.Click += btn_IPInfo_Click;
             // 
+            // cb_IpInfoPeriodically
+            // 
+            cb_IpInfoPeriodically.AutoSize = true;
+            cb_IpInfoPeriodically.Location = new Point(1, 97);
+            cb_IpInfoPeriodically.Name = "cb_IpInfoPeriodically";
+            cb_IpInfoPeriodically.Size = new Size(90, 19);
+            cb_IpInfoPeriodically.TabIndex = 21;
+            cb_IpInfoPeriodically.Text = "IP info 1min";
+            cb_IpInfoPeriodically.UseVisualStyleBackColor = true;
+            cb_IpInfoPeriodically.CheckedChanged += cb_IpInfoPeriodically_CheckedChanged;
+            // 
+            // IpInfo_timer
+            // 
+            IpInfo_timer.Interval = 1000;
+            IpInfo_timer.Tick += IpInfo_timer_Tick;
+            // 
+            // rtbProxyUrl
+            // 
+            rtbProxyUrl.Location = new Point(1, 119);
+            rtbProxyUrl.Name = "rtbProxyUrl";
+            rtbProxyUrl.Size = new Size(282, 20);
+            rtbProxyUrl.TabIndex = 22;
+            rtbProxyUrl.Text = "";
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(705, 456);
+            ClientSize = new Size(903, 456);
+            Controls.Add(rtbProxyUrl);
+            Controls.Add(cb_IpInfoPeriodically);
             Controls.Add(btn_IPInfo);
             Controls.Add(tb_noiselevel);
             Controls.Add(label7);
@@ -365,5 +395,9 @@
         private Button btn_IPInfo;
         private Button btn28min;
         private Button btn25min;
+        private CheckBox cb_IpInfoPeriodically;
+        public System.Windows.Forms.Timer timer2;
+        private System.Windows.Forms.Timer IpInfo_timer;
+        private RichTextBox rtbProxyUrl;
     }
 }
