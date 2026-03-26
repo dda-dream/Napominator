@@ -12,6 +12,8 @@ public class IpInfoDTO
     public string countryCode { get; set; } = "";
     public string country { get; set; } = "";
     public string http_response_status { get; set; } = "";
+    public string http_response_status1 { get; set; } = "";
+    public string http_response_status2 { get; set; } = "";
 }
 
 public class IpInfo : IDisposable
@@ -21,7 +23,9 @@ public class IpInfo : IDisposable
 
 
     HttpClientHandler handlerHttpClient;
-    public string urlTestIP { get; set; } = "";
+    public string urlTestIP { get; set; } = "http://ip-api.com/json/";
+    public string urlTestIP1 { get; set; } = "https://rutor.info";
+    public string urlTestIP2 { get; set; } = "https://github.com";
     public string Proxy { get; set; } = "";
     int httpClientTimeoutSeconds = 0;
     IConfigService _settings;
@@ -67,7 +71,7 @@ public class IpInfo : IDisposable
     {
         IpInfoDTO ipInfoData = new IpInfoDTO();
         Dictionary<string, string> replyResult = new Dictionary<string, string>();
-
+        // try URL 1
         try
         {
             HttpResponseMessage response = await httpClients[Proxy].GetAsync(urlTestIP);
@@ -95,6 +99,48 @@ public class IpInfo : IDisposable
         {
             ipInfoData.http_response_status = "ERR";
         }
+
+        // try URL 2
+        try
+        {
+            HttpResponseMessage response = await httpClients[Proxy].GetAsync(urlTestIP1);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                ipInfoData.http_response_status1 = response.StatusCode.ToString();
+            }
+            else
+            {
+                ipInfoData.http_response_status1 = "ERR " + response.StatusCode;
+            }
+        }
+        catch (Exception ex)
+        {
+            ipInfoData.http_response_status1 = "ERR";
+        }
+
+        // try URL 3
+        try
+        {
+            HttpResponseMessage response = await httpClients[Proxy].GetAsync(urlTestIP2);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string jsonResponse = await response.Content.ReadAsStringAsync();
+                ipInfoData.http_response_status2 = response.StatusCode.ToString();
+            }
+            else
+            {
+                ipInfoData.http_response_status2 = "ERR " + response.StatusCode;
+            }
+        }
+        catch (Exception ex)
+        {
+            ipInfoData.http_response_status2 = "ERR";
+        }
+
+
 
         return (ipInfoData, replyResult);
     }

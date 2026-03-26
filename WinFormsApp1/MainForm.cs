@@ -717,11 +717,11 @@ public partial class MainForm : Form
 
             if (pingResult.FirstOrDefault(k => k.Key == "Status").Value == IPStatus.Success.ToString())
             {
-                Add_TextBox_Log($"{ipInfo.Proxy}. IP: {ipInfoDTO.query} - {ipInfoDTO.countryCode}. Http status: {ipInfoDTO.http_response_status}. Ping - {pingResult.FirstOrDefault(k => k.Key == "RoundtripTime").Value} мс.", EventLogEntryType.Information, "");
+                Add_TextBox_Log($"{ipInfo.Proxy}. IP: {ipInfoDTO.query} - {ipInfoDTO.countryCode}. Http: {ipInfoDTO.http_response_status}. Http1: {ipInfoDTO.http_response_status1}. Http2: {ipInfoDTO.http_response_status2}. Ping - {pingResult.FirstOrDefault(k => k.Key == "RoundtripTime").Value} мс.", EventLogEntryType.Information, "");
             }
             else
             {
-                Add_TextBox_Log($"{ipInfo.Proxy}. IP: {ipInfoDTO.query} - {ipInfoDTO.countryCode}. Http status: {ipInfoDTO.http_response_status}. Ping error. Status: {pingResult.FirstOrDefault(k => k.Key == "Status").Value}. ", EventLogEntryType.Information, "");
+                Add_TextBox_Log($"{ipInfo.Proxy}. IP: {ipInfoDTO.query} - {ipInfoDTO.countryCode}. Http: {ipInfoDTO.http_response_status}. Http1: {ipInfoDTO.http_response_status1}. Http2: {ipInfoDTO.http_response_status2}. Ping error. Status: {pingResult.FirstOrDefault(k => k.Key == "Status").Value}. ", EventLogEntryType.Information, "");
             }
         }
     }
