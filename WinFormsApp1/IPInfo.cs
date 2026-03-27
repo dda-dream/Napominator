@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using System.Net.NetworkInformation;
 using System.Text.Json;
 
@@ -75,6 +76,7 @@ public class IpInfo : IDisposable
         IpInfoDTO ipInfoData = new IpInfoDTO();
         Dictionary<string, string> replyResult = new Dictionary<string, string>();
         // try URL 1
+        var stopwatch = Stopwatch.StartNew();
         try
         {
             HttpResponseMessage response = await httpClients[Proxy].GetAsync(urlTestIP1);
@@ -84,7 +86,9 @@ public class IpInfo : IDisposable
                 string jsonResponse = await response.Content.ReadAsStringAsync();
                 ipInfoData = JsonSerializer.Deserialize<IpInfoDTO>(jsonResponse);
 
-                ipInfoData.http_response_status1 = response.StatusCode.ToString();
+                stopwatch.Stop();
+                long headerTimeMs = stopwatch.ElapsedMilliseconds;
+                ipInfoData.http_response_status1 = $"{response.StatusCode.ToString()} {headerTimeMs} ms";
 
                 if (usePing)
                 {
@@ -98,56 +102,55 @@ public class IpInfo : IDisposable
                 }
             }
             else
-            {
                 ipInfoData.http_response_status1 = "ERR:"+ response.StatusCode;
-            }
         }
         catch (Exception ex)
         {
             ipInfoData.http_response_status1 = "ERR";
         }
+        stopwatch.Stop();
 
         // try URL 2
+        stopwatch = Stopwatch.StartNew();
         try
         {
-            HttpResponseMessage response = await httpClients[Proxy].GetAsync(urlTestIP2);
+            HttpResponseMessage response = await httpClients[Proxy].GetAsync(urlTestIP2, HttpCompletionOption.ResponseHeadersRead);
 
             if (response.IsSuccessStatusCode)
             {
-                //string jsonResponse = await response.Content.ReadAsStringAsync();
-                ipInfoData.http_response_status2 = response.StatusCode.ToString();
+                stopwatch.Stop();
+                long headerTimeMs = stopwatch.ElapsedMilliseconds;
+                ipInfoData.http_response_status2 = $"{response.StatusCode.ToString()} {headerTimeMs} ms";
             }
             else
-            {
                 ipInfoData.http_response_status2 = "ERR:" + response.StatusCode;
-            }
         }
         catch (Exception ex)
         {
             ipInfoData.http_response_status2 = "ERR";
         }
+        stopwatch.Stop();
 
         // try URL 3
+        stopwatch = Stopwatch.StartNew();
         try
         {
-            HttpResponseMessage response = await httpClients[Proxy].GetAsync(urlTestIP3);
+            HttpResponseMessage response = await httpClients[Proxy].GetAsync(urlTestIP3, HttpCompletionOption.ResponseHeadersRead);
 
             if (response.IsSuccessStatusCode)
             {
-                //string jsonResponse = await response.Content.ReadAsStringAsync();
-                ipInfoData.http_response_status3 = response.StatusCode.ToString();
+                stopwatch.Stop();
+                long headerTimeMs = stopwatch.ElapsedMilliseconds;
+                ipInfoData.http_response_status3 = $"{response.StatusCode.ToString()} {headerTimeMs} ms";
             }
             else
-            {
                 ipInfoData.http_response_status3 = "ERR:" + response.StatusCode;
-            }
         }
         catch (Exception ex)
         {
             ipInfoData.http_response_status3 = "ERR";
         }
-
-
+        stopwatch.Stop();
 
         return (ipInfoData, replyResult);
     }
