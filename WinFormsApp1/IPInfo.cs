@@ -11,21 +11,21 @@ public class IpInfoDTO
     public string query { get; set; } = "";
     public string countryCode { get; set; } = "";
     public string country { get; set; } = "";
-    public string http_response_status { get; set; } = "";
     public string http_response_status1 { get; set; } = "";
     public string http_response_status2 { get; set; } = "";
+    public string http_response_status3 { get; set; } = "";
 }
 
 public class IpInfo : IDisposable
 {
     Dictionary<string, HttpClient> httpClients;
     //private HttpClient httpClient;
-
+    bool usePing = false;
 
     HttpClientHandler handlerHttpClient;
-    public string urlTestIP { get; set; } = "http://ip-api.com/json/";
-    public string urlTestIP1 { get; set; } = "https://rutor.info";
-    public string urlTestIP2 { get; set; } = "https://github.com";
+    public string urlTestIP1 { get; set; } = "http://ip-api.com/json/";
+    public string urlTestIP2 { get; set; } = "https://rutor.info";
+    public string urlTestIP3 { get; set; } = "https://youtube.com";
     public string Proxy { get; set; } = "";
     int httpClientTimeoutSeconds = 0;
     IConfigService _settings;
@@ -36,13 +36,16 @@ public class IpInfo : IDisposable
         httpClients = new Dictionary<string, HttpClient>();
     }
 
-    public void Create()
+    public void Create(bool usePing, int httpTimeout)
     {
-        urlTestIP = _settings.NetworkConfig.IpInfoUrl;
+        urlTestIP1 = _settings.NetworkConfig.IpInfoUrl;
         if (String.IsNullOrEmpty(Proxy) && !String.IsNullOrEmpty(_settings.NetworkConfig.Proxy))
             Proxy = _settings.NetworkConfig.Proxy;
 
-        httpClientTimeoutSeconds = _settings.NetworkConfig.HttpClientTimeoutSeconds;
+        if (httpTimeout > 0)
+            httpClientTimeoutSeconds = httpTimeout;
+        else
+            httpClientTimeoutSeconds = _settings.NetworkConfig.HttpClientTimeoutSeconds;
 
         handlerHttpClient = new HttpClientHandler
         {
@@ -74,45 +77,29 @@ public class IpInfo : IDisposable
         // try URL 1
         try
         {
-            HttpResponseMessage response = await httpClients[Proxy].GetAsync(urlTestIP);
-
-            if (response.IsSuccessStatusCode)
-            {
-                string jsonResponse = await response.Content.ReadAsStringAsync();
-                ipInfoData = JsonSerializer.Deserialize<IpInfoDTO>(jsonResponse);
-                ipInfoData.http_response_status = response.StatusCode.ToString();
-                
-                PingReply reply;
-                using (Ping pingSender = new Ping())
-                {
-                    reply = await pingSender.SendPingAsync(ipInfoData.query, 5000);
-                    replyResult.Add("RoundtripTime", reply.RoundtripTime.ToString());
-                    replyResult.Add("Status", reply.Status.ToString());
-                }
-            }
-            else
-            {
-                ipInfoData.http_response_status = "ERR "+ response.StatusCode;
-            }
-        }
-        catch (Exception ex)
-        {
-            ipInfoData.http_response_status = "ERR";
-        }
-
-        // try URL 2
-        try
-        {
             HttpResponseMessage response = await httpClients[Proxy].GetAsync(urlTestIP1);
 
             if (response.IsSuccessStatusCode)
             {
                 string jsonResponse = await response.Content.ReadAsStringAsync();
+                ipInfoData = JsonSerializer.Deserialize<IpInfoDTO>(jsonResponse);
+
                 ipInfoData.http_response_status1 = response.StatusCode.ToString();
+
+                if (usePing)
+                {
+                    PingReply reply;
+                    using (Ping pingSender = new Ping())
+                    {
+                        reply = await pingSender.SendPingAsync(ipInfoData.query, 5000);
+                        replyResult.Add("RoundtripTime", reply.RoundtripTime.ToString());
+                        replyResult.Add("Status", reply.Status.ToString());
+                    }
+                }
             }
             else
             {
-                ipInfoData.http_response_status1 = "ERR " + response.StatusCode;
+                ipInfoData.http_response_status1 = "ERR:"+ response.StatusCode;
             }
         }
         catch (Exception ex)
@@ -120,24 +107,44 @@ public class IpInfo : IDisposable
             ipInfoData.http_response_status1 = "ERR";
         }
 
-        // try URL 3
+        // try URL 2
         try
         {
             HttpResponseMessage response = await httpClients[Proxy].GetAsync(urlTestIP2);
 
             if (response.IsSuccessStatusCode)
             {
-                string jsonResponse = await response.Content.ReadAsStringAsync();
+                //string jsonResponse = await response.Content.ReadAsStringAsync();
                 ipInfoData.http_response_status2 = response.StatusCode.ToString();
             }
             else
             {
-                ipInfoData.http_response_status2 = "ERR " + response.StatusCode;
+                ipInfoData.http_response_status2 = "ERR:" + response.StatusCode;
             }
         }
         catch (Exception ex)
         {
             ipInfoData.http_response_status2 = "ERR";
+        }
+
+        // try URL 3
+        try
+        {
+            HttpResponseMessage response = await httpClients[Proxy].GetAsync(urlTestIP3);
+
+            if (response.IsSuccessStatusCode)
+            {
+                //string jsonResponse = await response.Content.ReadAsStringAsync();
+                ipInfoData.http_response_status3 = response.StatusCode.ToString();
+            }
+            else
+            {
+                ipInfoData.http_response_status3 = "ERR:" + response.StatusCode;
+            }
+        }
+        catch (Exception ex)
+        {
+            ipInfoData.http_response_status3 = "ERR";
         }
 
 

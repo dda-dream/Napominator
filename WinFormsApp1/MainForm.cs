@@ -4,6 +4,7 @@ using NAudio.Wave;
 using System.Data;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
+using static Emgu.CV.VideoCapture;
 
 namespace Napominator;
 
@@ -15,7 +16,7 @@ public partial class MainForm : Form
     Functions functions;
     GlobalMouseHook globalMouseHook;
 
-    const string __VERSION = "ver 25.02.2026";
+    const string __VERSION = "ver 27.03.2026";
     Boolean allowFormClose = false;
 
     static WaveIn? audioSource;
@@ -660,7 +661,9 @@ public partial class MainForm : Form
 
     private async void btn_IPInfo_Click(object sender, EventArgs e)
     {
-        await PingTestProxy();
+        int timeout;
+        int.TryParse(rtb_httpTimeout.Text, out timeout);
+        await PingTestProxy(cb_UsePing.Checked, timeout);
     }
 
     private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -668,31 +671,17 @@ public partial class MainForm : Form
         globalMouseHook.Dispose();
     }
 
-    private void cb_IpInfoPeriodically_CheckedChanged(object sender, EventArgs e)
-    {
-        if (IpInfo_timer.Enabled)
-        {
-            IpInfo_timer.Stop();
-            logController.Log("Stop IpInfo_timer.");
-        }
-        else
-        {
-            IpInfo_timer.Interval = 1000*60;
-            IpInfo_timer.Start();
-            logController.Log("Start IpInfo_timer.");
-        }
-
-    }
 
     private async void IpInfo_timer_Tick(object sender, EventArgs e)
     {
         IpInfo_timer.Stop();
-        await PingTestProxy();
-
+        int timeout;
+        int.TryParse(rtb_httpTimeout.Text, out timeout);
+        await PingTestProxy(cb_UsePing.Checked, timeout);
         IpInfo_timer.Start();
     }
 
-    private async Task PingTestProxy()
+    private async Task PingTestProxy(bool usePing, int httpTimeout)
     {
         string proxy = functions.GetStringFromSettings("[Proxy_IP]");
 
@@ -700,29 +689,49 @@ public partial class MainForm : Form
         using (ipInfo)
         {
             if (!String.IsNullOrEmpty(proxy))
-            {
                 if (rtbProxyUrl.Text == "")
                     rtbProxyUrl.Text = proxy;
-            }
-            if (rtbProxyUrl.Text != "")
-            {
-                ipInfo.Proxy = rtbProxyUrl.Text;
-            }
 
-            ipInfo.Create();
+            if (rtbProxyUrl.Text != "")
+                ipInfo.Proxy = rtbProxyUrl.Text;
+
+            ipInfo.Create(usePing, httpTimeout);
             if (rtbProxyUrl.Text == "")
                 rtbProxyUrl.Text = ipInfo.Proxy;
 
             var (ipInfoDTO, pingResult) = await ipInfo.Process();
 
-            if (pingResult.FirstOrDefault(k => k.Key == "Status").Value == IPStatus.Success.ToString())
-            {
-                Add_TextBox_Log($"{ipInfo.Proxy}. IP: {ipInfoDTO.query} - {ipInfoDTO.countryCode}. Http: {ipInfoDTO.http_response_status}. Http1: {ipInfoDTO.http_response_status1}. Http2: {ipInfoDTO.http_response_status2}. Ping - {pingResult.FirstOrDefault(k => k.Key == "RoundtripTime").Value} мс.", EventLogEntryType.Information, "");
-            }
-            else
-            {
-                Add_TextBox_Log($"{ipInfo.Proxy}. IP: {ipInfoDTO.query} - {ipInfoDTO.countryCode}. Http: {ipInfoDTO.http_response_status}. Http1: {ipInfoDTO.http_response_status1}. Http2: {ipInfoDTO.http_response_status2}. Ping error. Status: {pingResult.FirstOrDefault(k => k.Key == "Status").Value}. ", EventLogEntryType.Information, "");
-            }
+            string pingResultStr = "";
+            if (usePing)
+                if (pingResult.FirstOrDefault(k => k.Key == "Status").Value == IPStatus.Success.ToString())
+                    pingResultStr = $" Ping - {pingResult.FirstOrDefault(k => k.Key == "RoundtripTime").Value} мс.";
+                else
+                    pingResultStr = $" Ping error. Status: {pingResult.FirstOrDefault(k => k.Key == "Status").Value}.";
+
+            string http1_status = $" ip-api: {ipInfoDTO.http_response_status1}.";
+            string http2_status = $" rutor: {ipInfoDTO.http_response_status2}.";
+            string http3_status = $" youtube: {ipInfoDTO.http_response_status3}.";
+
+            Add_TextBox_Log($"{ipInfo.Proxy}. IP: {ipInfoDTO.query} - {ipInfoDTO.countryCode}{http1_status}{http2_status}{http3_status}{pingResultStr}", EventLogEntryType.Information, "");
         }
+    }
+
+    private void rtb_IpInfoSeconds_TextChanged(object sender, EventArgs e)
+    {
+        int seconds;
+        if (int.TryParse(rtb_IpInfoSeconds.Text, out seconds) == false)
+            return;
+
+
+        if (seconds <= 0)
+        {
+            IpInfo_timer.Stop();
+            logController.Log("Stop IpInfo_timer.");
+        } else {
+            IpInfo_timer.Interval = 1000 * seconds;
+            IpInfo_timer.Start();
+            logController.Log("Start IpInfo_timer.");
+        }
+
     }
 }
