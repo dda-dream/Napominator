@@ -4,6 +4,7 @@ using NAudio.Wave;
 using System.Data;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
+using System.Runtime;
 using static Emgu.CV.VideoCapture;
 
 namespace Napominator;
@@ -695,6 +696,10 @@ public partial class MainForm : Form
             if (rtbProxyUrl.Text != "")
                 ipInfo.Proxy = rtbProxyUrl.Text;
 
+            var settings = Program._serviceProvider.GetRequiredService<IConfigService>();
+            if (httpTimeout == 0)
+                httpTimeout = settings.NetworkConfig.HttpClientTimeoutSeconds;
+
             ipInfo.Create(usePing, httpTimeout);
             if (rtbProxyUrl.Text == "")
                 rtbProxyUrl.Text = ipInfo.Proxy;
@@ -708,11 +713,11 @@ public partial class MainForm : Form
                 else
                     pingResultStr = $" Ping error. Status: {pingResult.FirstOrDefault(k => k.Key == "Status").Value}.";
 
-            string http1_status = $" ip-api: {ipInfoDTO.http_response_status1}.";
-            string http2_status = $" rutor: {ipInfoDTO.http_response_status2}.";
-            string http3_status = $" youtube: {ipInfoDTO.http_response_status3}.";
+            string http1_status = $"ip-api: {ipInfoDTO.http_response_status1}.";
+            string http2_status = $"rutor: {ipInfoDTO.http_response_status2}.";
+            string http3_status = $"youtube: {ipInfoDTO.http_response_status3}.";
 
-            Add_TextBox_Log($"{ipInfo.Proxy}. IP: {ipInfoDTO.query} - {ipInfoDTO.countryCode}{http1_status}{http2_status}{http3_status}{pingResultStr}", EventLogEntryType.Information, "");
+            Add_TextBox_Log($"{ipInfo.Proxy} {ipInfoDTO.query} {ipInfoDTO.countryCode} {httpTimeout} {http1_status} {http2_status} {http3_status} {pingResultStr}", EventLogEntryType.Information, "");
         }
     }
 
