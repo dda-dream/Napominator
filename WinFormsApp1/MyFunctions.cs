@@ -193,14 +193,14 @@ class Functions
             };
             handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
             client = new HttpClient(handler);
-        }
-
-        try
-        {
             //client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
             //client.DefaultRequestHeaders.Add("Accept", "text/plain, */*");
             client.DefaultRequestHeaders.Add("User", "NAPOMINATOR");
             //client.DefaultRequestHeaders.ExpectContinue = false;
+        }
+
+        try
+        {
 
             string url = $"https://fbdda.duckdns.org:5005/napominator/Get/{ip_last_digit}";
 
