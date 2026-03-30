@@ -65,5 +65,8 @@ public class NetworkConfig
         if (i <= 0)
             i = 10;
         HttpClientTimeoutSeconds = i;
+
+        var b = appSettings.Config.GetValue<bool>("Network:DebugEnabled");
+        DebugEnabled = b;
     }
 }
