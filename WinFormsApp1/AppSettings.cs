@@ -38,13 +38,12 @@ public class AppSettings : IConfigService
         }
     }
     public NetworkConfig NetworkConfig { get; }
-
-
 }
 
 
 public class NetworkConfig
 {
+    public bool DebugEnabled { get; }
     public string IpInfoUrl { get; }
     public string Proxy { get; }
     public int HttpClientTimeoutSeconds { get; }

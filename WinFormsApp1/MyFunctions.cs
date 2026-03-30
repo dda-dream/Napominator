@@ -1,4 +1,5 @@
 ﻿using Emgu.CV;
+using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Management;
@@ -6,7 +7,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace Napominator;
 
@@ -46,12 +46,14 @@ class Functions
     IPAddress ip;
     string ip_last_digit;
     RabbitMQConnection rabbitMQConnection;
+    IConfigService settings;
 
 
     public Functions(LogController logController)
     {
         this.logController = logController;
-        
+        this.settings = Program._serviceProvider.GetRequiredService<IConfigService>();
+
         USERNAME = username2USERNAME(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1]);
         ArgumentException.ThrowIfNullOrEmpty(USERNAME);
         //TODO: debug
@@ -213,15 +215,18 @@ class Functions
         }
         catch (OperationCanceledException)
         {
-            logController.Log("ReadSettingFile:Запрос был отменен по таймауту.");
+            if (settings.NetworkConfig.DebugEnabled)
+                logController.Log("ReadSettingFile:Запрос был отменен по таймауту.");
         }
         catch (HttpRequestException ex)
         {
-            logController.Log($"ReadSettingFile:Ошибка запроса: {ex.Message}");
+            if (settings.NetworkConfig.DebugEnabled)
+                logController.Log($"ReadSettingFile:Ошибка запроса: {ex.Message}");
         }
         catch (Exception ex)
         {
-            logController.Log($"ReadSettingFile:Непредвиденная ошибка: {ex.Message}");
+            if (settings.NetworkConfig.DebugEnabled)
+                logController.Log($"ReadSettingFile:Непредвиденная ошибка: {ex.Message}");
         }
         finally
         {

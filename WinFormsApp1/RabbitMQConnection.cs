@@ -1,4 +1,5 @@
-﻿using RabbitMQ.Client;
+﻿using Microsoft.Extensions.DependencyInjection;
+using RabbitMQ.Client;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -11,8 +12,9 @@ class RabbitMQConnection
 {
     string NapominatorRequestsQueue;
     string NapominatorResponseQueue ;
-    
-        
+    IConfigService settings;
+
+
     string ip_last_digit;
     bool commandSent;
     bool responseReceived;
@@ -35,6 +37,7 @@ class RabbitMQConnection
             Password = password
         };
         this.logController = logController;
+        this.settings = Program._serviceProvider.GetRequiredService<IConfigService>();
     }
 
 
@@ -97,7 +100,8 @@ class RabbitMQConnection
                 lines = message.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
             }
 
-            //logController.Log($"RabbitMQConnection.GetResponse Received Count = {responseSet.Count}");
+            if(settings.NetworkConfig.DebugEnabled)
+                logController.Log($"RabbitMQConnection.GetResponse Received Count = {responseSet.Count}");
         }
         catch (Exception e)
         {
@@ -143,7 +147,8 @@ class RabbitMQConnection
                 body: body,
                 basicProperties: props);
 
-            //logController.Log($"RabbitMQConnection.SendCommandGetConfig message sent.");
+            if (settings.NetworkConfig.DebugEnabled)
+                logController.Log($"RabbitMQConnection.SendCommandGetConfig message sent.");
         }
         catch (Exception e)
         {
