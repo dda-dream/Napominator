@@ -373,6 +373,7 @@ class Functions
         int textWeekOfMth = 0, textDayOfWeek = 0;
         while (curLine < arr.Length)
         {
+            /*
             if (arr[curLine].Contains("[shedule_week_of_mth]"))
             {
                 textWeekOfMth = Int16.Parse(arr[curLine].Replace("[shedule_week_of_mth]", ""));
@@ -390,7 +391,8 @@ class Functions
                 ret = ret + arr[curLine] + Environment.NewLine;
             if (textWeekOfMth == curWeekOfMth && textDayOfWeek == curDayOfWeek)
                 ret = ret + arr[curLine] + Environment.NewLine;
-
+            */
+            ret = ret + arr[curLine] + Environment.NewLine;
             curLine++;
         }
         return ret;
