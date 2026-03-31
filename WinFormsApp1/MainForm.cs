@@ -311,8 +311,6 @@ public partial class MainForm : Form
     }
 
 
-
-
     string prev_curWinTitle = "";
     DateTime lastExec_Tick = DateTime.Now;
     DateTime lastReadSettingsFile = DateTime.MinValue;
@@ -324,8 +322,6 @@ public partial class MainForm : Form
         CHECK_PERIOD_SECONDS = (int)functions.GetDoubleFromSettings("[CHECK_PERIOD_SECONDS]");
         try
         {
-
-
             string curWinTitle = functions.GetActiveWindowTitle();
             curWinTitle = curWinTitle.ToLower();
             if (prev_curWinTitle != curWinTitle)
@@ -344,13 +340,9 @@ public partial class MainForm : Form
 
             // периодичность проверки 
             if (DateTime.Now > lastExec_Tick.AddSeconds(CHECK_PERIOD_SECONDS))
-            {
                 lastExec_Tick = DateTime.Now;
-            }
             else
-            {
                 return;
-            }
 
             if (executing_Tick == false)
                 executing_Tick = true;
@@ -556,7 +548,6 @@ public partial class MainForm : Form
         else
             logEntry = timeStr + message + Environment.NewLine;
 
-
         textBox_Log.AppendText(logEntry);
         textBox_Log.SelectionStart = textBox_Log.Text.Length;
         textBox_Log.SelectionLength = 0;
@@ -567,10 +558,9 @@ public partial class MainForm : Form
     private async void Form1_Shown(object sender, EventArgs e)
     {
         logController.Log("Started. initial version created at 29.12.2022 11:50");
-        logController.Log("NAPOMINATOR MainForm()-Form1_Shown()");
+        logController.Log("NAPOMINATOR");
         logController.Log($"Exec FileName : {System.IO.Path.GetFileName(Application.ExecutablePath)}");
         logController.Log("NAPOMINATOR version:" + __VERSION);
-        logController.Log("ReadSettingFile() executed", EventLogEntryType.Information);
 
         var lines = await functions.ReadSettingFile();
         functions.ParseSettingFile(lines);
@@ -584,8 +574,7 @@ public partial class MainForm : Form
         if (functions.USERNAME == "p")
             checkBox_Polina.Checked = true;
 
-        string tmpUser = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
-        if (!tmpUser.Contains("d"))
+        if (functions.USERNAME != "d")
             StartTimer();
     }
 

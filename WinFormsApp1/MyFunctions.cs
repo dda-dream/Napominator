@@ -154,7 +154,7 @@ class Functions
         {
             DisableControls(c);
         }
-        if (con.Name != "MainForm")
+        if (con.Name != "MainForm" && con.Name != "textBox_PersonalPeriod" && con.Name != "btnPersonalTimerStartStop" && con.Name != "textBox_PersonalPeriodText")
             con.Enabled = false;
     }
     public void EnableControls(Control? con)
