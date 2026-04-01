@@ -337,7 +337,9 @@
             // 
             rtb_IpInfoSeconds.DetectUrls = false;
             rtb_IpInfoSeconds.Location = new Point(68, 98);
+            rtb_IpInfoSeconds.Multiline = false;
             rtb_IpInfoSeconds.Name = "rtb_IpInfoSeconds";
+            rtb_IpInfoSeconds.ScrollBars = RichTextBoxScrollBars.None;
             rtb_IpInfoSeconds.Size = new Size(26, 20);
             rtb_IpInfoSeconds.TabIndex = 23;
             rtb_IpInfoSeconds.Text = "";
@@ -367,7 +369,9 @@
             // 
             rtb_httpTimeout.DetectUrls = false;
             rtb_httpTimeout.Location = new Point(257, 98);
+            rtb_httpTimeout.Multiline = false;
             rtb_httpTimeout.Name = "rtb_httpTimeout";
+            rtb_httpTimeout.ScrollBars = RichTextBoxScrollBars.None;
             rtb_httpTimeout.Size = new Size(26, 20);
             rtb_httpTimeout.TabIndex = 24;
             rtb_httpTimeout.Text = "";

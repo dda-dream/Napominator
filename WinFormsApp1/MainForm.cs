@@ -706,7 +706,7 @@ public partial class MainForm : Form
             string http2_status = $"rutor: {ipInfoDTO.http_response_status2}.";
             string http3_status = $"youtube: {ipInfoDTO.http_response_status3}.";
 
-            Add_TextBox_Log($"{ipInfo.Proxy} {ipInfoDTO.query} {ipInfoDTO.countryCode} {httpTimeout} {http1_status} {http2_status} {http3_status} {pingResultStr}", EventLogEntryType.Information, "");
+            Add_TextBox_Log($"{ipInfoDTO.query} {ipInfoDTO.countryCode} {httpTimeout} {http1_status} {http2_status} {http3_status} {pingResultStr}", EventLogEntryType.Information, "");
         }
     }
 
