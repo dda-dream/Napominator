@@ -1,6 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
+using Serilog;
+using Serilog.Sinks.Grafana.Loki;
+using Serilog.Sinks.Grafana.Loki.HttpClients;
 using System.Data;
 using System.Diagnostics;
 using System.Net.NetworkInformation;
@@ -42,6 +45,7 @@ public partial class MainForm : Form
 
         logController.AddEventViewerLogger();
         logController.AddFileLogger();
+        logController.AddSerilogLoki(functions.ip_last_digit);
 
         sound = new Sound();
 
@@ -421,8 +425,9 @@ public partial class MainForm : Form
 
                 }
                 if (functions.GetDoubleFromSettings("[DisableNotify]") == 0)
-                    if (checkBox_Papa.Checked == true || checkBox_Mama.Checked == true)
-                        Show_Message_To_Polina(functions.Parse_NotifyText(), "НАПОМИНАТОР!", false, true);
+                    if( ! string.IsNullOrEmpty(textBox_NotifyText.Text) )
+                        if (checkBox_Papa.Checked == true || checkBox_Mama.Checked == true)
+                            Show_Message_To_Polina(functions.Parse_NotifyText(), "НАПОМИНАТОР!", false, true);
             }
             executing_Tick = false;
         }
@@ -659,6 +664,8 @@ public partial class MainForm : Form
     private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
     {
         globalMouseHook.Dispose();
+        logController.Dispose();
+
     }
 
 

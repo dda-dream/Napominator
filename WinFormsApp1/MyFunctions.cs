@@ -44,7 +44,7 @@ class Functions
     List<string> settingsNotifyLines = new List<string>();
     IPHostEntry host;
     IPAddress ip;
-    string ip_last_digit;
+    public string ip_last_digit;
     RabbitMQConnection rabbitMQConnection;
     IConfigService settings;
 
@@ -53,6 +53,7 @@ class Functions
     {
         this.logController = logController;
         this.settings = Program._serviceProvider.GetRequiredService<IConfigService>();
+
 
         USERNAME = username2USERNAME(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1]);
         ArgumentException.ThrowIfNullOrEmpty(USERNAME);
@@ -65,7 +66,9 @@ class Functions
         ip = host.AddressList.FirstOrDefault(addr => addr.AddressFamily == AddressFamily.InterNetwork);
         ip_last_digit = ip.ToString().Split(".")[3];
 
-        rabbitMQConnection = new RabbitMQConnection(ip_last_digit, "fbdda.duckdns.org", "q", "guestSuperPuper_!", logController);
+        if (rabbitMQConnection == null)
+            rabbitMQConnection = new RabbitMQConnection(ip_last_digit, logController);
+
     }
 
 
@@ -178,10 +181,26 @@ class Functions
         string RabbitMQRequestStatus;
 
         //=> if RabbitMQ commands 
+            
+        rabbitMQConnection.SetConnectionData("fbdda.duckdns.org", "q", "guestSuperPuper_!");
         (RabbitMQRequestStatus, lines) = await rabbitMQConnection.GetConfig();
+        if (RabbitMQRequestStatus == "GetResponse" && lines.Length == 0)
+        {
+            logController.Log($"RabbitMQConnection.GetConfig (10.66.66.49)");
+            rabbitMQConnection.SetConnectionData("10.66.66.49", "q", "guestSuperPuper_!");
+            (RabbitMQRequestStatus, lines) = await rabbitMQConnection.GetConfig();
+        }
+        if (RabbitMQRequestStatus == "GetResponse" && lines.Length == 0)
+        {
+            logController.Log($"RabbitMQConnection.GetConfig (192.168.2.49)");
+            rabbitMQConnection.SetConnectionData("192.168.2.49", "q", "guestSuperPuper_!");
+            (RabbitMQRequestStatus, lines) = await rabbitMQConnection.GetConfig();
+        }
 
         if (RabbitMQRequestStatus == "SendCommandGetConfig")
             return lines;
+
+
         if (RabbitMQRequestStatus == "GetResponse" && lines.Length > 0)
             return lines;
         //<= if RabbitMQ commands 

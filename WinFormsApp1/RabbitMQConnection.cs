@@ -22,7 +22,7 @@ class RabbitMQConnection
     LogController logController;
 
 
-    public RabbitMQConnection(string ip_last_digit, string ip, string username, string password, LogController logController)
+    public RabbitMQConnection(string ip_last_digit, LogController logController)
     {
         commandSent = false;
         responseReceived = false;
@@ -30,16 +30,19 @@ class RabbitMQConnection
         NapominatorResponseQueue = $"NapominatorResponseQueue_{this.ip_last_digit}";
         NapominatorRequestsQueue = "NapominatorRequestsQueue";
 
+        this.logController = logController;
+        this.settings = Program._serviceProvider.GetRequiredService<IConfigService>();
+    }
+
+    public void SetConnectionData(string ip, string username, string password)
+    {
         factory = new ConnectionFactory()
         {
             HostName = ip,
             UserName = username,
             Password = password
         };
-        this.logController = logController;
-        this.settings = Program._serviceProvider.GetRequiredService<IConfigService>();
     }
-
 
     public async Task<( string, string[] )> GetConfig()
     {

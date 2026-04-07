@@ -336,7 +336,7 @@
             // rtb_IpInfoSeconds
             // 
             rtb_IpInfoSeconds.DetectUrls = false;
-            rtb_IpInfoSeconds.Location = new Point(68, 98);
+            rtb_IpInfoSeconds.Location = new Point(69, 98);
             rtb_IpInfoSeconds.Multiline = false;
             rtb_IpInfoSeconds.Name = "rtb_IpInfoSeconds";
             rtb_IpInfoSeconds.ScrollBars = RichTextBoxScrollBars.None;
@@ -358,7 +358,7 @@
             // cb_UsePing
             // 
             cb_UsePing.AutoSize = true;
-            cb_UsePing.Location = new Point(97, 99);
+            cb_UsePing.Location = new Point(98, 99);
             cb_UsePing.Name = "cb_UsePing";
             cb_UsePing.Size = new Size(72, 19);
             cb_UsePing.TabIndex = 21;

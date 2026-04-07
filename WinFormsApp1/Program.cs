@@ -1,4 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
+using Serilog.Sinks.Grafana.Loki;
 
 namespace Napominator;
 
@@ -8,32 +10,27 @@ internal static class Program
     static bool mutexHasCapture = false;
     public static ServiceProvider _serviceProvider;
 
-    //static SpinLock s;
-
 
     [STAThread]
     static void Main()
     {
-        
 
-
-        var services = new ServiceCollection();
-        services.AddTransient<IpInfo>();
-        services.AddSingleton<MainForm>();
-        services.AddTransient<IConfigService, AppSettings>();
-
-        _serviceProvider = services.BuildServiceProvider();
 
         try
         {
             if (mutex.WaitOne(TimeSpan.Zero, true))
             {
                 mutexHasCapture = true;
+
+                var services = new ServiceCollection();
+                services.AddTransient<IpInfo>();
+                services.AddSingleton<MainForm>();
+                services.AddTransient<IConfigService, AppSettings>();
+                _serviceProvider = services.BuildServiceProvider();
+
                 ApplicationConfiguration.Initialize();
 
-
                 var mainForm = _serviceProvider.GetRequiredService<MainForm>();
-                //var mainForm = new MainForm();
                 Application.Run(mainForm);
 
                 mutex.ReleaseMutex();
@@ -52,6 +49,7 @@ internal static class Program
 
                 mutex.Dispose();
             }
+
         }
     }
 }
