@@ -671,11 +671,16 @@ public partial class MainForm : Form
 
     private async void IpInfo_timer_Tick(object sender, EventArgs e)
     {
+        int seconds = 0;
+        if (int.TryParse(rtb_IpInfoSeconds.Text, out seconds) == false)
+
         IpInfo_timer.Stop();
         int timeout;
         int.TryParse(rtb_httpTimeout.Text, out timeout);
         await PingTestProxy(cb_UsePing.Checked, timeout);
-        IpInfo_timer.Start();
+
+        if (seconds > 0)
+            IpInfo_timer.Start();
     }
 
     private async Task PingTestProxy(bool usePing, int httpTimeout)
