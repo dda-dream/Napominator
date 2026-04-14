@@ -671,8 +671,9 @@ public partial class MainForm : Form
 
     private async void IpInfo_timer_Tick(object sender, EventArgs e)
     {
-        int seconds = 0;
+        int seconds;
         if (int.TryParse(rtb_IpInfoSeconds.Text, out seconds) == false)
+            seconds = 0;
 
         IpInfo_timer.Stop();
         int timeout;
@@ -726,7 +727,7 @@ public partial class MainForm : Form
     {
         int seconds;
         if (int.TryParse(rtb_IpInfoSeconds.Text, out seconds) == false)
-            return;
+            seconds = 0;
 
 
         if (seconds <= 0)
