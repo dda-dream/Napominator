@@ -728,7 +728,7 @@ public partial class MainForm : Form
         int seconds;
         if (int.TryParse(rtb_IpInfoSeconds.Text, out seconds) == false)
             seconds = 0;
-
+         
 
         if (seconds <= 0)
         {
