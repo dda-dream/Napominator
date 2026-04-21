@@ -6,9 +6,12 @@ using Serilog.Sinks.Grafana.Loki;
 using Serilog.Sinks.Grafana.Loki.HttpClients;
 using System.Data;
 using System.Diagnostics;
+using System.Net;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Runtime;
 using static Emgu.CV.VideoCapture;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace Napominator;
 
@@ -33,19 +36,37 @@ public partial class MainForm : Form
     {
         InitializeComponent();
 
+        string USERNAME = Functions.username2USERNAME(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1]);
+        ArgumentException.ThrowIfNullOrEmpty(USERNAME);
+        //TODO: debug
+        //HACK: Если нужно запустить под другим пользователем, то менять тут.
+        //USERNAME = "p";
+        //TODO: debug
+
+        IPHostEntry host;
+        IPAddress ip;
+
+        host = Dns.GetHostEntry(Dns.GetHostName());
+        ip = host.AddressList.FirstOrDefault(addr => addr.AddressFamily == AddressFamily.InterNetwork);
+        string ip_last_digit = ip.ToString().Split(".")[3];
+
+
 
         logController = LogController.Builder();
         logMediator = new LogMediator();
-        functions = new Functions(logController);
-
-        logController.AddUSERNAME(functions.USERNAME);
-
-        logMediator.subscriber += LogMediator_subscriber;
+        logController.AddUSERNAME(USERNAME);
         logController.AddTextBoxLogger(logMediator);
-
         logController.AddEventViewerLogger();
         logController.AddFileLogger();
-        logController.AddSerilogLoki(functions.ip_last_digit);
+        logController.AddSerilogLoki(ip_last_digit);
+        logMediator.subscriber += LogMediator_subscriber;
+
+        functions = new Functions(logController, USERNAME, ip_last_digit);
+
+
+
+
+
 
         sound = new Sound();
 

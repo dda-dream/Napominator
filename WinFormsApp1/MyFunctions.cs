@@ -42,33 +42,25 @@ class Functions
     public string USERNAME { get; }
     List<string> settingsLines = new List<string>();
     List<string> settingsNotifyLines = new List<string>();
-    IPHostEntry host;
-    IPAddress ip;
-    public string ip_last_digit;
+    string ip_last_digit;
     RabbitMQConnection rabbitMQConnection;
     IConfigService settings;
 
 
-    public Functions(LogController logController)
+    public Functions(LogController logController,  string _USERNAME, string _ip_last_digit)
     {
         this.logController = logController;
         this.settings = Program._serviceProvider.GetRequiredService<IConfigService>();
 
+        USERNAME = _USERNAME;
+        ip_last_digit = _ip_last_digit;
 
-        USERNAME = username2USERNAME(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1]);
-        ArgumentException.ThrowIfNullOrEmpty(USERNAME);
-        //TODO: debug
-        //HACK: Если нужно запустить под другим пользователем, то менять тут.
-        //USERNAME = "p";
-        //TODO: debug
 
-        host = Dns.GetHostEntry(Dns.GetHostName());
-        ip = host.AddressList.FirstOrDefault(addr => addr.AddressFamily == AddressFamily.InterNetwork);
-        ip_last_digit = ip.ToString().Split(".")[3];
 
         if (rabbitMQConnection == null)
             rabbitMQConnection = new RabbitMQConnection(ip_last_digit, logController);
 
+        logController.Log($"Functions.Functions() initialized. Ip: {ip_last_digit}");
     }
 
 
@@ -349,7 +341,7 @@ class Functions
         }
         return ret;
     }
-    string username2USERNAME(string _username)
+    public static string username2USERNAME(string _username)
     {
         string ret = "ERROR";
 
