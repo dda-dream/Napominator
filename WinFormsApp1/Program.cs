@@ -16,7 +16,7 @@ internal static class Program
     {
         //.
 
-        try //1
+        try //1 //2
         {
             if (mutex.WaitOne(TimeSpan.Zero, true))
             {
