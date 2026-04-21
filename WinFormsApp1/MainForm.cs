@@ -43,7 +43,7 @@ public partial class MainForm : Form
         //USERNAME = "p";
         //TODO: debug
 
-        IPHostEntry host;
+        IPHostEntry host; 
         IPAddress ip;
 
         host = Dns.GetHostEntry(Dns.GetHostName());
