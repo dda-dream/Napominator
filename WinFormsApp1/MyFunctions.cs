@@ -60,7 +60,7 @@ class Functions
         if (rabbitMQConnection == null)
             rabbitMQConnection = new RabbitMQConnection(ip_last_digit, logController);
 
-        logController.Log($"Functions.Functions() initialized. Ip: {ip_last_digit}");
+        logController.Log($"Functions.Functions() initialized (git:master). Ip: {ip_last_digit}");
     }
 
 
