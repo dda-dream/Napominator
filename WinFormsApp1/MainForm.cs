@@ -44,7 +44,7 @@ public partial class MainForm : Form
         //TODO: debug
 
         IPHostEntry host; 
-        IPAddress ip;
+        IPAddress ip; //1
 
         host = Dns.GetHostEntry(Dns.GetHostName());
         ip = host.AddressList.FirstOrDefault(addr => addr.AddressFamily == AddressFamily.InterNetwork);
