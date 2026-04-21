@@ -50,8 +50,6 @@ public partial class MainForm : Form
         ip = host.AddressList.FirstOrDefault(addr => addr.AddressFamily == AddressFamily.InterNetwork);
         string ip_last_digit = ip.ToString().Split(".")[3];
 
-
-
         logController = LogController.Builder();
         logMediator = new LogMediator();
         logController.AddUSERNAME(USERNAME);
@@ -63,14 +61,7 @@ public partial class MainForm : Form
 
         functions = new Functions(logController, USERNAME, ip_last_digit);
 
-
-
-
-
-
         sound = new Sound();
-
-
 
         globalMouseHook = new GlobalMouseHook();
         globalMouseHook.OnMouseClick += functions.CaptureScreenshotByMouseClick;
