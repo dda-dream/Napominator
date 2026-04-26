@@ -45,7 +45,7 @@ public partial class MainForm : Form
         ArgumentException.ThrowIfNullOrEmpty(USERNAME);
         //TODO: debug
         //HACK: Если нужно запустить под другим пользователем, то менять тут.
-        USERNAME = "p";
+        //USERNAME = "p";
         //TODO: debug
 
         IPHostEntry host; 
