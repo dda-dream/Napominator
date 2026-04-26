@@ -32,6 +32,11 @@ public partial class MainForm : Form
     double shuminatorCount = 0, tot_shuminatorCount = 0;
     static bool messageShown = false;
 
+    TaskScheduler t1;
+    SynchronizationContext t2;
+    WindowsFormsSynchronizationContext t3;
+    Task t4;
+
     public MainForm()
     {
         InitializeComponent();
@@ -43,11 +48,8 @@ public partial class MainForm : Form
         //USERNAME = "p";
         //TODO: debug
 
-        IPHostEntry host; 
-        IPAddress ip; //1
-
-        host = Dns.GetHostEntry(Dns.GetHostName());
-        ip = host.AddressList.FirstOrDefault(addr => addr.AddressFamily == AddressFamily.InterNetwork);
+        IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+        IPAddress ip = host.AddressList.FirstOrDefault(addr => addr.AddressFamily == AddressFamily.InterNetwork);
         string ip_last_digit = ip.ToString().Split(".")[3];
 
         logController = LogController.Builder();
