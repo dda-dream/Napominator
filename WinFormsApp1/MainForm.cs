@@ -48,35 +48,27 @@ public partial class MainForm : Form
         //USERNAME = "p";
         //TODO: debug
 
-        IPHostEntry host; 
-        IPAddress ip; //1
-        try
-        {
-            host = Dns.GetHostEntry(Dns.GetHostName());
-            ip = host.AddressList.FirstOrDefault(addr => addr.AddressFamily == AddressFamily.InterNetwork);
-            string ip_last_digit = ip.ToString().Split(".")[3];
+        IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+        IPAddress ip = host.AddressList.FirstOrDefault(addr => addr.AddressFamily == AddressFamily.InterNetwork);
+        string ip_last_digit = ip.ToString().Split(".")[3];
 
-            logController = LogController.Builder();
-            logMediator = new LogMediator();
-            logController.AddUSERNAME(USERNAME);
-            logController.AddTextBoxLogger(logMediator);
-            logController.AddEventViewerLogger();
-            logController.AddFileLogger();
-            logController.AddSerilogLoki(ip_last_digit);
-            logMediator.subscriber += LogMediator_subscriber;
+        logController = LogController.Builder();
+        logMediator = new LogMediator();
+        logController.AddUSERNAME(USERNAME);
+        logController.AddTextBoxLogger(logMediator);
+        logController.AddEventViewerLogger();
+        logController.AddFileLogger();
+        logController.AddSerilogLoki(ip_last_digit);
+        logMediator.subscriber += LogMediator_subscriber;
 
-            functions = new Functions(logController, USERNAME, ip_last_digit);
+        functions = new Functions(logController, USERNAME, ip_last_digit);
 
-            sound = new Sound();
+        sound = new Sound();
 
-            globalMouseHook = new GlobalMouseHook();
-            globalMouseHook.OnMouseClick += functions.CaptureScreenshotByMouseClick;
-            globalMouseHook.Start();
-        }
-        catch (Exception ex)
-        {
-            logController.Log(ex.ToString());
-        }
+        globalMouseHook = new GlobalMouseHook();
+        globalMouseHook.OnMouseClick += functions.CaptureScreenshotByMouseClick;
+        globalMouseHook.Start();
+
     }
 
     MMDevice? device = null;

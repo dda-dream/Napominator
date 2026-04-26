@@ -55,8 +55,6 @@ class Functions
         USERNAME = _USERNAME;
         ip_last_digit = _ip_last_digit;
 
-
-
         if (rabbitMQConnection == null)
             rabbitMQConnection = new RabbitMQConnection(ip_last_digit, logController);
 
@@ -189,8 +187,8 @@ class Functions
             (RabbitMQRequestStatus, lines) = await rabbitMQConnection.GetConfig();
         }
 
-        //if (RabbitMQRequestStatus == "SendCommandGetConfig")
-        //    return lines;
+        if (RabbitMQRequestStatus == "SendCommandGetConfig")
+            return lines;
 
 
         if (RabbitMQRequestStatus == "GetResponse" && lines.Length > 0)
@@ -206,10 +204,7 @@ class Functions
             };
             handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
             client = new HttpClient(handler);
-            //client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64)");
-            //client.DefaultRequestHeaders.Add("Accept", "text/plain, */*");
             client.DefaultRequestHeaders.Add("User", "NAPOMINATOR");
-            //client.DefaultRequestHeaders.ExpectContinue = false;
         }
 
         try

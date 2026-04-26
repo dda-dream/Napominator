@@ -50,8 +50,16 @@ class RabbitMQConnection
 
         if (!commandSent)
         {
-            commandSent = await SendCommandGetConfig();
-            return ("SendCommandGetConfig", lines);
+            string result = await SendCommandGetConfig();
+            if (result == "error")
+            {
+                return ("SendCommandGetConfig_error", lines);
+            }
+            else
+            {
+                commandSent = true;
+                return ("SendCommandGetConfig", lines);
+            }
         }
 
         commandSent = false;
@@ -116,7 +124,7 @@ class RabbitMQConnection
     }
         
 
-    private async Task<bool> SendCommandGetConfig()
+    private async Task<string> SendCommandGetConfig()
     {
         try
         {
@@ -156,10 +164,10 @@ class RabbitMQConnection
         catch (Exception e)
         {
             logController.Log($"RabbitMQConnection.SendCommandGetConfig error: {e.Message}");
-            return false;
+            return "error";
         }
 
-        return true;
+        return "ok";
     }
 
 
