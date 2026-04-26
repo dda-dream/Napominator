@@ -189,8 +189,8 @@ class Functions
             (RabbitMQRequestStatus, lines) = await rabbitMQConnection.GetConfig();
         }
 
-        if (RabbitMQRequestStatus == "SendCommandGetConfig")
-            return lines;
+        //if (RabbitMQRequestStatus == "SendCommandGetConfig")
+        //    return lines;
 
 
         if (RabbitMQRequestStatus == "GetResponse" && lines.Length > 0)

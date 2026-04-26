@@ -122,8 +122,8 @@ namespace Napominator
             this.CenterToScreen();
 
             Size size = this.Size;
-            size.Width = resolution.Width / 100 * 95;
-            size.Height = resolution.Height / 100 * 95;
+            size.Width = resolution.Width / 100 * 80;
+            size.Height = resolution.Height / 100 * 80;
             Point point = ((Point)size);
             //point.X = rnd.Next(resolution.Width - resolution.Width / 100 * 95);
             //point.Y = rnd.Next(resolution.Height - Height / 100 * 95);
