@@ -42,6 +42,7 @@ namespace Napominator
         const int MIN_ALL = 419;
         const int MIN_ALL_UNDO = 416;
 
+        string USERNAME = Functions.username2USERNAME(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1]);
 
         public void Set_counter(int _i)
         {
@@ -119,14 +120,16 @@ namespace Napominator
 
         private void CenterAndMAximize()
         {
+            int sizeKoeff = 95;
+            if (USERNAME == "d")
+                sizeKoeff = 30;
+
             this.CenterToScreen();
 
             Size size = this.Size;
-            size.Width = resolution.Width / 100 * 80;
-            size.Height = resolution.Height / 100 * 80;
+            size.Width = resolution.Width / 100 * sizeKoeff;
+            size.Height = resolution.Height / 100 * sizeKoeff;
             Point point = ((Point)size);
-            //point.X = rnd.Next(resolution.Width - resolution.Width / 100 * 95);
-            //point.Y = rnd.Next(resolution.Height - Height / 100 * 95);
             
             point.X = (resolution.Width - (resolution.Width - resolution.Width / 100 * 1) );
             point.Y = (resolution.Height - (resolution.Height - Height / 100 * 1) );
@@ -134,13 +137,8 @@ namespace Napominator
             this.Location = point;
             this.Size = size;
 
-
-
-            //richTextBox_NotifyText
             size.Width -= 40;
             size.Height -= 90;
-            //size.Width -= resolution.Width - (resolution.Width - resolution.Width / 100 * 1);
-            //size.Height -= resolution.Height - (resolution.Height - Height / 100 * 1);
             richTextBox_NotifyText.Size = size;
         }
 
@@ -177,8 +175,9 @@ namespace Napominator
         }
 
         private void Message_To_Polina_Shown(object sender, EventArgs e)
-        {
-            if (dontCloseWindow == false)
+        {           
+
+            if (dontCloseWindow == false && USERNAME != "d")
             {
                 timer_Polina_Form.Interval = 1000 * 1;
                 timer_Polina_Form.Start();

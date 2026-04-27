@@ -174,6 +174,8 @@ class Functions
             
         rabbitMQConnection.SetConnectionData("fbdda.duckdns.org", "q", "guestSuperPuper_!");
         (RabbitMQRequestStatus, lines) = await rabbitMQConnection.GetConfig();
+
+        /*
         if (RabbitMQRequestStatus == "GetResponse" && lines.Length == 0)
         {
             logController.Log($"RabbitMQConnection.GetConfig (10.66.66.49)");
@@ -186,14 +188,12 @@ class Functions
             rabbitMQConnection.SetConnectionData("192.168.2.49", "q", "guestSuperPuper_!");
             (RabbitMQRequestStatus, lines) = await rabbitMQConnection.GetConfig();
         }
-
-        if (RabbitMQRequestStatus == "SendCommandGetConfig")
-            return lines;
-
+        */
 
         if (RabbitMQRequestStatus == "GetResponse" && lines.Length > 0)
             return lines;
         //<= if RabbitMQ commands 
+
 
         if (client == null)
         {

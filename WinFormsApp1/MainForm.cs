@@ -15,6 +15,8 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace Napominator;
 
+
+
 public partial class MainForm : Form
 {
     LogMediator logMediator;
