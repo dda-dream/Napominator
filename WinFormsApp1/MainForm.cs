@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Primitives;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using Serilog;
@@ -49,9 +50,15 @@ public partial class MainForm : Form
         //HACK: Если нужно запустить под другим пользователем, то менять тут.
         //USERNAME = "p";
         //TODO: debug
-
         IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
-        IPAddress ip = host.AddressList.FirstOrDefault(addr => addr.AddressFamily == AddressFamily.InterNetwork);
+        IPAddress ip;
+        //ip = host.AddressList.FirstOrDefault(addr => addr.AddressFamily == AddressFamily.InterNetwork);
+        ip = host.AddressList.FirstOrDefault(ip => ip.ToString().StartsWith("192.168.2."));
+        if(ip == null)
+            ip = host.AddressList.FirstOrDefault(ip => ip.ToString().StartsWith("192.168.3."));
+        if (ip == null)
+            ip = host.AddressList.FirstOrDefault(ip => ip.ToString().StartsWith("192.168.5."));
+
         string ip_last_digit = ip.ToString().Split(".")[3];
 
         logController = LogController.Builder();
