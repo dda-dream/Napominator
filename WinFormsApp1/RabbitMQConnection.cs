@@ -116,7 +116,7 @@ class RabbitMQConnection
         }
         catch (Exception e)
         {
-            logController.Log($"RabbitMQConnection.GetResponse error: {e.Message}");
+            logController.Log($"RabbitMQConnection.GetResponse error: {e.Message} {e.InnerException}");
             return lines;
         }
 
@@ -163,7 +163,7 @@ class RabbitMQConnection
         }
         catch (Exception e)
         {
-            logController.Log($"RabbitMQConnection.SendCommandGetConfig error: {e.Message}");
+            logController.Log($"RabbitMQConnection.SendCommandGetConfig error: {e.Message} {e.InnerException}");
             return "error";
         }
 
