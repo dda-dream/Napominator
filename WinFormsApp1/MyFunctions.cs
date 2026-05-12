@@ -45,7 +45,7 @@ class Functions
     string ip_last_digit;
     RabbitMQConnection rabbitMQConnection;
     IConfigService settings;
-
+    int countEmptyResponseFromRabbitMQ = 0;
 
     public Functions(LogController logController,  string _USERNAME, string _ip_last_digit)
     {
@@ -171,29 +171,29 @@ class Functions
         string RabbitMQRequestStatus;
 
         //=> if RabbitMQ commands 
-            
-        rabbitMQConnection.SetConnectionData("fbdda.duckdns.org", "q", "guestSuperPuper_!");
-        (RabbitMQRequestStatus, lines) = await rabbitMQConnection.GetConfig();
 
-        /*
-        if (RabbitMQRequestStatus == "GetResponse" && lines.Length == 0)
+        if (countEmptyResponseFromRabbitMQ <= 5)
         {
-            logController.Log($"RabbitMQConnection.GetConfig (10.66.66.49)");
-            rabbitMQConnection.SetConnectionData("10.66.66.49", "q", "guestSuperPuper_!");
-            (RabbitMQRequestStatus, lines) = await rabbitMQConnection.GetConfig();
-        }
-        if (RabbitMQRequestStatus == "GetResponse" && lines.Length == 0)
-        {
-            logController.Log($"RabbitMQConnection.GetConfig (192.168.2.49)");
-            rabbitMQConnection.SetConnectionData("192.168.2.49", "q", "guestSuperPuper_!");
-            (RabbitMQRequestStatus, lines) = await rabbitMQConnection.GetConfig();
-        }
-        */
+            countEmptyResponseFromRabbitMQ++;
 
-        if (RabbitMQRequestStatus == "GetResponse" && lines.Length > 0)
-            return lines;
-        //<= if RabbitMQ commands 
+            rabbitMQConnection.SetConnectionData("fbdda.duckdns.org", "q", "guestSuperPuper_!");
+            (RabbitMQRequestStatus, lines) = await rabbitMQConnection.GetConfig();
 
+            if (RabbitMQRequestStatus == "SendCommandGetConfig")
+                return lines;
+
+            if (RabbitMQRequestStatus == "GetResponse" && lines.Length > 0)
+            {
+                countEmptyResponseFromRabbitMQ = 0;
+                return lines;
+            }
+            //<= if RabbitMQ commands 
+
+        }
+        countEmptyResponseFromRabbitMQ=0;
+
+        if (settings.NetworkConfig.DebugEnabled)
+            logController.Log($"No config from RabbitMQ for 5 times. Get it from https.");
 
         if (client == null)
         {
@@ -237,7 +237,10 @@ class Functions
         finally
         {
         }
-        
+
+        if (settings.NetworkConfig.DebugEnabled)
+            logController.Log($"No config from https. Get it from file.");
+
         if (lines.Length <= 1) //if no HTTP response
         {
             try
