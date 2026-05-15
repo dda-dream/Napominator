@@ -682,7 +682,7 @@ public partial class MainForm : Form
     {
         int timeout;
         int.TryParse(rtb_httpTimeout.Text, out timeout);
-        await PingTestProxy(cb_UsePing.Checked, timeout);
+        await PingTestProxy(cb_UsePing.Checked, cb_ShowContentLength.Checked, timeout);
     }
 
     private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
@@ -702,13 +702,13 @@ public partial class MainForm : Form
         IpInfo_timer.Stop();
         int timeout;
         int.TryParse(rtb_httpTimeout.Text, out timeout);
-        await PingTestProxy(cb_UsePing.Checked, timeout);
+        await PingTestProxy(cb_UsePing.Checked, cb_ShowContentLength.Checked, timeout);
 
         if (seconds > 0)
             IpInfo_timer.Start();
     }
 
-    private async Task PingTestProxy(bool usePing, int httpTimeout)
+    private async Task PingTestProxy(bool usePing, bool showContentLength, int httpTimeout)
     {
         string proxy = functions.GetStringFromSettings("[Proxy_IP]");
 
@@ -726,22 +726,30 @@ public partial class MainForm : Form
             if (httpTimeout == 0)
                 httpTimeout = settings.NetworkConfig.HttpClientTimeoutSeconds;
 
-            ipInfo.Create(usePing, httpTimeout);
+            ipInfo.Create(usePing, showContentLength, httpTimeout);
             if (rtbProxyUrl.Text == "")
                 rtbProxyUrl.Text = ipInfo.Proxy;
 
-            var (ipInfoDTO, pingResult) = await ipInfo.Process();
+            var ipInfoDTO = await ipInfo.Process();
 
             string pingResultStr = "";
             if (usePing)
-                if (pingResult.FirstOrDefault(k => k.Key == "Status").Value == IPStatus.Success.ToString())
-                    pingResultStr = $" Ping - {pingResult.FirstOrDefault(k => k.Key == "RoundtripTime").Value} мс.";
+                if (ipInfoDTO.Ping_Status == IPStatus.Success.ToString())
+                    pingResultStr = $" Ping - {ipInfoDTO.Ping_RoundtripTime} мс.";
                 else
-                    pingResultStr = $" Ping error. Status: {pingResult.FirstOrDefault(k => k.Key == "Status").Value}.";
+                    pingResultStr = $" Ping error. Status: {ipInfoDTO.Ping_Status}.";
 
-            string http1_status = $"ip-api: {ipInfoDTO.http_response_status1}.";
-            string http2_status = $"rutor: {ipInfoDTO.http_response_status2}.";
-            string http3_status = $"youtube: {ipInfoDTO.http_response_status3}.";
+            string response_len_1 = "", response_len_2 = "", response_len_3 = "";
+            if (showContentLength)
+            {
+                response_len_1 = $"({ipInfoDTO.http_response_1?.Length} b)";
+                response_len_2 = $"({ipInfoDTO.http_response_2?.Length} b)";
+                response_len_3 = $"({ipInfoDTO.http_response_3?.Length} b)";
+            }
+            string http1_status = $"ip-api: {ipInfoDTO.http_response_status1}.{response_len_1}";
+            string http2_status = $"rutor: {ipInfoDTO.http_response_status2}.{response_len_2}";
+            string http3_status = $"youtube: {ipInfoDTO.http_response_status3}.{response_len_3}";
+
 
             Add_TextBox_Log($"{ipInfoDTO.query} {ipInfoDTO.countryCode} {httpTimeout} {http1_status} {http2_status} {http3_status} {pingResultStr}", EventLogEntryType.Information, "");
         }

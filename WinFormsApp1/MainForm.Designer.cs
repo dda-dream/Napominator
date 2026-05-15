@@ -63,6 +63,7 @@
             cb_UsePing = new CheckBox();
             rtb_httpTimeout = new RichTextBox();
             label2 = new Label();
+            cb_ShowContentLength = new CheckBox();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             SuspendLayout();
@@ -188,7 +189,7 @@
             label3.AutoSize = true;
             label3.Location = new Point(6, 40);
             label3.Name = "label3";
-            label3.Size = new Size(115, 15);
+            label3.Size = new Size(116, 15);
             label3.TabIndex = 7;
             label3.Text = "Текст напоминания";
             // 
@@ -358,7 +359,7 @@
             // cb_UsePing
             // 
             cb_UsePing.AutoSize = true;
-            cb_UsePing.Location = new Point(98, 99);
+            cb_UsePing.Location = new Point(98, 98);
             cb_UsePing.Name = "cb_UsePing";
             cb_UsePing.Size = new Size(72, 19);
             cb_UsePing.TabIndex = 21;
@@ -385,11 +386,22 @@
             label2.TabIndex = 21;
             label2.Text = "timeout, sec:";
             // 
+            // cb_ShowContentLength
+            // 
+            cb_ShowContentLength.AutoSize = true;
+            cb_ShowContentLength.Location = new Point(98, 76);
+            cb_ShowContentLength.Name = "cb_ShowContentLength";
+            cb_ShowContentLength.Size = new Size(136, 19);
+            cb_ShowContentLength.TabIndex = 25;
+            cb_ShowContentLength.Text = "Show content length";
+            cb_ShowContentLength.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(903, 529);
+            Controls.Add(cb_ShowContentLength);
             Controls.Add(label2);
             Controls.Add(rtb_httpTimeout);
             Controls.Add(cb_UsePing);
@@ -453,5 +465,6 @@
         private CheckBox cb_UsePing;
         private RichTextBox rtb_httpTimeout;
         private Label label2;
+        private CheckBox cb_ShowContentLength;
     }
 }
