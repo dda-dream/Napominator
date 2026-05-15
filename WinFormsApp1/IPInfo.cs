@@ -125,7 +125,9 @@ public class IpInfo : IDisposable
             {
                 ipInfoData.http_response_status1 = "ERR";
             }
-            stopwatch.Stop();
+            finally {
+                stopwatch.Stop();
+            }
         });
 
         // try URL 2
@@ -160,7 +162,10 @@ public class IpInfo : IDisposable
             {
                 ipInfoData.http_response_status2 = "ERR";
             }
-            stopwatch.Stop();
+            finally
+            {
+                stopwatch.Stop();
+            }
         });
 
         // try URL 3
@@ -195,8 +200,10 @@ public class IpInfo : IDisposable
             {
                 ipInfoData.http_response_status3 = "ERR";
             }
-            stopwatch.Stop();
-
+            finally
+            {
+                stopwatch.Stop();
+            }
         });
 
         await Task.WhenAll(t1, t2, t3);
