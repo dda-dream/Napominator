@@ -90,7 +90,7 @@ public class IpInfo : IDisposable
             var stopwatch = Stopwatch.StartNew();
             try
             {
-                HttpResponseMessage response = await httpClients[Proxy].GetAsync(urlTestIP1);
+                using HttpResponseMessage response = await httpClients[Proxy].GetAsync(urlTestIP1, HttpCompletionOption.ResponseHeadersRead);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -101,7 +101,7 @@ public class IpInfo : IDisposable
 
                     stopwatch.Stop();
                     long headerTimeMs = stopwatch.ElapsedMilliseconds;
-                    ipInfoData.http_response_status1 = $"{response.StatusCode.ToString()} {headerTimeMs} ms";
+                    ipInfoData.http_response_status1 = $"{response.StatusCode} {headerTimeMs} ms";
 
                     if (_usePing && ipInfoData.query != null)
                     {
@@ -134,7 +134,7 @@ public class IpInfo : IDisposable
             var stopwatch = Stopwatch.StartNew();
             try
             {
-                HttpResponseMessage response = await httpClients[Proxy].GetAsync(urlTestIP2, HttpCompletionOption.ResponseHeadersRead);
+                using HttpResponseMessage response = await httpClients[Proxy].GetAsync(urlTestIP2, HttpCompletionOption.ResponseHeadersRead);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -147,7 +147,7 @@ public class IpInfo : IDisposable
 
                     stopwatch.Stop();
                     long headerTimeMs = stopwatch.ElapsedMilliseconds;
-                    ipInfoData.http_response_status2 = $"{response.StatusCode.ToString()} {headerTimeMs} ms";
+                    ipInfoData.http_response_status2 = $"{response.StatusCode} {headerTimeMs} ms";
                 }
                 else
                     ipInfoData.http_response_status2 = $"ERR:{response.StatusCode}";
@@ -169,7 +169,7 @@ public class IpInfo : IDisposable
             var stopwatch = Stopwatch.StartNew();
             try
             {
-                HttpResponseMessage response = await httpClients[Proxy].GetAsync(urlTestIP3, HttpCompletionOption.ResponseHeadersRead);
+                using HttpResponseMessage response = await httpClients[Proxy].GetAsync(urlTestIP3, HttpCompletionOption.ResponseHeadersRead);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -182,7 +182,7 @@ public class IpInfo : IDisposable
 
                     stopwatch.Stop();
                     long headerTimeMs = stopwatch.ElapsedMilliseconds;
-                    ipInfoData.http_response_status3 = $"{response.StatusCode.ToString()} {headerTimeMs} ms";
+                    ipInfoData.http_response_status3 = $"{response.StatusCode} {headerTimeMs} ms";
                 }
                 else
                     ipInfoData.http_response_status3 = $"ERR:{response.StatusCode}";
