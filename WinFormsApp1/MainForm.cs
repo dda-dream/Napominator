@@ -54,7 +54,7 @@ public partial class MainForm : Form
         IPAddress ip;
         //ip = host.AddressList.FirstOrDefault(addr => addr.AddressFamily == AddressFamily.InterNetwork);
         ip = host.AddressList.FirstOrDefault(ip => ip.ToString().StartsWith("192.168.2."));
-        if(ip == null)
+        if (ip == null)
             ip = host.AddressList.FirstOrDefault(ip => ip.ToString().StartsWith("192.168.3."));
         if (ip == null)
             ip = host.AddressList.FirstOrDefault(ip => ip.ToString().StartsWith("192.168.5."));
@@ -449,7 +449,7 @@ public partial class MainForm : Form
 
                 }
                 if (functions.GetDoubleFromSettings("[DisableNotify]") == 0)
-                    if( ! string.IsNullOrEmpty(textBox_NotifyText.Text) )
+                    if (!string.IsNullOrEmpty(textBox_NotifyText.Text))
                         if (checkBox_Papa.Checked == true || checkBox_Mama.Checked == true)
                             Show_Message_To_Polina(functions.Parse_NotifyText(), "НАПОМИНАТОР!", false, true);
             }
@@ -681,7 +681,7 @@ public partial class MainForm : Form
     private async void btn_IPInfo_Click(object sender, EventArgs e)
     {
         int timeout;
-        int.TryParse(rtb_httpTimeout.Text, out timeout);
+        int.TryParse(ctrlHttpTimeout.Text, out timeout);
         await PingTestProxy(cb_UsePing.Checked, cb_ShowContentLength.Checked, timeout);
     }
 
@@ -696,12 +696,12 @@ public partial class MainForm : Form
     private async void IpInfo_timer_Tick(object sender, EventArgs e)
     {
         int seconds;
-        if (int.TryParse(rtb_IpInfoSeconds.Text, out seconds) == false)
+        if (int.TryParse(ctrlIpInfoSeconds.Text, out seconds) == false)
             seconds = 0;
 
         IpInfo_timer.Stop();
         int timeout;
-        int.TryParse(rtb_httpTimeout.Text, out timeout);
+        int.TryParse(ctrlHttpTimeout.Text, out timeout);
         await PingTestProxy(cb_UsePing.Checked, cb_ShowContentLength.Checked, timeout);
 
         if (seconds > 0)
@@ -757,20 +757,32 @@ public partial class MainForm : Form
 
     private void rtb_IpInfoSeconds_TextChanged(object sender, EventArgs e)
     {
-        int seconds;
-        if (int.TryParse(rtb_IpInfoSeconds.Text, out seconds) == false)
-            seconds = 0;
-         
 
-        if (seconds <= 0)
+    }
+
+    private void cb_IpInfoTimerEnabled_CheckedChanged(object sender, EventArgs e)
+    {
+        int seconds;
+        if (int.TryParse(ctrlIpInfoSeconds.Text, out seconds) == false)
+            seconds = 0;
+
+        if (cb_IpInfoTimerEnabled.Checked == true)
+        {
+            if (seconds <= 0)
+            {
+                IpInfo_timer.Stop();
+                logController.Log("Stop IpInfo_timer.");
+            }
+            else
+            {
+                IpInfo_timer.Interval = 1000 * seconds;
+                IpInfo_timer.Start();
+                logController.Log("Start IpInfo_timer.");
+            }
+        } else
         {
             IpInfo_timer.Stop();
             logController.Log("Stop IpInfo_timer.");
-        } else {
-            IpInfo_timer.Interval = 1000 * seconds;
-            IpInfo_timer.Start();
-            logController.Log("Start IpInfo_timer.");
         }
-
     }
 }

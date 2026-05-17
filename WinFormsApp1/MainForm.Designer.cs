@@ -58,14 +58,17 @@
             timer2 = new System.Windows.Forms.Timer(components);
             IpInfo_timer = new System.Windows.Forms.Timer(components);
             rtbProxyUrl = new RichTextBox();
-            rtb_IpInfoSeconds = new RichTextBox();
             label1 = new Label();
             cb_UsePing = new CheckBox();
-            rtb_httpTimeout = new RichTextBox();
             label2 = new Label();
             cb_ShowContentLength = new CheckBox();
+            cb_IpInfoTimerEnabled = new CheckBox();
+            ctrlHttpTimeout = new NumericUpDown();
+            ctrlIpInfoSeconds = new NumericUpDown();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)ctrlHttpTimeout).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)ctrlIpInfoSeconds).BeginInit();
             SuspendLayout();
             // 
             // button_StartStop
@@ -334,53 +337,30 @@
             rtbProxyUrl.TabIndex = 22;
             rtbProxyUrl.Text = "";
             // 
-            // rtb_IpInfoSeconds
-            // 
-            rtb_IpInfoSeconds.DetectUrls = false;
-            rtb_IpInfoSeconds.Location = new Point(69, 98);
-            rtb_IpInfoSeconds.Multiline = false;
-            rtb_IpInfoSeconds.Name = "rtb_IpInfoSeconds";
-            rtb_IpInfoSeconds.ScrollBars = RichTextBoxScrollBars.None;
-            rtb_IpInfoSeconds.Size = new Size(26, 20);
-            rtb_IpInfoSeconds.TabIndex = 23;
-            rtb_IpInfoSeconds.Text = "";
-            rtb_IpInfoSeconds.TextChanged += rtb_IpInfoSeconds_TextChanged;
-            // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Location = new Point(1, 101);
             label1.Name = "label1";
             label1.RightToLeft = RightToLeft.No;
-            label1.Size = new Size(67, 15);
+            label1.Size = new Size(101, 15);
             label1.TabIndex = 21;
-            label1.Text = "period, sec:";
+            label1.Text = "Timer period, sec:";
             // 
             // cb_UsePing
             // 
             cb_UsePing.AutoSize = true;
-            cb_UsePing.Location = new Point(98, 98);
+            cb_UsePing.Location = new Point(211, 76);
             cb_UsePing.Name = "cb_UsePing";
             cb_UsePing.Size = new Size(72, 19);
             cb_UsePing.TabIndex = 21;
             cb_UsePing.Text = "Use Ping";
             cb_UsePing.UseVisualStyleBackColor = true;
             // 
-            // rtb_httpTimeout
-            // 
-            rtb_httpTimeout.DetectUrls = false;
-            rtb_httpTimeout.Location = new Point(257, 98);
-            rtb_httpTimeout.Multiline = false;
-            rtb_httpTimeout.Name = "rtb_httpTimeout";
-            rtb_httpTimeout.ScrollBars = RichTextBoxScrollBars.None;
-            rtb_httpTimeout.Size = new Size(26, 20);
-            rtb_httpTimeout.TabIndex = 24;
-            rtb_httpTimeout.Text = "";
-            // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(181, 101);
+            label2.Location = new Point(165, 100);
             label2.Name = "label2";
             label2.Size = new Size(75, 15);
             label2.TabIndex = 21;
@@ -389,24 +369,54 @@
             // cb_ShowContentLength
             // 
             cb_ShowContentLength.AutoSize = true;
-            cb_ShowContentLength.Location = new Point(98, 76);
+            cb_ShowContentLength.Location = new Point(98, 51);
             cb_ShowContentLength.Name = "cb_ShowContentLength";
-            cb_ShowContentLength.Size = new Size(136, 19);
+            cb_ShowContentLength.Size = new Size(92, 19);
             cb_ShowContentLength.TabIndex = 25;
-            cb_ShowContentLength.Text = "Show content length";
+            cb_ShowContentLength.Text = "Show lenght";
             cb_ShowContentLength.UseVisualStyleBackColor = true;
+            // 
+            // cb_IpInfoTimerEnabled
+            // 
+            cb_IpInfoTimerEnabled.AutoSize = true;
+            cb_IpInfoTimerEnabled.Location = new Point(98, 76);
+            cb_IpInfoTimerEnabled.Name = "cb_IpInfoTimerEnabled";
+            cb_IpInfoTimerEnabled.Size = new Size(62, 19);
+            cb_IpInfoTimerEnabled.TabIndex = 26;
+            cb_IpInfoTimerEnabled.Text = "[timer]";
+            cb_IpInfoTimerEnabled.UseVisualStyleBackColor = true;
+            cb_IpInfoTimerEnabled.CheckedChanged += cb_IpInfoTimerEnabled_CheckedChanged;
+            // 
+            // ctrlHttpTimeout
+            // 
+            ctrlHttpTimeout.Location = new Point(238, 96);
+            ctrlHttpTimeout.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            ctrlHttpTimeout.Name = "ctrlHttpTimeout";
+            ctrlHttpTimeout.Size = new Size(43, 23);
+            ctrlHttpTimeout.TabIndex = 27;
+            ctrlHttpTimeout.Value = new decimal(new int[] { 10, 0, 0, 0 });
+            // 
+            // ctrlIpInfoSeconds
+            // 
+            ctrlIpInfoSeconds.Location = new Point(103, 96);
+            ctrlIpInfoSeconds.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
+            ctrlIpInfoSeconds.Name = "ctrlIpInfoSeconds";
+            ctrlIpInfoSeconds.Size = new Size(43, 23);
+            ctrlIpInfoSeconds.TabIndex = 28;
+            ctrlIpInfoSeconds.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(903, 529);
+            Controls.Add(ctrlIpInfoSeconds);
+            Controls.Add(ctrlHttpTimeout);
+            Controls.Add(cb_IpInfoTimerEnabled);
             Controls.Add(cb_ShowContentLength);
             Controls.Add(label2);
-            Controls.Add(rtb_httpTimeout);
             Controls.Add(cb_UsePing);
             Controls.Add(label1);
-            Controls.Add(rtb_IpInfoSeconds);
             Controls.Add(rtbProxyUrl);
             Controls.Add(btn_IPInfo);
             Controls.Add(tb_noiselevel);
@@ -425,6 +435,8 @@
             groupBox1.PerformLayout();
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)ctrlHttpTimeout).EndInit();
+            ((System.ComponentModel.ISupportInitialize)ctrlIpInfoSeconds).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -460,11 +472,12 @@
         public System.Windows.Forms.Timer timer2;
         private System.Windows.Forms.Timer IpInfo_timer;
         private RichTextBox rtbProxyUrl;
-        private RichTextBox rtb_IpInfoSeconds;
         private Label label1;
         private CheckBox cb_UsePing;
-        private RichTextBox rtb_httpTimeout;
         private Label label2;
         private CheckBox cb_ShowContentLength;
+        private CheckBox cb_IpInfoTimerEnabled;
+        private NumericUpDown ctrlHttpTimeout;
+        private NumericUpDown ctrlIpInfoSeconds;
     }
 }
