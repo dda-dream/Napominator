@@ -779,10 +779,21 @@ public partial class MainForm : Form
                 IpInfo_timer.Start();
                 logController.Log("Start IpInfo_timer.");
             }
-        } else
+        }
+        else
         {
             IpInfo_timer.Stop();
             logController.Log("Stop IpInfo_timer.");
         }
+    }
+
+    private void btn15min_Click(object sender, EventArgs e)
+    {
+        textBox_PersonalPeriod.Text = "15*60";
+    }
+
+    private void btn20min_Click(object sender, EventArgs e)
+    {
+        textBox_PersonalPeriod.Text = "20*60";
     }
 }

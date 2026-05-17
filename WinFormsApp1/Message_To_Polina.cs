@@ -121,8 +121,8 @@ namespace Napominator
         private void CenterAndMAximize()
         {
             int sizeKoeff = 95;
-            if (USERNAME == "d")
-                sizeKoeff = 30;
+            //if (USERNAME == "d")
+            //    sizeKoeff = 30;
 
             this.CenterToScreen();
 

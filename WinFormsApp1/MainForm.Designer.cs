@@ -45,8 +45,8 @@
             textBox_NotifyText = new TextBox();
             checkBox_Polina = new CheckBox();
             groupBox2 = new GroupBox();
-            btn28min = new Button();
-            btn25min = new Button();
+            btn20min = new Button();
+            btn15min = new Button();
             textBox_PersonalPeriod = new TextBox();
             textBox_PersonalPeriodText = new TextBox();
             label8 = new Label();
@@ -220,8 +220,8 @@
             // 
             // groupBox2
             // 
-            groupBox2.Controls.Add(btn28min);
-            groupBox2.Controls.Add(btn25min);
+            groupBox2.Controls.Add(btn20min);
+            groupBox2.Controls.Add(btn15min);
             groupBox2.Controls.Add(textBox_PersonalPeriod);
             groupBox2.Controls.Add(textBox_PersonalPeriodText);
             groupBox2.Controls.Add(label8);
@@ -233,23 +233,25 @@
             groupBox2.TabStop = false;
             groupBox2.Text = "Дополнительный таймер";
             // 
-            // btn28min
+            // btn20min
             // 
-            btn28min.Location = new Point(383, 16);
-            btn28min.Name = "btn28min";
-            btn28min.Size = new Size(50, 24);
-            btn28min.TabIndex = 23;
-            btn28min.Text = "28min";
-            btn28min.UseVisualStyleBackColor = true;
+            btn20min.Location = new Point(383, 16);
+            btn20min.Name = "btn20min";
+            btn20min.Size = new Size(50, 24);
+            btn20min.TabIndex = 23;
+            btn20min.Text = "20min";
+            btn20min.UseVisualStyleBackColor = true;
+            btn20min.Click += btn20min_Click;
             // 
-            // btn25min
+            // btn15min
             // 
-            btn25min.Location = new Point(327, 16);
-            btn25min.Name = "btn25min";
-            btn25min.Size = new Size(50, 24);
-            btn25min.TabIndex = 22;
-            btn25min.Text = "25min";
-            btn25min.UseVisualStyleBackColor = true;
+            btn15min.Location = new Point(327, 16);
+            btn15min.Name = "btn15min";
+            btn15min.Size = new Size(50, 24);
+            btn15min.TabIndex = 22;
+            btn15min.Text = "15min";
+            btn15min.UseVisualStyleBackColor = true;
+            btn15min.Click += btn15min_Click;
             // 
             // textBox_PersonalPeriod
             // 
@@ -467,8 +469,8 @@
         public System.Windows.Forms.Timer timer_Personal;
         private TextBox textBox_PersonalPeriodText;
         private Button btn_IPInfo;
-        private Button btn28min;
-        private Button btn25min;
+        private Button btn20min;
+        private Button btn15min;
         public System.Windows.Forms.Timer timer2;
         private System.Windows.Forms.Timer IpInfo_timer;
         private RichTextBox rtbProxyUrl;
