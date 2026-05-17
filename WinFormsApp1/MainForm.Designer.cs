@@ -371,17 +371,17 @@
             // cb_ShowContentLength
             // 
             cb_ShowContentLength.AutoSize = true;
-            cb_ShowContentLength.Location = new Point(98, 51);
+            cb_ShowContentLength.Location = new Point(98, 76);
             cb_ShowContentLength.Name = "cb_ShowContentLength";
             cb_ShowContentLength.Size = new Size(92, 19);
             cb_ShowContentLength.TabIndex = 25;
-            cb_ShowContentLength.Text = "Show lenght";
+            cb_ShowContentLength.Text = "Show length";
             cb_ShowContentLength.UseVisualStyleBackColor = true;
             // 
             // cb_IpInfoTimerEnabled
             // 
             cb_IpInfoTimerEnabled.AutoSize = true;
-            cb_IpInfoTimerEnabled.Location = new Point(98, 76);
+            cb_IpInfoTimerEnabled.Location = new Point(12, 47);
             cb_IpInfoTimerEnabled.Name = "cb_IpInfoTimerEnabled";
             cb_IpInfoTimerEnabled.Size = new Size(62, 19);
             cb_IpInfoTimerEnabled.TabIndex = 26;

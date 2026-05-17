@@ -695,16 +695,17 @@ public partial class MainForm : Form
 
     private async void IpInfo_timer_Tick(object sender, EventArgs e)
     {
-        int seconds;
-        if (int.TryParse(ctrlIpInfoSeconds.Text, out seconds) == false)
+        if (int.TryParse(ctrlIpInfoSeconds.Text, out var seconds) == false)
+        {
             seconds = 0;
+            return;
+        }
 
         IpInfo_timer.Stop();
-        int timeout;
-        int.TryParse(ctrlHttpTimeout.Text, out timeout);
+        int.TryParse(ctrlHttpTimeout.Text, out var timeout);
         await PingTestProxy(cb_UsePing.Checked, cb_ShowContentLength.Checked, timeout);
 
-        if (seconds > 0)
+        if (cb_IpInfoTimerEnabled.Checked == true)
             IpInfo_timer.Start();
     }
 
