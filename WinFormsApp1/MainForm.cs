@@ -740,6 +740,18 @@ public partial class MainForm : Form
                 else
                     pingResultStr = $" Ping error. Status: {ipInfoDTO.Ping_Status}.";
 
+            Add_TextBox_Log($"-------------------------------", EventLogEntryType.Information, "");
+            Add_TextBox_Log($"Proxy-{ipInfo.Proxy} IP-{ipInfoDTO.query} Country-{ipInfoDTO.countryCode} Timeout-{httpTimeout} Ping result-{pingResultStr}", EventLogEntryType.Information, "");
+            Add_TextBox_Log($"-------------------------------", EventLogEntryType.Information, "");
+
+            var sortedDictionary = ipInfoDTO.http_response_status.OrderBy(pair => pair.Key);
+
+            foreach (var i in sortedDictionary)
+            {
+                Add_TextBox_Log($"{i.Key} - {i.Value} - {ipInfoDTO.http_response[i.Key].Length} bytes", EventLogEntryType.Information, "");
+            }
+
+            /*
             string response_len_1 = "", response_len_2 = "", response_len_3 = "";
             if (showContentLength)
             {
@@ -750,9 +762,9 @@ public partial class MainForm : Form
             string http1_status = $"ip-api: {ipInfoDTO.http_response_status1}.{response_len_1}";
             string http2_status = $"rutor: {ipInfoDTO.http_response_status2}.{response_len_2}";
             string http3_status = $"youtube: {ipInfoDTO.http_response_status3}.{response_len_3}";
+            */
 
-
-            Add_TextBox_Log($"{ipInfoDTO.query} {ipInfoDTO.countryCode} {httpTimeout} {http1_status} {http2_status} {http3_status} {pingResultStr}", EventLogEntryType.Information, "");
+            //Add_TextBox_Log($"{ipInfoDTO.query} {ipInfoDTO.countryCode} {httpTimeout} {http1_status} {http2_status} {http3_status} {pingResultStr}", EventLogEntryType.Information, "");
         }
     }
 

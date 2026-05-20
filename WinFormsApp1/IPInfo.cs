@@ -1,24 +1,33 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Net;
 using System.Net.NetworkInformation;
+using System.Security.Policy;
 using System.Text.Json;
+using System.Xml.Linq;
 
 
 namespace Napominator;
 
 
+public class IpInfoDTO_CountryCode
+{
+    public string? query { get; set; }
+    public string? country { get; set; }
+    public string? countryCode { get; set; }
+}
 public class IpInfoDTO
 {
     public string? query { get; set; }
     public string? country { get; set; }
     public string? countryCode { get; set; }
-    public string? http_response_status1 { get; set; }
-    public string? http_response_status2 { get; set; }
-    public string? http_response_status3 { get; set; } 
 
-    public string? http_response_1 { get; set; }
-    public string? http_response_2 { get; set; }
-    public string? http_response_3 { get; set; }
+
+
+    public ConcurrentDictionary<string, string> http_response_status { get; set; } = new ConcurrentDictionary<string, string>();
+    public ConcurrentDictionary<string, string> http_response { get; set; } = new ConcurrentDictionary<string, string>();
+
+
 
     public string? Ping_RoundtripTime { get; set; }
 
@@ -27,13 +36,20 @@ public class IpInfoDTO
 
 public class IpInfo : IDisposable
 {
-    readonly Dictionary<string, HttpClient> httpClients;
+    readonly ConcurrentDictionary<string, HttpClient> httpClients;
     bool _usePing = false;
     bool _showContentLength = false;
 
-    public string urlTestIP1 { get; set; } = "http://ip-api.com/json/";
-    public string urlTestIP2 { get; set; } = "https://rutor.info";
-    public string urlTestIP3 { get; set; } = "https://youtube.com";
+    List<(string Name, string Url)> urlTestIP = new List<(string Name, string Url)>
+    {
+        ("countrycode","http://ip-api.com/json"),
+        ("rutor","https://rutor.info"),
+        ("ytb","https://youtube.com"),
+        ("grok","https://grok.com\""),
+        ("gemini","https://gemini.google.com"),
+        ("claude","https://claude.ai"),
+    };
+
     public string Proxy { get; set; } = "";
     int httpClientTimeoutSeconds = 0;
     IConfigService? _settings;
@@ -42,7 +58,7 @@ public class IpInfo : IDisposable
     public IpInfo(IConfigService settings)
     {
         _settings = settings;
-        httpClients = new Dictionary<string, HttpClient>();
+        httpClients = new ConcurrentDictionary<string, HttpClient>();
     }
 
     public void Create(bool usePing, bool showContentLength, int httpTimeout)
@@ -50,8 +66,6 @@ public class IpInfo : IDisposable
         _usePing = usePing;
         _showContentLength = showContentLength;
 
-
-        urlTestIP1 = _settings.NetworkConfig.IpInfoUrl;
         if (String.IsNullOrEmpty(Proxy) && !String.IsNullOrEmpty(_settings.NetworkConfig.Proxy))
             Proxy = _settings.NetworkConfig.Proxy;
 
@@ -70,7 +84,12 @@ public class IpInfo : IDisposable
         {
             HttpClient httpClient = new HttpClient(handlerHttpClient);
             httpClient.Timeout = TimeSpan.FromSeconds(httpClientTimeoutSeconds);
-            httpClients.Add(Proxy, httpClient);
+
+            if(httpClients.TryAdd(Proxy, httpClient) == false)
+            {
+                Console.WriteLine("[ERROR] if(httpClients.TryAdd(Proxy, httpClient) == false)");
+                Console.ReadKey();
+            }
         }
     }
 
@@ -83,130 +102,77 @@ public class IpInfo : IDisposable
     public async Task<IpInfoDTO> Process()
     {
         IpInfoDTO ipInfoData = new IpInfoDTO();
+        List<Task> tasks = new List<Task>();
 
-        var t1 = Task.Run(async () =>
+        foreach (var url in urlTestIP)
         {
-            // try URL 1
-            var stopwatch = Stopwatch.StartNew();
-            try
+            var i = url;
+
+            var t = Task.Run(async Task<string> () =>
             {
-                using HttpResponseMessage response = await httpClients[Proxy].GetAsync(urlTestIP1, HttpCompletionOption.ResponseHeadersRead);
-
-                if (response.IsSuccessStatusCode)
+                ipInfoData.http_response[i.Name] = "";
+                var stopwatch = Stopwatch.StartNew();
+                try
                 {
-                    using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(httpClientTimeoutSeconds));
-                    string jsonResponse = await response.Content.ReadAsStringAsync(cts.Token);
-                    ipInfoData = JsonSerializer.Deserialize<IpInfoDTO>(jsonResponse) ?? new IpInfoDTO();
-                    ipInfoData.http_response_1 = jsonResponse;
+                    using HttpResponseMessage response = await httpClients[Proxy].GetAsync(i.Url, HttpCompletionOption.ResponseHeadersRead);
+                    if(i.Name == "gemini")
+                    { }
 
-                    stopwatch.Stop();
-                    long headerTimeMs = stopwatch.ElapsedMilliseconds;
-                    ipInfoData.http_response_status1 = $"{response.StatusCode} {headerTimeMs} ms";
-
-                    if (_usePing && ipInfoData.query != null)
+                    if (response.IsSuccessStatusCode)
                     {
-                        PingReply reply;
-                        using (Ping pingSender = new Ping())
+                        if (i.Name == "countrycode" || _showContentLength)
                         {
-                            reply = await pingSender.SendPingAsync(ipInfoData.query, 5000);
-                            ipInfoData.Ping_RoundtripTime = reply.RoundtripTime.ToString();
-                            ipInfoData.Ping_Status = reply.Status.ToString();
+                            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(httpClientTimeoutSeconds));
+                            string jsonResponse = await response.Content.ReadAsStringAsync(cts.Token);
+                            ipInfoData.http_response[i.Name] = jsonResponse;
+                            if (i.Name == "countrycode")
+                            {
+                                IpInfoDTO_CountryCode ipInfoDTO_CountryCode = JsonSerializer.Deserialize<IpInfoDTO_CountryCode>(jsonResponse) ?? new IpInfoDTO_CountryCode();
+                                ipInfoData.query = ipInfoDTO_CountryCode.query;
+                                ipInfoData.country = ipInfoDTO_CountryCode.country;
+                                ipInfoData.countryCode = ipInfoDTO_CountryCode.countryCode;
+                            }
+                        }
+                        stopwatch.Stop();
+                        long headerTimeMs = stopwatch.ElapsedMilliseconds;
+                        ipInfoData.http_response_status[i.Name] = $"{response.StatusCode} {headerTimeMs} ms";
+
+                        if (_usePing && ipInfoData.query != null && i.Name == "countrycode")
+                        {
+                            PingReply reply;
+                            using (Ping pingSender = new Ping())
+                            {
+                                reply = await pingSender.SendPingAsync(ipInfoData.query, 5000);
+                                ipInfoData.Ping_RoundtripTime = reply.RoundtripTime.ToString();
+                                ipInfoData.Ping_Status = reply.Status.ToString();
+                            }
                         }
                     }
-                }
-                else
-                    ipInfoData.http_response_status1 = $"ERR:{response.StatusCode}";
-            }
-            catch (OperationCanceledException)
-            {
-                ipInfoData.http_response_status1 = "TIMEOUT";
-            }
-            catch (Exception ex)
-            {
-                ipInfoData.http_response_status1 = "ERR";
-            }
-            finally {
-                stopwatch.Stop();
-            }
-        });
-
-        // try URL 2
-        var t2 = Task.Run(async () =>
-        {
-            var stopwatch = Stopwatch.StartNew();
-            try
-            {
-                using HttpResponseMessage response = await httpClients[Proxy].GetAsync(urlTestIP2, HttpCompletionOption.ResponseHeadersRead);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    if (_showContentLength)
+                    else
                     {
-                        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(httpClientTimeoutSeconds));
-                        string jsonResponse = await response.Content.ReadAsStringAsync(cts.Token);
-                        ipInfoData.http_response_2 = jsonResponse;
+                        ipInfoData.http_response_status[i.Name] = $"ERR:{response.StatusCode}";
                     }
-
-                    stopwatch.Stop();
-                    long headerTimeMs = stopwatch.ElapsedMilliseconds;
-                    ipInfoData.http_response_status2 = $"{response.StatusCode} {headerTimeMs} ms";
                 }
-                else
-                    ipInfoData.http_response_status2 = $"ERR:{response.StatusCode}";
-            }
-            catch (OperationCanceledException)
-            {
-                ipInfoData.http_response_status2 = "TIMEOUT";
-            }
-            catch (Exception ex)
-            {
-                ipInfoData.http_response_status2 = "ERR";
-            }
-            finally
-            {
-                stopwatch.Stop();
-            }
-        });
-
-        // try URL 3
-        var t3 = Task.Run(async () =>
-        {
-            var stopwatch = Stopwatch.StartNew();
-            try
-            {
-                using HttpResponseMessage response = await httpClients[Proxy].GetAsync(urlTestIP3, HttpCompletionOption.ResponseHeadersRead);
-
-                if (response.IsSuccessStatusCode)
+                catch (OperationCanceledException)
                 {
-                    if (_showContentLength)
-                    {
-                        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(httpClientTimeoutSeconds));
-                        string jsonResponse = await response.Content.ReadAsStringAsync(cts.Token);
-                        ipInfoData.http_response_3 = jsonResponse;
-                    }
-
-                    stopwatch.Stop();
-                    long headerTimeMs = stopwatch.ElapsedMilliseconds;
-                    ipInfoData.http_response_status3 = $"{response.StatusCode} {headerTimeMs} ms";
+                    ipInfoData.http_response_status[i.Name] = "TIMEOUT";
                 }
-                else
-                    ipInfoData.http_response_status3 = $"ERR:{response.StatusCode}";
-            }
-            catch (OperationCanceledException)
-            {
-                ipInfoData.http_response_status3 = "TIMEOUT";
-            }
-            catch (Exception ex)
-            {
-                ipInfoData.http_response_status3 = "ERR";
-            }
-            finally
-            {
-                stopwatch.Stop();
-            }
-        });
+                catch (Exception ex)
+                {
+                    ipInfoData.http_response_status[i.Name] = "ERR";
+                }
+                finally
+                {
+                    stopwatch.Stop();
+                }
 
-        await Task.WhenAll(t1, t2, t3);
+                return $"{i} - done";
+            });
+
+            tasks.Add(t);
+        }
+
+        await Task.WhenAll(tasks);
 
         return ipInfoData;
     }
