@@ -740,6 +740,7 @@ public partial class MainForm : Form
                 else
                     pingResultStr = $" Ping error. Status: {ipInfoDTO.Ping_Status}.";
 
+            //Clear_TextBox_Log();
             Add_TextBox_Log($"-------------------------------", EventLogEntryType.Information, "");
             Add_TextBox_Log($"Proxy-{ipInfo.Proxy} IP-{ipInfoDTO.query} Country-{ipInfoDTO.countryCode} Timeout-{httpTimeout} Ping result-{pingResultStr}", EventLogEntryType.Information, "");
             Add_TextBox_Log($"-------------------------------", EventLogEntryType.Information, "");
