@@ -175,8 +175,8 @@ class Functions
         if (countEmptyResponseFromRabbitMQ <= 5)
         {
             countEmptyResponseFromRabbitMQ++;
-
-            rabbitMQConnection.SetConnectionData("fbdda.duckdns.org", "q", "guestSuperPuper_!"); // port: 5672
+            
+            rabbitMQConnection.SetConnectionData(settings.RabbitMQConfig.Host, settings.RabbitMQConfig.Login, settings.RabbitMQConfig.Password); // port: 5672
             (RabbitMQRequestStatus, lines) = await rabbitMQConnection.GetConfig();
 
             if (RabbitMQRequestStatus == "SendCommandGetConfig")
