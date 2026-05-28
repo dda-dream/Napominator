@@ -167,6 +167,7 @@ class Functions
 
     public async Task<string> CheckUnreadChatMessages()
     {
+        string result = String.Empty;
         try
         {
             if (httpСlient == null)
@@ -187,15 +188,20 @@ class Functions
             HttpContent httpContent = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
             var unreadResponse = await httpСlient.PostAsync(settings.ChatConnectionConfig.CheckUnreadUrl, httpContent);
-            var content = await unreadResponse.Content.ReadAsStringAsync();
-
-            return content;
+            if (unreadResponse.StatusCode == HttpStatusCode.OK)
+            {
+                result = await unreadResponse.Content.ReadAsStringAsync();
+            }
+            else
+            {
+                logController.Log("[ERR] CheckUnreadChatMessages:StatusCode = {unreadResponse.StatusCode}", EventLogEntryType.Error);
+            }
         }
         catch (Exception ex)
         {
-            logController.Log("[ERR] CheckUnreadChatMessages:{ex.ToString()}", EventLogEntryType.Error);
+            logController.Log("[ERR] CheckUnreadChatMessages: exception {ex.ToString()}", EventLogEntryType.Error);
         }
-        return "";
+        return result;
     }
 
 
