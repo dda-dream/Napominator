@@ -11,6 +11,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime;
+using System.Text.Json;
 using static Emgu.CV.VideoCapture;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
@@ -77,6 +78,8 @@ public partial class MainForm : Form
         globalMouseHook = new GlobalMouseHook();
         globalMouseHook.OnMouseClick += functions.CaptureScreenshotByMouseClick;
         globalMouseHook.Start();
+
+
 
     }
 
@@ -339,15 +342,30 @@ public partial class MainForm : Form
     }
 
 
+    public async Task ShowForUnreadMessagesInChat()
+    {
+        var messages = await functions.CheckUnreadChatMessages();
+        var unreadCounts = JsonSerializer.Deserialize<Dictionary<string, int>>(messages);
+
+        if (unreadCounts != null && unreadCounts.ContainsKey("dddMobile"))
+        {
+            Show_Message_To_Polina("У вас есть непрочитанные сообщения в чате!",
+                                   "У вас есть непрочитанные сообщения в чате!",
+                    false, true, false, 5);
+        }
+    }
+
+
     string prev_curWinTitle = "";
     DateTime lastExec_Tick = DateTime.Now;
     DateTime lastReadSettingsFile = DateTime.MinValue;
+    DateTime lastCheckUnreadChatMessages = DateTime.MinValue;
     bool executing_Tick = false;
     private async void Timer1_Tick(object sender, EventArgs e)
     {
         int CHECK_PERIOD_SECONDS = 5;
 
-        CHECK_PERIOD_SECONDS = (int)functions.GetDoubleFromSettings("[CHECK_PERIOD_SECONDS]");
+          CHECK_PERIOD_SECONDS = (int)functions.GetDoubleFromSettings("[CHECK_PERIOD_SECONDS]");
         try
         {
             string curWinTitle = functions.GetActiveWindowTitle();
@@ -364,6 +382,13 @@ public partial class MainForm : Form
                 functions.ParseSettingFile(lines);
 
                 RefreshControlsFromSettings();
+            }
+
+            if (DateTime.Now > lastCheckUnreadChatMessages.AddMinutes(5))
+            {   
+                lastCheckUnreadChatMessages = DateTime.Now;
+
+                ShowForUnreadMessagesInChat();
             }
 
             // периодичность проверки 
@@ -477,7 +502,7 @@ public partial class MainForm : Form
         Message_To_Polina.Set_counter(_notifyLenghCounter);
         Message_To_Polina.Set_FormCaption(_formCaption);
         Message_To_Polina.Set_ShowDesktop(_showDesktop);
-        Message_To_Polina.Set_DontCloseWindow(_dontCloseWindow);
+        Message_To_Polina.Set_AllowCloseWindow(_dontCloseWindow);
         Message_To_Polina.ShowDialog();
         Message_To_Polina.Focus();
         if (_write_textBox_Log)
@@ -680,8 +705,20 @@ public partial class MainForm : Form
 
     private async void btn_IPInfo_Click(object sender, EventArgs e)
     {
-        int timeout;
-        int.TryParse(ctrlHttpTimeout.Text, out timeout);
+
+        /*
+        var messages = await functions.CheckUnreadChatMessages();
+        var unreadCounts = JsonSerializer.Deserialize<Dictionary<string, int>>(messages);
+
+        if (unreadCounts != null && unreadCounts.ContainsKey("dddMobile"))
+        {
+            Show_Message_To_Polina("У вас есть непрочитанные сообщения в чате!",
+                                   "У вас есть непрочитанные сообщения в чате!",
+                    false, true, false, 5 );
+        } 
+        */   
+
+        int.TryParse(ctrlHttpTimeout.Text, out int timeout);
         await PingTestProxy(cb_UsePing.Checked, cb_ShowContentLength.Checked, timeout);
     }
 

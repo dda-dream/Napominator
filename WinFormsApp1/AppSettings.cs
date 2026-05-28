@@ -11,6 +11,7 @@ public interface IConfigService
     IConfiguration Config { get; }
     NetworkConfig NetworkConfig { get; }
     RabbitMQConfig RabbitMQConfig { get; }
+    ChatConnectionConfig ChatConnectionConfig { get; }
 }
 
 
@@ -33,6 +34,7 @@ public class AppSettings : IConfigService
         
         NetworkConfig = _configuration.GetSection("Network").Get<NetworkConfig>();
         RabbitMQConfig = _configuration.GetSection("RabbitMQ").Get<RabbitMQConfig>();
+        ChatConnectionConfig = _configuration.GetSection("ChatConnection").Get<ChatConnectionConfig>();
     }
 
     public IConfiguration Config
@@ -45,6 +47,7 @@ public class AppSettings : IConfigService
 
     public NetworkConfig NetworkConfig { get; }
     public RabbitMQConfig RabbitMQConfig { get; }
+    public ChatConnectionConfig ChatConnectionConfig { get; }
 }
 
 public class RabbitMQConfig
@@ -53,6 +56,16 @@ public class RabbitMQConfig
     public string Login { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
 }
+
+public class ChatConnectionConfig
+{
+    public string CheckUnreadUrl { get; set; } = string.Empty;
+    public string Login { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+    public string CheckForUser { get; set; } = string.Empty;
+    public int PeriodCheck {  get; set; }
+}
+
 
 public class NetworkConfig
 {

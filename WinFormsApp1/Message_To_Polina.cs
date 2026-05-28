@@ -19,7 +19,7 @@ namespace Napominator
         Rectangle resolution = Screen.PrimaryScreen!.Bounds;
         Boolean allowFormClose = false;
         Boolean showDesktop = false;
-        Boolean dontCloseWindow = false;
+        Boolean AllowCloseWindow = false;
         public Message_To_Polina()
         {
             InitializeComponent();
@@ -62,14 +62,14 @@ namespace Napominator
         {
             showDesktop = _showDesktop;
         }
-        public void Set_DontCloseWindow(Boolean _dontCloseWindow)
+        public void Set_AllowCloseWindow(Boolean allowCloseWindow)
         {
-            dontCloseWindow = _dontCloseWindow;
+            AllowCloseWindow = allowCloseWindow;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (dontCloseWindow == false)
+            if (AllowCloseWindow == false)
                 richTextBox_NotifyText.Text = "Не верю! Не верю!";
             else
                 this.Close();
@@ -98,7 +98,7 @@ namespace Napominator
                 this.Hide();
                 this.Show();
 
-                if (dontCloseWindow)
+                if (AllowCloseWindow)
                 {
                     this.TopMost = false;
                 }
@@ -144,7 +144,7 @@ namespace Napominator
 
         private void button1_MouseEnter(object sender, EventArgs e)
         {
-            if (dontCloseWindow == false)
+            if (AllowCloseWindow == false)
             {
                 Point point = button1.Location;
 
@@ -177,7 +177,7 @@ namespace Napominator
         private void Message_To_Polina_Shown(object sender, EventArgs e)
         {           
 
-            if (dontCloseWindow == false && USERNAME != "d")
+            if (AllowCloseWindow == false && USERNAME != "d")
             {
                 timer_Polina_Form.Interval = 1000 * 1;
                 timer_Polina_Form.Start();

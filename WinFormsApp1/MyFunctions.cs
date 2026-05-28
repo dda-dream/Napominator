@@ -4,9 +4,12 @@ using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Management;
 using System.Net;
+using System.Net.Http.Json;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json;
+using static System.Net.WebRequestMethods;
 
 namespace Napominator;
 
@@ -38,7 +41,7 @@ class Functions
 
     LogController logController;
 
-    HttpClient client;
+    HttpClient httpСlient;
     public string USERNAME { get; }
     List<string> settingsLines = new List<string>();
     List<string> settingsNotifyLines = new List<string>();
@@ -162,6 +165,40 @@ class Functions
 
 
 
+    public async Task<string> CheckUnreadChatMessages()
+    {
+        try
+        {
+            if (httpСlient == null)
+            {
+                var handler = new HttpClientHandler
+                {
+                    UseProxy = false,
+                    Proxy = null
+                };
+                handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
+                httpСlient = new HttpClient(handler);
+                httpСlient.DefaultRequestHeaders.Add("Application", "NAPOMINATOR");
+            }
+
+
+            var loginCredentials = new { Username = settings.ChatConnectionConfig.Login, Password = settings.ChatConnectionConfig.Password };
+            string jsonPayload = JsonSerializer.Serialize(loginCredentials);
+            HttpContent httpContent = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+            var unreadResponse = await httpСlient.PostAsync(settings.ChatConnectionConfig.CheckUnreadUrl, httpContent);
+            var content = await unreadResponse.Content.ReadAsStringAsync();
+
+            return content;
+        }
+        catch (Exception ex)
+        {
+            logController.Log("[ERR] CheckUnreadChatMessages:{ex.ToString()}", EventLogEntryType.Error);
+        }
+        return "";
+    }
+
+
 
 
 
@@ -195,7 +232,7 @@ class Functions
         if (settings.NetworkConfig.DebugEnabled)
             logController.Log($"No config from RabbitMQ for 5 times. Get it from https.");
 
-        if (client == null)
+        if (httpСlient == null)
         {
             var handler = new HttpClientHandler
             {
@@ -203,8 +240,8 @@ class Functions
                 Proxy = null
             };
             handler.ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true;
-            client = new HttpClient(handler);
-            client.DefaultRequestHeaders.Add("User", "NAPOMINATOR");
+            httpСlient = new HttpClient(handler);
+            httpСlient.DefaultRequestHeaders.Add("User", "NAPOMINATOR");
         }
 
         try
@@ -213,7 +250,7 @@ class Functions
             string url = $"https://fbdda.duckdns.org:5005/napominator/Get/{ip_last_digit}";
 
             CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-            HttpResponseMessage response = await client.GetAsync(url, cts.Token);
+            HttpResponseMessage response = await httpСlient.GetAsync(url, cts.Token);
             string content = await response.Content.ReadAsStringAsync(cts.Token);
             content = content.Replace("\t", "");
 
