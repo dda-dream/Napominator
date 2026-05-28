@@ -194,12 +194,12 @@ class Functions
             }
             else
             {
-                logController.Log("$[ERR] CheckUnreadChatMessages:StatusCode = {unreadResponse.StatusCode}", EventLogEntryType.Error);
+                logController.Log($"[ERR] CheckUnreadChatMessages:StatusCode = {unreadResponse.StatusCode}", EventLogEntryType.Error);
             }
         }
         catch (Exception ex)
         {
-            logController.Log("$[ERR] CheckUnreadChatMessages: exception {ex.ToString()}", EventLogEntryType.Error);
+            logController.Log($"[ERR] CheckUnreadChatMessages: exception {ex.ToString()}", EventLogEntryType.Error);
         }
         return result;
     }
