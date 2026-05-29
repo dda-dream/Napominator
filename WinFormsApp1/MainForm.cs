@@ -26,6 +26,7 @@ public partial class MainForm : Form
     Sound sound;
     Functions functions;
     GlobalMouseHook globalMouseHook;
+    IConfigService settings;
 
     const string __VERSION = "ver 27.03.2026";
     Boolean allowFormClose = false;
@@ -44,6 +45,7 @@ public partial class MainForm : Form
     public MainForm()
     {
         InitializeComponent();
+        settings = Program._serviceProvider.GetRequiredService<IConfigService>();
 
         string USERNAME = Functions.username2USERNAME(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1]);
         ArgumentException.ThrowIfNullOrEmpty(USERNAME);
@@ -347,7 +349,7 @@ public partial class MainForm : Form
         var messages = await functions.CheckUnreadChatMessages();
         var unreadCounts = JsonSerializer.Deserialize<Dictionary<string, int>>(messages);
 
-        if (unreadCounts != null && unreadCounts.ContainsKey("dddMobile"))
+        if (unreadCounts != null && unreadCounts.ContainsKey(settings.ChatConnectionConfig.CheckForUser))
         {
             Show_Message_To_Polina("У вас есть непрочитанные сообщения в чате!",
                                    "У вас есть непрочитанные сообщения в чате!",
@@ -365,7 +367,7 @@ public partial class MainForm : Form
     {
         int CHECK_PERIOD_SECONDS = 5;
 
-          CHECK_PERIOD_SECONDS = (int)functions.GetDoubleFromSettings("[CHECK_PERIOD_SECONDS]");
+        CHECK_PERIOD_SECONDS = (int)functions.GetDoubleFromSettings("[CHECK_PERIOD_SECONDS]");
         try
         {
             string curWinTitle = functions.GetActiveWindowTitle();
