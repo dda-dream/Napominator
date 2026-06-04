@@ -386,9 +386,9 @@ class Functions
     {
         string ret = "ERROR";
 
-        if (_username.ToLower() == "r" || _username.ToLower().Contains("lobur"))
+        if (_username.ToLower() == "r" )
             ret = "i";
-        if (_username.ToLower() == "d" || _username.ToLower().Contains("dementev_d"))
+        if (_username.ToLower() == "d" )
             ret = "d";
         if (_username.ToLower() == "p" || _username.ToLower().Contains("user"))
             ret = "p";

@@ -48,6 +48,7 @@ public class IpInfo : IDisposable
         ("grok","https://grok.com\""),
         ("gemini","https://gemini.google.com"),
         ("claude","https://claude.ai"),
+        ("whatsapp","https://web.whatsapp.com/"),
     };
 
     public string Proxy { get; set; } = "";
