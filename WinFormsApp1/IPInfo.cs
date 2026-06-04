@@ -92,6 +92,10 @@ public class IpInfo : IDisposable
                 Console.ReadKey();
             }
         }
+
+        urlTestIP = _settings.TestProxyUrls;
+
+
     }
 
     public void Dispose()
@@ -116,8 +120,6 @@ public class IpInfo : IDisposable
                 try
                 {
                     using HttpResponseMessage response = await httpClients[Proxy].GetAsync(i.Url, HttpCompletionOption.ResponseHeadersRead);
-                    if(i.Name == "gemini")
-                    { }
 
                     if (response.IsSuccessStatusCode)
                     {

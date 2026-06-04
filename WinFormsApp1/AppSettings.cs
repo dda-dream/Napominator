@@ -12,12 +12,17 @@ public interface IConfigService
     NetworkConfig NetworkConfig { get; }
     RabbitMQConfig RabbitMQConfig { get; }
     ChatConnectionConfig ChatConnectionConfig { get; }
+    List<(string Name, string Url)> TestProxyUrls { get; }
 }
 
 
 public class AppSettings : IConfigService
 {
     private readonly IConfiguration _configuration;
+    public NetworkConfig NetworkConfig { get; }
+    public RabbitMQConfig RabbitMQConfig { get; }
+    public ChatConnectionConfig ChatConnectionConfig { get; }
+    public List<(string Name, string Url)> TestProxyUrls { get; }
 
     public AppSettings()
     { 
@@ -35,6 +40,12 @@ public class AppSettings : IConfigService
         NetworkConfig = _configuration.GetSection("Network").Get<NetworkConfig>();
         RabbitMQConfig = _configuration.GetSection("RabbitMQ").Get<RabbitMQConfig>();
         ChatConnectionConfig = _configuration.GetSection("ChatConnection").Get<ChatConnectionConfig>();
+        var testProxyUrlsDict = _configuration.GetSection("TestProxyUrls").Get<Dictionary<string, string>>();
+
+        TestProxyUrls = testProxyUrlsDict?
+            .Select(x => (Name: x.Key, Url: x.Value))
+            .ToList() ?? new List<(string Name, string Url)>();
+
     }
 
     public IConfiguration Config
@@ -45,9 +56,7 @@ public class AppSettings : IConfigService
     }
 
 
-    public NetworkConfig NetworkConfig { get; }
-    public RabbitMQConfig RabbitMQConfig { get; }
-    public ChatConnectionConfig ChatConnectionConfig { get; }
+
 }
 
 public class RabbitMQConfig
