@@ -20,6 +20,8 @@ namespace Napominator
         Boolean allowFormClose = false;
         Boolean showDesktop = false;
         Boolean AllowCloseWindow = false;
+        int timerPeriodSeconds = 0;
+
         public Message_To_Polina()
         {
             InitializeComponent();
@@ -47,7 +49,7 @@ namespace Napominator
         public void Set_counter(int _i)
         {
             counter = _i;
-            label_Count.Text = counter.ToString();
+            RefreshCounter();
         }
         public void Set_NotifyText(string _s)
         {
@@ -67,12 +69,22 @@ namespace Napominator
             AllowCloseWindow = allowCloseWindow;
         }
 
+        public void Set_TimerPeriod(int seconds)
+        {
+            timerPeriodSeconds = seconds;
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             if (AllowCloseWindow == false)
+            {
                 richTextBox_NotifyText.Text = "Не верю! Не верю!";
+            }
             else
+            {
+                timer_Polina_Form.Stop();
                 this.Close();
+            }
         }
 
         private void timer_Polina_Form_Tick(object sender, EventArgs e)
@@ -109,13 +121,21 @@ namespace Napominator
                 CenterAndMAximize();
 
                 counter--;
-                label_Count.Text = counter.ToString();
+
+                RefreshCounter();
 
                 Color randomColor = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
                 richTextBox_NotifyText.ForeColor = randomColor;
                 randomColor = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
                 richTextBox_NotifyText.ForeColor = randomColor;
             }
+        }
+
+        void RefreshCounter()
+        {
+            int minutes = counter / 60;
+            int seconds = counter % 60;
+            label_Count.Text = $"{minutes:00}:{seconds:00}";
         }
 
         private void CenterAndMAximize()
@@ -177,7 +197,7 @@ namespace Napominator
         private void Message_To_Polina_Shown(object sender, EventArgs e)
         {           
 
-            if (AllowCloseWindow == false && USERNAME != "d")
+            if (AllowCloseWindow == false)
             {
                 timer_Polina_Form.Interval = 1000 * 1;
                 timer_Polina_Form.Start();
@@ -187,6 +207,12 @@ namespace Napominator
                 allowFormClose = true;
                 this.ControlBox = true;
                 CenterAndMAximize();
+            }
+
+            if (timerPeriodSeconds > 0)
+            {
+                timer_Polina_Form.Interval = 1000 * timerPeriodSeconds;
+                timer_Polina_Form.Start();
             }
         }
     }

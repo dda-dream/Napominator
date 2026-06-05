@@ -348,12 +348,18 @@ public partial class MainForm : Form
     {
         var messages = await functions.CheckUnreadChatMessages();
         var unreadCounts = JsonSerializer.Deserialize<Dictionary<string, int>>(messages);
-
-        if (unreadCounts != null && unreadCounts.ContainsKey(settings.ChatConnectionConfig.CheckForUser))
+        if (unreadCounts != null)
         {
-            Show_Message_To_Polina("У вас есть непрочитанные сообщения в чате!",
-                                   "У вас есть непрочитанные сообщения в чате!",
-                    false, true, false, 5);
+            unreadCounts.TryGetValue(settings.ChatConnectionConfig.CheckForUser, out int msgCount);
+
+            if (msgCount > 0)
+            {
+                Show_Message_To_Polina($"У вас есть {msgCount} непрочитанные сообщения в чате!",
+                                       $"У вас есть {msgCount} непрочитанные сообщения в чате!",
+                                        false, true, false,
+                                        4 * 60/*4 минуты мигать и 1 минута до следующей проверки*/
+                                        , 1);
+            }
         }
     }
 
@@ -390,7 +396,7 @@ public partial class MainForm : Form
             {   
                 lastCheckUnreadChatMessages = DateTime.Now;
 
-                ShowForUnreadMessagesInChat();
+                await ShowForUnreadMessagesInChat();
             }
 
             // периодичность проверки 
@@ -497,11 +503,14 @@ public partial class MainForm : Form
     }
 
 
-    void Show_Message_To_Polina(string _messageToShow, string _formCaption, Boolean _showDesktop = true, Boolean _dontCloseWindow = false, bool _write_textBox_Log = true, int _notifyLenghCounter = 5)
+    void Show_Message_To_Polina(string _messageToShow, string _formCaption, Boolean _showDesktop = true,
+        Boolean _dontCloseWindow = false, bool _write_textBox_Log = true,
+        int periodToCloseSeconds = 5, int timerPeriodSeconds = 0)
     {
         Message_To_Polina Message_To_Polina = new Message_To_Polina();
+        Message_To_Polina.Set_TimerPeriod(timerPeriodSeconds);
         Message_To_Polina.Set_NotifyText(_messageToShow);
-        Message_To_Polina.Set_counter(_notifyLenghCounter);
+        Message_To_Polina.Set_counter(periodToCloseSeconds);
         Message_To_Polina.Set_FormCaption(_formCaption);
         Message_To_Polina.Set_ShowDesktop(_showDesktop);
         Message_To_Polina.Set_AllowCloseWindow(_dontCloseWindow);
