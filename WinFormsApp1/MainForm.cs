@@ -565,10 +565,13 @@ public partial class MainForm : Form
     }
     private void Form1_FormClosing(object sender, FormClosingEventArgs e)
     {
-        if (!allowFormClose)
+        if (functions.USERNAME != "d")
         {
-            logController.Log("NAPOMINATOR Form1_FormClosing() - Dont allowed.");
-            e.Cancel = true;
+            if (!allowFormClose)
+            {
+                logController.Log("NAPOMINATOR Form1_FormClosing() - Dont allowed.");
+                e.Cancel = true;
+            }
         }
     }
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)

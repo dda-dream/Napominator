@@ -188,9 +188,12 @@ namespace Napominator
 
         private void Message_To_Polina_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!allowFormClose)
+            if (USERNAME != "d")
             {
-                e.Cancel = true;
+                if (!allowFormClose)
+                {
+                    e.Cancel = true;
+                }
             }
         }
 
