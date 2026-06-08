@@ -720,6 +720,8 @@ public partial class MainForm : Form
     private async void btn_IPInfo_Click(object sender, EventArgs e)
     {
         Clear_TextBox_Log();
+        Add_TextBox_Log($"--------------Start IpInfo-----------------", EventLogEntryType.Information, "");
+
         /*
         var messages = await functions.CheckUnreadChatMessages();
         var unreadCounts = JsonSerializer.Deserialize<Dictionary<string, int>>(messages);
@@ -734,6 +736,8 @@ public partial class MainForm : Form
 
         int.TryParse(ctrlHttpTimeout.Text, out int timeout);
         await PingTestProxy(cb_UsePing.Checked, cb_ShowContentLength.Checked, timeout);
+        Add_TextBox_Log($"--------------End IpInfo-----------------", EventLogEntryType.Information, "");
+
     }
 
     private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
