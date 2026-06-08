@@ -719,7 +719,7 @@ public partial class MainForm : Form
 
     private async void btn_IPInfo_Click(object sender, EventArgs e)
     {
-
+        Clear_TextBox_Log();
         /*
         var messages = await functions.CheckUnreadChatMessages();
         var unreadCounts = JsonSerializer.Deserialize<Dictionary<string, int>>(messages);
@@ -730,7 +730,7 @@ public partial class MainForm : Form
                                    "У вас есть непрочитанные сообщения в чате!",
                     false, true, false, 5 );
         } 
-        */   
+        */
 
         int.TryParse(ctrlHttpTimeout.Text, out int timeout);
         await PingTestProxy(cb_UsePing.Checked, cb_ShowContentLength.Checked, timeout);
