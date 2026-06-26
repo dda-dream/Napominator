@@ -393,7 +393,7 @@ public partial class MainForm : Form
             }
 
             if (DateTime.Now > lastCheckUnreadChatMessages.AddMinutes(5))
-            {   
+            {
                 lastCheckUnreadChatMessages = DateTime.Now;
 
                 await ShowForUnreadMessagesInChat();
@@ -666,16 +666,16 @@ public partial class MainForm : Form
             try
             {
                 var table = new DataTable();
-                personalTimes_secondsToStop = (int)table.Compute(textBox_PersonalPeriod.Text, null);
+                personalTimes_secondsToStop = (int)table.Compute(ctrlPersonalPeriod.Text, null);
             }
             catch
             {
-                textBox_PersonalPeriod.Text = "5";
+                ctrlPersonalPeriod.Text = "5";
                 return;
             }
             if (personalTimes_secondsToStop <= 1)
             {
-                textBox_PersonalPeriod.Text = "5";
+                ctrlPersonalPeriod.Text = "5";
                 return;
             }
 
@@ -709,7 +709,7 @@ public partial class MainForm : Form
             return;
         }
         PersonalTime_StartTimer();
-        Show_Message_To_Polina($"Message: {textBox_PersonalPeriodText.Text}.\n Прошедшее время в секундах: {textBox_PersonalPeriod.Text}", $"Personal timer DONE.", false, true);
+        Show_Message_To_Polina($"Message: {textBox_PersonalPeriodText.Text}.\n Прошедшее время в секундах: {ctrlPersonalPeriod.Text}", $"Personal timer DONE.", false, true);
 
     }
 
@@ -856,13 +856,33 @@ public partial class MainForm : Form
         }
     }
 
-    private void btn15min_Click(object sender, EventArgs e)
+    private void btnPlus1min_Click(object sender, EventArgs e)
     {
-        textBox_PersonalPeriod.Text = "15*60";
+        AddRemove_ctrlPersonalPeriod(1);
     }
 
-    private void btn20min_Click(object sender, EventArgs e)
+    private void btnMinus1min_Click(object sender, EventArgs e)
     {
-        textBox_PersonalPeriod.Text = "20*60";
+        AddRemove_ctrlPersonalPeriod(-1);
+    }
+
+    private void btnPlus5min_Click(object sender, EventArgs e)
+    {
+        AddRemove_ctrlPersonalPeriod(5);
+    }
+
+    private void btnMinus5min_Click(object sender, EventArgs e)
+    {
+        AddRemove_ctrlPersonalPeriod(-5);
+    }
+
+    void AddRemove_ctrlPersonalPeriod(int minutes)
+    {
+
+        int.TryParse(ctrlPersonalPeriod.Text.Replace("*60", ""), out int curValue);
+        if (curValue > 0)
+            curValue += minutes;
+        if(curValue > 0)
+            ctrlPersonalPeriod.Text = curValue.ToString()+"*60";
     }
 }
