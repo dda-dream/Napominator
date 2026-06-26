@@ -67,6 +67,8 @@
             cb_IpInfoTimerEnabled = new CheckBox();
             ctrlHttpTimeout = new NumericUpDown();
             ctrlIpInfoSeconds = new NumericUpDown();
+            btnMinus5min = new Button();
+            btnPlus5min = new Button();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)ctrlHttpTimeout).BeginInit();
@@ -237,7 +239,7 @@
             groupBox2.TabStop = false;
             groupBox2.Text = "Дополнительный таймер";
             // 
-            // btnMinus5min
+            // btn20min
             // 
             btnMinus5min.Location = new Point(421, 16);
             btnMinus5min.Name = "btnMinus5min";
@@ -430,6 +432,26 @@
             ctrlIpInfoSeconds.Size = new Size(43, 23);
             ctrlIpInfoSeconds.TabIndex = 28;
             ctrlIpInfoSeconds.Value = new decimal(new int[] { 1, 0, 0, 0 });
+            // 
+            // btnMinus5min
+            // 
+            btnMinus5min.Location = new Point(420, 16);
+            btnMinus5min.Name = "btnMinus5min";
+            btnMinus5min.Size = new Size(30, 24);
+            btnMinus5min.TabIndex = 25;
+            btnMinus5min.Text = "-5";
+            btnMinus5min.UseVisualStyleBackColor = true;
+            btnMinus5min.Click += btnMinus5min_Click;
+            // 
+            // btnPlus5min
+            // 
+            btnPlus5min.Location = new Point(392, 16);
+            btnPlus5min.Name = "btnPlus5min";
+            btnPlus5min.Size = new Size(29, 24);
+            btnPlus5min.TabIndex = 24;
+            btnPlus5min.Text = "+5m";
+            btnPlus5min.UseVisualStyleBackColor = true;
+            btnPlus5min.Click += btnPlus5min_Click;
             // 
             // MainForm
             // 
