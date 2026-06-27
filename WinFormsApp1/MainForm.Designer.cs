@@ -45,9 +45,11 @@
             textBox_NotifyText = new TextBox();
             checkBox_Polina = new CheckBox();
             groupBox2 = new GroupBox();
-            btn20min = new Button();
-            btn15min = new Button();
-            textBox_PersonalPeriod = new TextBox();
+            btnMinus5min = new Button();
+            btnPlus5min = new Button();
+            btnMinus1min = new Button();
+            btnPlus1min = new Button();
+            ctrlPersonalPeriod = new TextBox();
             textBox_PersonalPeriodText = new TextBox();
             label8 = new Label();
             btnPersonalTimerStartStop = new Button();
@@ -65,6 +67,8 @@
             cb_IpInfoTimerEnabled = new CheckBox();
             ctrlHttpTimeout = new NumericUpDown();
             ctrlIpInfoSeconds = new NumericUpDown();
+            btnMinus5min = new Button();
+            btnPlus5min = new Button();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)ctrlHttpTimeout).BeginInit();
@@ -192,7 +196,7 @@
             label3.AutoSize = true;
             label3.Location = new Point(6, 40);
             label3.Name = "label3";
-            label3.Size = new Size(116, 15);
+            label3.Size = new Size(115, 15);
             label3.TabIndex = 7;
             label3.Text = "Текст напоминания";
             // 
@@ -220,9 +224,11 @@
             // 
             // groupBox2
             // 
-            groupBox2.Controls.Add(btn20min);
-            groupBox2.Controls.Add(btn15min);
-            groupBox2.Controls.Add(textBox_PersonalPeriod);
+            groupBox2.Controls.Add(btnMinus5min);
+            groupBox2.Controls.Add(btnPlus5min);
+            groupBox2.Controls.Add(btnMinus1min);
+            groupBox2.Controls.Add(btnPlus1min);
+            groupBox2.Controls.Add(ctrlPersonalPeriod);
             groupBox2.Controls.Add(textBox_PersonalPeriodText);
             groupBox2.Controls.Add(label8);
             groupBox2.Controls.Add(btnPersonalTimerStartStop);
@@ -235,32 +241,52 @@
             // 
             // btn20min
             // 
-            btn20min.Location = new Point(383, 16);
-            btn20min.Name = "btn20min";
-            btn20min.Size = new Size(50, 24);
-            btn20min.TabIndex = 23;
-            btn20min.Text = "20min";
-            btn20min.UseVisualStyleBackColor = true;
-            btn20min.Click += btn20min_Click;
+            btnMinus5min.Location = new Point(421, 16);
+            btnMinus5min.Name = "btnMinus5min";
+            btnMinus5min.Size = new Size(30, 24);
+            btnMinus5min.TabIndex = 25;
+            btnMinus5min.Text = "-5";
+            btnMinus5min.UseVisualStyleBackColor = true;
+            btnMinus5min.Click += btnMinus5min_Click;
             // 
-            // btn15min
+            // btnPlus5min
             // 
-            btn15min.Location = new Point(327, 16);
-            btn15min.Name = "btn15min";
-            btn15min.Size = new Size(50, 24);
-            btn15min.TabIndex = 22;
-            btn15min.Text = "15min";
-            btn15min.UseVisualStyleBackColor = true;
-            btn15min.Click += btn15min_Click;
+            btnPlus5min.Location = new Point(392, 16);
+            btnPlus5min.Name = "btnPlus5min";
+            btnPlus5min.Size = new Size(30, 24);
+            btnPlus5min.TabIndex = 24;
+            btnPlus5min.Text = "+5m";
+            btnPlus5min.UseVisualStyleBackColor = true;
+            btnPlus5min.Click += btnPlus5min_Click;
             // 
-            // textBox_PersonalPeriod
+            // btnMinus1min
             // 
-            textBox_PersonalPeriod.Location = new Point(137, 16);
-            textBox_PersonalPeriod.Name = "textBox_PersonalPeriod";
-            textBox_PersonalPeriod.Size = new Size(73, 23);
-            textBox_PersonalPeriod.TabIndex = 17;
-            textBox_PersonalPeriod.Text = "5";
-            textBox_PersonalPeriod.TextAlign = HorizontalAlignment.Center;
+            btnMinus1min.Location = new Point(356, 16);
+            btnMinus1min.Name = "btnMinus1min";
+            btnMinus1min.Size = new Size(30, 24);
+            btnMinus1min.TabIndex = 23;
+            btnMinus1min.Text = "-1";
+            btnMinus1min.UseVisualStyleBackColor = true;
+            btnMinus1min.Click += btnMinus1min_Click;
+            // 
+            // btnPlus1min
+            // 
+            btnPlus1min.Location = new Point(327, 16);
+            btnPlus1min.Name = "btnPlus1min";
+            btnPlus1min.Size = new Size(30, 24);
+            btnPlus1min.TabIndex = 22;
+            btnPlus1min.Text = "+1m";
+            btnPlus1min.UseVisualStyleBackColor = true;
+            btnPlus1min.Click += btnPlus1min_Click;
+            // 
+            // ctrlPersonalPeriod
+            // 
+            ctrlPersonalPeriod.Location = new Point(137, 16);
+            ctrlPersonalPeriod.Name = "ctrlPersonalPeriod";
+            ctrlPersonalPeriod.Size = new Size(73, 23);
+            ctrlPersonalPeriod.TabIndex = 17;
+            ctrlPersonalPeriod.Text = "5";
+            ctrlPersonalPeriod.TextAlign = HorizontalAlignment.Center;
             // 
             // textBox_PersonalPeriodText
             // 
@@ -345,7 +371,7 @@
             label1.Location = new Point(1, 101);
             label1.Name = "label1";
             label1.RightToLeft = RightToLeft.No;
-            label1.Size = new Size(101, 15);
+            label1.Size = new Size(100, 15);
             label1.TabIndex = 21;
             label1.Text = "Timer period, sec:";
             // 
@@ -407,6 +433,26 @@
             ctrlIpInfoSeconds.TabIndex = 28;
             ctrlIpInfoSeconds.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
+            // btnMinus5min
+            // 
+            btnMinus5min.Location = new Point(420, 16);
+            btnMinus5min.Name = "btnMinus5min";
+            btnMinus5min.Size = new Size(30, 24);
+            btnMinus5min.TabIndex = 25;
+            btnMinus5min.Text = "-5";
+            btnMinus5min.UseVisualStyleBackColor = true;
+            btnMinus5min.Click += btnMinus5min_Click;
+            // 
+            // btnPlus5min
+            // 
+            btnPlus5min.Location = new Point(392, 16);
+            btnPlus5min.Name = "btnPlus5min";
+            btnPlus5min.Size = new Size(29, 24);
+            btnPlus5min.TabIndex = 24;
+            btnPlus5min.Text = "+5m";
+            btnPlus5min.UseVisualStyleBackColor = true;
+            btnPlus5min.Click += btnPlus5min_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -463,14 +509,14 @@
         public System.Windows.Forms.Timer timer1;
         public NotifyIcon notifyIcon1;
         private Button btnPersonalTimerStartStop;
-        private TextBox textBox_PersonalPeriod;
+        private TextBox ctrlPersonalPeriod;
         private Label label8;
         private GroupBox groupBox2;
         public System.Windows.Forms.Timer timer_Personal;
         private TextBox textBox_PersonalPeriodText;
         private Button btn_IPInfo;
-        private Button btn20min;
-        private Button btn15min;
+        private Button btnMinus1min;
+        private Button btnPlus1min;
         public System.Windows.Forms.Timer timer2;
         private System.Windows.Forms.Timer IpInfo_timer;
         private RichTextBox rtbProxyUrl;
@@ -481,5 +527,7 @@
         private CheckBox cb_IpInfoTimerEnabled;
         private NumericUpDown ctrlHttpTimeout;
         private NumericUpDown ctrlIpInfoSeconds;
+        private Button btnMinus5min;
+        private Button btnPlus5min;
     }
 }
