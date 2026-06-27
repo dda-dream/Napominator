@@ -525,6 +525,7 @@ class Functions
         }
         catch (Exception ex)
         {
+            logController.Log($"[ERROR] ManageFolderSize() {ex.ToString()}"); 
         }
     }
     public void CaptureScreenshotByMouseClick()
