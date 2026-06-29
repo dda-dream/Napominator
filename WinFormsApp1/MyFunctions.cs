@@ -253,7 +253,10 @@ class Functions
         try
         {
 
-            string url = $"https://fbdda.duckdns.org:5005/napominator/Get/{ip_last_digit}";
+            Uri url;// = new Uri($"https://fbdda.duckdns.org:5005/napominator/Get/{ip_last_digit}");
+            url = new Uri($"{settings.NapominatorWebApi.BaseUrl.TrimEnd('/')}/" +
+                          $"{settings.NapominatorWebApi.GetEndpoint.Trim('/')}/" +
+                          $"{ip_last_digit}");
 
             CancellationTokenSource cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
             HttpResponseMessage response = await httpСlient.GetAsync(url, cts.Token);

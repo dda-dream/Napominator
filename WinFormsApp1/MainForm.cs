@@ -1,19 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Primitives;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
-using Serilog;
-using Serilog.Sinks.Grafana.Loki;
-using Serilog.Sinks.Grafana.Loki.HttpClients;
 using System.Data;
 using System.Diagnostics;
 using System.Net;
 using System.Net.NetworkInformation;
-using System.Net.Sockets;
-using System.Runtime;
 using System.Text.Json;
-using static Emgu.CV.VideoCapture;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace Napominator;
 
