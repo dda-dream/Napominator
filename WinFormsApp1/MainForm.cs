@@ -73,7 +73,7 @@ public partial class MainForm : Form
         globalMouseHook.OnMouseClick += functions.CaptureScreenshotByMouseClick;
         globalMouseHook.Start();
 
-
+        Add_TextBox_Log($"USERNAME: {USERNAME}", EventLogEntryType.Information, USERNAME);
 
     }
 
@@ -633,6 +633,8 @@ public partial class MainForm : Form
             checkBox_Papa.Checked = true;
         if (functions.USERNAME == "p")
             checkBox_Polina.Checked = true;
+
+        await ShowForUnreadMessagesInChat();
 
         if (functions.USERNAME != "d")
             StartTimer();
