@@ -36,7 +36,7 @@ public class IpInfoDTO
 
 public class IpInfo : IDisposable
 {
-    readonly ConcurrentDictionary<string, HttpClient> httpClients;
+    private readonly ConcurrentDictionary<string, HttpClient> httpClients = new ConcurrentDictionary<string, HttpClient>();
     bool _usePing = false;
     bool _showContentLength = false;
 
@@ -59,7 +59,6 @@ public class IpInfo : IDisposable
     public IpInfo(IConfigService settings)
     {
         _settings = settings;
-        httpClients = new ConcurrentDictionary<string, HttpClient>();
     }
 
     public void Create(bool usePing, bool showContentLength, int httpTimeout)
@@ -86,7 +85,7 @@ public class IpInfo : IDisposable
             HttpClient httpClient = new HttpClient(handlerHttpClient);
             httpClient.Timeout = TimeSpan.FromSeconds(httpClientTimeoutSeconds);
 
-            if(httpClients.TryAdd(Proxy, httpClient) == false)
+            if (httpClients.TryAdd(Proxy, httpClient) == false)
             {
                 Console.WriteLine("[ERROR] if(httpClients.TryAdd(Proxy, httpClient) == false)");
                 Console.ReadKey();
@@ -94,9 +93,9 @@ public class IpInfo : IDisposable
         }
 
         urlTestIP = _settings.TestProxyUrls;
-
-
     }
+
+
 
     public void Dispose()
     {

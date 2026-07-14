@@ -4,6 +4,18 @@ using Serilog.Sinks.Grafana.Loki;
 
 namespace Napominator;
 
+
+
+
+class Publisher
+{
+    public event EventHandler SomethingHappened;
+
+    public void Raise() => SomethingHappened?.Invoke(this, EventArgs.Empty);
+}
+
+
+
 internal static class Program
 {
     static Mutex mutex = new Mutex(true, Application.ExecutablePath.Replace("\\",""));
