@@ -339,18 +339,21 @@ public partial class MainForm : Form
     public async Task ShowForUnreadMessagesInChat()
     {
         var messages = await functions.CheckUnreadChatMessages();
-        var unreadCounts = JsonSerializer.Deserialize<Dictionary<string, int>>(messages);
-        if (unreadCounts != null)
+        if (!string.IsNullOrEmpty(messages))
         {
-            unreadCounts.TryGetValue(settings.ChatConnectionConfig.CheckForUser, out int msgCount);
-
-            if (msgCount > 0)
+            var unreadCounts = JsonSerializer.Deserialize<Dictionary<string, int>>(messages);
+            if (unreadCounts != null)
             {
-                Show_Message_To_Polina($"У вас есть {msgCount} непрочитанные сообщения в чате!",
-                                       $"У вас есть {msgCount} непрочитанные сообщения в чате!",
-                                        false, true, false,
-                                        4 * 60/*4 минуты мигать и 1 минута до следующей проверки*/
-                                        , 1);
+                unreadCounts.TryGetValue(settings.ChatConnectionConfig.CheckForUser, out int msgCount);
+
+                if (msgCount > 0)
+                {
+                    Show_Message_To_Polina($"У вас есть {msgCount} непрочитанные сообщения в чате!",
+                                           $"У вас есть {msgCount} непрочитанные сообщения в чате!",
+                                            false, true, false,
+                                            4 * 60/*4 минуты мигать и 1 минута до следующей проверки*/
+                                            , 1);
+                }
             }
         }
     }
