@@ -54,7 +54,16 @@ public partial class MainForm : Form
         if (ip == null)
             ip = host.AddressList.FirstOrDefault(ip => ip.ToString().StartsWith("192.168.5."));
 
-        string ip_last_digit = ip.ToString().Split(".")[3];
+        string ip_last_digit = "00";
+        if (ip == null)
+        {
+            if (host.HostName.Contains("BMAX"))
+                ip_last_digit = "44";
+        }
+        else
+        {
+            ip_last_digit = ip.ToString().Split(".")[3];
+        }
 
         logController = LogController.Builder();
         logMediator = new LogMediator();
