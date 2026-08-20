@@ -397,7 +397,8 @@ public partial class MainForm : Form
             if (DateTime.Now > lastReadSettingsFile.AddSeconds(59))
             {   // reread setting file every 59 seconds
                 lastReadSettingsFile = DateTime.Now;
-                var lines = await functions.ReadSettingFile();
+                CancellationTokenSource cts = new CancellationTokenSource();
+                var lines = await functions.ReadSettingFile(cts.Token);
                 functions.ParseSettingFile(lines);
 
                 RefreshControlsFromSettings();
@@ -574,17 +575,6 @@ public partial class MainForm : Form
         checkBox_Polina.CheckedChanged += this.CheckBox_Polina_CheckedChanged;
         checkBox_Mama.CheckedChanged += this.CheckBox_Mama_CheckedChanged;
     }
-    private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-    {
-        if (functions.USERNAME != "d")
-        {
-            if (!allowFormClose)
-            {
-                logController.Log("NAPOMINATOR Form1_FormClosing() - Dont allowed.");
-                e.Cancel = true;
-            }
-        }
-    }
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
         if (keyData == (Keys.Control | Keys.X))
@@ -615,6 +605,9 @@ public partial class MainForm : Form
     }
     private void Add_TextBox_Log(string message, EventLogEntryType level, string USERNAME)
     {
+        if (IsDisposed || Disposing || textBox_Log.IsDisposed || textBox_Log.Disposing)
+            return;
+
         const int MAX_LINES = 100;
         if (textBox_Log.Lines.Length > MAX_LINES)
             textBox_Log.Text = "";
@@ -641,11 +634,6 @@ public partial class MainForm : Form
         logController.Log($"Exec FileName : {System.IO.Path.GetFileName(Application.ExecutablePath)}");
         logController.Log("NAPOMINATOR version:" + __VERSION);
 
-        var lines = await functions.ReadSettingFile();
-        functions.ParseSettingFile(lines);
-        RefreshControlsFromSettings();
-
-
         if (functions.USERNAME == "i")
             checkBox_Mama.Checked = true;
         if (functions.USERNAME == "d")
@@ -653,11 +641,45 @@ public partial class MainForm : Form
         if (functions.USERNAME == "p")
             checkBox_Polina.Checked = true;
 
-        await ShowForUnreadMessagesInChat();
-
         if (functions.USERNAME != "d")
             StartTimer();
+
+        InitMainThings();
     }
+
+
+    CancellationTokenSource ctsReadRabbitMQ;
+    async void InitMainThings()
+    {
+        logController.Log("InitMainThings()");
+        ctsReadRabbitMQ = new CancellationTokenSource();
+        var lines = await functions.ReadSettingFile(ctsReadRabbitMQ.Token);
+        functions.ParseSettingFile(lines);
+        RefreshControlsFromSettings();
+
+        await ShowForUnreadMessagesInChat();
+    }
+    private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+    {
+        if (functions.USERNAME != "d")
+        {
+            if (!allowFormClose)
+            {
+                logController.Log("NAPOMINATOR Form1_FormClosing() - Dont allowed.");
+                e.Cancel = true;
+            }
+        }
+        ctsReadRabbitMQ.Cancel();
+    }
+
+
+    private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
+    {
+        globalMouseHook.Dispose();
+        logController.Dispose();
+
+    }
+
 
 
     private void Form1_Resize(object sender, EventArgs e)
@@ -753,12 +775,6 @@ public partial class MainForm : Form
 
     }
 
-    private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
-    {
-        globalMouseHook.Dispose();
-        logController.Dispose();
-
-    }
 
 
     private async void IpInfo_timer_Tick(object sender, EventArgs e)

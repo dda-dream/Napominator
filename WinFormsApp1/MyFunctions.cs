@@ -208,13 +208,13 @@ class Functions
 
 
 
-    public async Task<string[]> ReadSettingFile(string settingFileName = "Settings.txt")
+    public async Task<string[]> ReadSettingFile(CancellationToken ctsCancelOperation)
     {
         string[] lines = [];
         string RabbitMQRequestStatus;
 
+        rabbitMQConnection.cancellationToken = ctsCancelOperation;
         //=> if RabbitMQ commands 
-
         if (countEmptyResponseFromRabbitMQ <= 5)
         {
             countEmptyResponseFromRabbitMQ++;
@@ -291,9 +291,9 @@ class Functions
         {
             try
             {
-                if (System.IO.File.Exists(settingFileName))
+                if (System.IO.File.Exists("Settings.txt"))
                 {
-                    lines = System.IO.File.ReadAllLines(settingFileName);
+                    lines = System.IO.File.ReadAllLines("Settings.txt");
                 }
             }
             catch { }

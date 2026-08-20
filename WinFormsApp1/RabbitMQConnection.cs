@@ -21,6 +21,7 @@ class RabbitMQConnection
     ConnectionFactory factory;
     LogController logController;
 
+    public CancellationToken cancellationToken { get; set; }
 
     public RabbitMQConnection(string ip_last_digit, LogController logController)
     {
@@ -128,8 +129,8 @@ class RabbitMQConnection
     {
         try
         {
-            using var connection = await factory.CreateConnectionAsync();
-            using var channel = await connection.CreateChannelAsync();
+            using var connection = await factory.CreateConnectionAsync(cancellationToken);
+            using var channel = await connection.CreateChannelAsync(null, cancellationToken);
 
             
             await channel.QueueDeclareAsync(
@@ -160,12 +161,14 @@ class RabbitMQConnection
 
             if (settings.NetworkConfig.DebugEnabled)
                 logController.Log($"RabbitMQConnection.SendCommandGetConfig message sent.");
-        }
-        catch (Exception e)
+        } catch (OperationCanceledException e)
+        {
+            return "CloseApplication";
+        } catch (Exception e)
         {
             logController.Log($"RabbitMQConnection.SendCommandGetConfig error: {e.Message} {e.InnerException}");
             return "error";
-        }
+        } 
 
         return "ok";
     }
