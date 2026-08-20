@@ -12,7 +12,7 @@ class RabbitMQConnection
 {
     string NapominatorRequestsQueue;
     string NapominatorResponseQueue ;
-    IConfigService settings;
+    IAppSettings settings;
 
 
     string ip_last_digit;
@@ -31,7 +31,7 @@ class RabbitMQConnection
         NapominatorRequestsQueue = "NapominatorRequestsQueue";
 
         this.logController = logController;
-        this.settings = Program._serviceProvider.GetRequiredService<IConfigService>();
+        this.settings = Program._serviceProvider.GetRequiredService<IAppSettings>();
     }
 
     public void SetConnectionData(string ip, string username, string password)

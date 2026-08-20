@@ -53,10 +53,10 @@ public class IpInfo : IDisposable
 
     public string Proxy { get; set; } = "";
     int httpClientTimeoutSeconds = 0;
-    IConfigService? _settings;
+    IAppSettings? _settings;
     HttpClientHandler? handlerHttpClient;
 
-    public IpInfo(IConfigService settings)
+    public IpInfo(IAppSettings settings)
     {
         _settings = settings;
     }

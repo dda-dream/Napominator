@@ -47,13 +47,13 @@ class Functions
     List<string> settingsNotifyLines = new List<string>();
     string ip_last_digit;
     RabbitMQConnection rabbitMQConnection;
-    IConfigService settings;
+    IAppSettings settings;
     int countEmptyResponseFromRabbitMQ = 0;
 
     public Functions(LogController logController,  string _USERNAME, string _ip_last_digit)
     {
         this.logController = logController;
-        this.settings = Program._serviceProvider.GetRequiredService<IConfigService>();
+        this.settings = Program._serviceProvider.GetRequiredService<IAppSettings>();
 
         USERNAME = _USERNAME;
         ip_last_digit = _ip_last_digit;

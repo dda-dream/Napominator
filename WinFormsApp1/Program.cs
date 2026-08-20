@@ -37,7 +37,7 @@ internal static class Program
                 var services = new ServiceCollection();
                 services.AddTransient<IpInfo>();
                 services.AddSingleton<MainForm>();
-                services.AddTransient<IConfigService, AppSettings>();
+                services.AddTransient<IAppSettings, AppSettings>();
                 _serviceProvider = services.BuildServiceProvider();
 
                 ApplicationConfiguration.Initialize();

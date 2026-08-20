@@ -6,7 +6,7 @@ using System.Runtime;
 namespace Napominator;
 
 
-public interface IConfigService
+public interface IAppSettings
 {
     IConfiguration Config { get; }
     NetworkConfig? NetworkConfig { get; }
@@ -17,7 +17,7 @@ public interface IConfigService
 }
 
 
-public class AppSettings : IConfigService
+public class AppSettings : IAppSettings
 {
     private readonly IConfiguration _configuration;
     public NetworkConfig? NetworkConfig { get; }

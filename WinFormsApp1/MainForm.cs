@@ -18,7 +18,7 @@ public partial class MainForm : Form
     Sound sound;
     Functions functions;
     GlobalMouseHook globalMouseHook;
-    IConfigService settings;
+    IAppSettings settings;
 
     const string __VERSION = "ver 27.03.2026";
     Boolean allowFormClose = false;
@@ -37,7 +37,9 @@ public partial class MainForm : Form
     public MainForm()
     {
         InitializeComponent();
-        settings = Program._serviceProvider.GetRequiredService<IConfigService>();
+        settings = Program._serviceProvider.GetRequiredService<IAppSettings>();
+        if (settings == null)
+            settings = new AppSettings();
 
         string USERNAME = Functions.username2USERNAME(System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1]);
         ArgumentException.ThrowIfNullOrEmpty(USERNAME);
@@ -46,13 +48,18 @@ public partial class MainForm : Form
         //USERNAME = "p";
         //TODO: debug
         IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
-        IPAddress ip;
-        //ip = host.AddressList.FirstOrDefault(addr => addr.AddressFamily == AddressFamily.InterNetwork);
-        ip = host.AddressList.FirstOrDefault(ip => ip.ToString().StartsWith("192.168.2."));
+
+        IPAddress[] ips = host.AddressList;
+        foreach( var i in ips)
+        {
+            var s = i.ToString();
+        }
+
+        IPAddress ip = ips.FirstOrDefault(ip => ip.ToString().StartsWith("192.168.2."));
         if (ip == null)
-            ip = host.AddressList.FirstOrDefault(ip => ip.ToString().StartsWith("192.168.3."));
+            ip = ips.FirstOrDefault(ip => ip.ToString().StartsWith("192.168.3."));
         if (ip == null)
-            ip = host.AddressList.FirstOrDefault(ip => ip.ToString().StartsWith("192.168.5."));
+            ip = ips.FirstOrDefault(ip => ip.ToString().StartsWith("192.168.5."));
 
         string ip_last_digit = "00";
         if (ip == null)
@@ -784,7 +791,7 @@ public partial class MainForm : Form
             if (rtbProxyUrl.Text != "")
                 ipInfo.Proxy = rtbProxyUrl.Text;
 
-            var settings = Program._serviceProvider.GetRequiredService<IConfigService>();
+            var settings = Program._serviceProvider.GetRequiredService<IAppSettings>();
             if (httpTimeout == 0)
                 httpTimeout = settings.NetworkConfig.HttpClientTimeoutSeconds;
 
