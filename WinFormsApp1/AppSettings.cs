@@ -13,6 +13,7 @@ public interface IAppSettings
     RabbitMQConfig? RabbitMQConfig { get; }
     ChatConnectionConfig? ChatConnectionConfig { get; }
     NapominatorWebApi? NapominatorWebApi {  get; }
+    NapominatorBaseSettings? NapominatorBaseSettings { get; }
     List <(string Name, string Url)> TestProxyUrls { get; }
 }
 
@@ -25,6 +26,7 @@ public class AppSettings : IAppSettings
     public ChatConnectionConfig? ChatConnectionConfig { get; }
     public NapominatorWebApi? NapominatorWebApi { get; }
     public List<(string Name, string Url)> TestProxyUrls { get; }
+    public NapominatorBaseSettings? NapominatorBaseSettings { get;  }
 
     public AppSettings()
     { 
@@ -44,6 +46,7 @@ public class AppSettings : IAppSettings
         ChatConnectionConfig = _configuration.GetSection("ChatConnection").Get<ChatConnectionConfig>();
         NapominatorWebApi = _configuration.GetSection("NapominatorWebApi").Get<NapominatorWebApi>();
         var testProxyUrlsDict = _configuration.GetSection("TestProxyUrls").Get<Dictionary<string, string>>();
+        NapominatorBaseSettings = _configuration.GetSection("BaseSettings").Get<NapominatorBaseSettings>();
 
         TestProxyUrls = testProxyUrlsDict?
             .Select(x => (Name: x.Key, Url: x.Value))
@@ -99,5 +102,9 @@ public class NapominatorWebApi
 {
     public string BaseUrl { get; set; }
     public string GetEndpoint { get; set; }
+}
+public class NapominatorBaseSettings
+{
+    public string NapominatorIP { get; set; }
 }
 

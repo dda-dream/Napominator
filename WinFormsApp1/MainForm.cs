@@ -43,29 +43,35 @@ public partial class MainForm : Form
         //HACK: Если нужно запустить под другим пользователем, то менять тут.
         //USERNAME = "p";
         //TODO: debug
-        IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
-
-        IPAddress[] ips = host.AddressList;
-        foreach( var i in ips)
-        {
-            var s = i.ToString();
-        }
-
-        IPAddress ip = ips.FirstOrDefault(ip => ip.ToString().StartsWith("192.168.2."));
-        if (ip == null)
-            ip = ips.FirstOrDefault(ip => ip.ToString().StartsWith("192.168.3."));
-        if (ip == null)
-            ip = ips.FirstOrDefault(ip => ip.ToString().StartsWith("192.168.5."));
 
         string ip_last_digit = "00";
-        if (ip == null)
+        if (string.IsNullOrEmpty(settings.NapominatorBaseSettings.NapominatorIP))
         {
-            if (host.HostName.Contains("BMAX"))
-                ip_last_digit = "44";
-        }
-        else
+            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+
+            IPAddress[] ips = host.AddressList;
+            foreach (var i in ips)
+            {
+                var s = i.ToString();
+            }
+
+            IPAddress ip = ips.FirstOrDefault(ip => ip.ToString().StartsWith("192.168.2."));
+            if (ip == null)
+                ip = ips.FirstOrDefault(ip => ip.ToString().StartsWith("192.168.3."));
+            if (ip == null)
+                ip = ips.FirstOrDefault(ip => ip.ToString().StartsWith("192.168.5."));
+
+            if (ip == null)
+            {
+                if (host.HostName.Contains("BMAX"))
+                    ip_last_digit = "44";
+            } else
+            {
+                ip_last_digit = ip.ToString().Split(".")[3];
+            }
+        } else
         {
-            ip_last_digit = ip.ToString().Split(".")[3];
+            ip_last_digit = settings.NapominatorBaseSettings.NapominatorIP;
         }
 
         logController = LogController.Builder();
